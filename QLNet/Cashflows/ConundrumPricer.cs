@@ -1,8 +1,9 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
-  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
+ 
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -20,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public abstract class VanillaOptionPricer {
@@ -273,7 +273,7 @@ namespace QLNet {
                     try {
                         calibratedShift_ = solver.solve(objectiveFunction_, accuracy_, Math.Max(Math.Min(initialGuess, upper * .99), lower * .99), lower, upper);
                     } catch (Exception e) {
-                        throw new ApplicationException("meanReversion: " + meanReversion_.link.value() + ", swapRateValue: " + swapRateValue_ + ", swapStartTime: " + swapStartTime_ + ", shapedPaymentTime: " + shapedPaymentTime_ + "\n error message: " + e.Message);
+                        throw new Exception("meanReversion: " + meanReversion_.link.value() + ", swapRateValue: " + swapRateValue_ + ", swapStartTime: " + swapStartTime_ + ", shapedPaymentTime: " + shapedPaymentTime_ + "\n error message: " + e.Message);
                     }
                     tmpRs_ = Rs;
                 }
@@ -297,7 +297,7 @@ namespace QLNet {
                 numerator += shapedSwapPaymentTimes_.Last() * swapPaymentDiscounts_.Last() * Math.Exp(-shapedSwapPaymentTimes_.Last() * x) * sqrtDenominator;
                 numerator -= (discountAtStart_ - swapPaymentDiscounts_.Last() * Math.Exp(-shapedSwapPaymentTimes_.Last() * x)) * derSqrtDenominator;
                 if (!(denominator != 0))
-                    throw new ApplicationException("GFunctionWithShifts::derRs_derX: denominator == 0");
+                    throw new Exception("GFunctionWithShifts::derRs_derX: denominator == 0");
                 return numerator / denominator;
             }
 
@@ -305,7 +305,7 @@ namespace QLNet {
                 double sqrtDenominator = (1.0 - discountRatio_ * Math.Exp(-shapedSwapPaymentTimes_.Last() * x));
                 double denominator = sqrtDenominator * sqrtDenominator;
                 if (!(denominator != 0))
-                    throw new ApplicationException("GFunctionWithShifts::derZ_derX: denominator == 0");
+                    throw new Exception("GFunctionWithShifts::derZ_derX: denominator == 0");
 
                 double numerator = 0;
                 numerator -= shapedPaymentTime_ * Math.Exp(-shapedPaymentTime_ * x) * sqrtDenominator;
@@ -343,7 +343,7 @@ namespace QLNet {
 
                 double numerator = derNumOfDerR * denOfDerR - numOfDerR * derDenOfDerR;
                 if (!(denominator != 0))
-                    throw new ApplicationException("GFunctionWithShifts::der2Rs_derX2: denominator == 0");
+                    throw new Exception("GFunctionWithShifts::der2Rs_derX2: denominator == 0");
                 return numerator / denominator;
             }
 
@@ -352,7 +352,7 @@ namespace QLNet {
                 double derDenOfZfunction = shapedSwapPaymentTimes_.Last() * discountRatio_ * Math.Exp(-shapedSwapPaymentTimes_.Last() * x);
                 double denominator = Math.Pow(denOfZfunction, 4);
                 if (!(denominator != 0))
-                    throw new ApplicationException("GFunctionWithShifts::der2Z_derX2: denominator == 0");
+                    throw new Exception("GFunctionWithShifts::der2Z_derX2: denominator == 0");
 
                 double numOfDerZ = 0;
                 numOfDerZ -= shapedPaymentTime_ * Math.Exp(-shapedPaymentTime_ * x) * denOfZfunction;
@@ -541,7 +541,11 @@ namespace QLNet {
             if (meanReversion_.link != null)
                 meanReversion_.registerWith(update);
         }
-
+        
+       protected virtual double optionletPrice(Option.Type optionType,double strike)
+       {
+          throw new NotImplementedException();
+       }
         public override void initialize(FloatingRateCoupon coupon) {
             coupon_ = coupon as CmsCoupon;
             Utils.QL_REQUIRE( coupon_ != null, () => "CMS coupon needed" );
@@ -569,7 +573,7 @@ namespace QLNet {
                 swapRateValue_ = swap.fairRate();
 
                 double bp = 1.0e-4;
-                annuity_ = (swap.floatingLegBPS() / bp);
+                annuity_ = Math.Abs( swap.fixedLegBPS() / bp );
 
                 int q = (int)swapIndex.fixedLegTenor().frequency();
                 Schedule schedule = swap.fixedSchedule();
@@ -596,7 +600,7 @@ namespace QLNet {
                         gFunction_ = GFunctionFactory.newGFunctionWithShifts(coupon_, meanReversion_);
                         break;
                     default:
-                        throw new ApplicationException("unknown/illegal gFunction type");
+                        throw new Exception("unknown/illegal gFunction type");
                 }
                 vanillaOptionPricer_ = new BlackVanillaOptionPricer(swapRateValue_, fixingDate_, swapTenor_, swaptionVolatility().link);
             }
@@ -635,14 +639,22 @@ namespace QLNet {
         public double requiredStdDeviations_;
         public double precision_;
         public double refiningIntegrationTolerance_;
+        public double hardUpperLimit_;
 
-        public NumericHaganPricer(Handle<SwaptionVolatilityStructure> swaptionVol, GFunctionFactory.YieldCurveModel modelOfYieldCurve, Handle<Quote> meanReversion, double lowerLimit, double upperLimit, double precision)
+        public NumericHaganPricer(Handle<SwaptionVolatilityStructure> swaptionVol, 
+           GFunctionFactory.YieldCurveModel modelOfYieldCurve, 
+           Handle<Quote> meanReversion, 
+           double lowerLimit = 0.0, 
+           double upperLimit = 1.0,
+           double precision = 1.0e-6, 
+           double hardUpperLimit = Double.MaxValue)
             : base(swaptionVol, modelOfYieldCurve, meanReversion) {
             upperLimit_ = upperLimit;
             lowerLimit_ = lowerLimit;
             requiredStdDeviations_ = 8;
             precision_ = precision;
             refiningIntegrationTolerance_ = 0.0001;
+            hardUpperLimit_ = hardUpperLimit;
         }
 
         protected override double optionletPrice(Option.Type optionType, double strike) {
@@ -697,6 +709,7 @@ namespace QLNet {
                 GaussKronrodNonAdaptive gaussKronrodNonAdaptive = new GaussKronrodNonAdaptive(precision_, 1000000, 1.0);
                 // if the integration intervall is wide enough we use the
                 // following change variable x -> a + (b-a)*(t/(a-b))^3
+                upperBoundary = Math.Max(a,Math.Min(upperBoundary, hardUpperLimit_));
                 if (upperBoundary > 2 * a) {
                     VariableChange variableChange = new VariableChange(integrand.value, a, upperBoundary, 3);
                     result = gaussKronrodNonAdaptive.value(variableChange.value, .0, 1.0);
@@ -706,12 +719,14 @@ namespace QLNet {
 
                 // if the expected precision has not been reached we use the old algorithm
                 if (!gaussKronrodNonAdaptive.integrationSuccess()) {
-                    GaussKronrodAdaptive integrator = new GaussKronrodAdaptive(precision_, 1000000);
+                    GaussKronrodAdaptive integrator = new GaussKronrodAdaptive(precision_, 100000);
+                    b = Math.Max(a,Math.Min(b, hardUpperLimit_));
                     result = integrator.value(integrand.value, a, b);
                 }
             } // if a < b we use the old algorithm
             else {
-                GaussKronrodAdaptive integrator = new GaussKronrodAdaptive(precision_, 1000000);
+                b = Math.Max(a,Math.Min(b,hardUpperLimit_));
+                GaussKronrodAdaptive integrator = new GaussKronrodAdaptive(precision_, 100000);
                 result = integrator.value(integrand.value, a, b);
             }
             return result;
@@ -752,13 +767,12 @@ namespace QLNet {
 
         #region Nested classes
         public class VariableChange {
-            private double a_, b_, width_;
+            private double a_,  width_;
             private Func<double, double> f_;
             private int k_;
 
             public VariableChange(Func<double, double> f, double a, double b, int k) {
                 a_ = a;
-                b_ = b;
                 width_ = b - a;
                 f_ = f;
                 k_ = k;

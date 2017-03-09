@@ -1,159 +1,522 @@
-commit 1ab2e71de4384e1a431dbcaa0226ec216320dc9f
+commit d7536399ebac07f40ab396a5756398de75f06535
 Author: Andrea Maggiulli <a.maggiulli@gmail.com>
-Date:   Wed, 5 Mar 2014 18:54:43 +0100
+Date:   Thu Jan 19 10:51:16 2017 +0100
 
-    Enable new Pricing Engines
+    Assembly version updated to 1.9.0.0
 
-commit c717f91876d97d0b4dbad2e3cf2573b510ce89d2
+ Examples/BermudanSwaption/Properties/AssemblyInfo.cs | 6 +++---
+ Examples/Bonds/Properties/AssemblyInfo.cs            | 6 +++---
+ Examples/CVAIRS/Properties/AssemblyInfo.cs           | 6 +++---
+ Examples/CallableBonds/Properties/AssemblyInfo.cs    | 6 +++---
+ Examples/EquityOption/Properties/AssemblyInfo.cs     | 6 +++---
+ Examples/FRA/Properties/AssemblyInfo.cs              | 6 +++---
+ Examples/FittedBondCurve/Properties/AssemblyInfo.cs  | 6 +++---
+ Examples/Repo/Properties/AssemblyInfo.cs             | 6 +++---
+ Examples/Swap/Properties/AssemblyInfo.cs             | 6 +++---
+ QLNet/Properties/AssemblyInfo.cs                     | 6 +++---
+ Test/Properties/AssemblyInfo.cs                      | 6 +++---
+ 11 files changed, 33 insertions(+), 33 deletions(-)
+
+commit 40dfdf8e9e286fa9a8ebce9473e31c8dd352b691
 Author: Andrea Maggiulli <a.maggiulli@gmail.com>
-Date:   Wed, 5 Mar 2014 17:55:46 +0100
+Date:   Tue Jan 17 17:51:08 2017 +0100
 
-    New vanilla pricing engines :AnalyticDividendEuropeanEngine,FDDividendAmericanEngine,FDDividendEuropeanEngine ...with tests.
+    Fix Empty redundant statement.
 
-commit 40586b45c6629b3009435a71b906adbd307755b2
-Merge: b468bb4 1dafb00
+ Test/T_BlackDeltaCalculator.cs | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 9d3ecd117391a05e8bc127332ee22df0b3a754d8
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Jan 17 17:45:05 2017 +0100
+
+    Fix inconsistent modifiers declaration order
+
+ QLNet/Models/Parameter.cs  | 6 +++---
+ QLNet/StochasticProcess.cs | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 7b655e21afaf09736d419fac5a146283551852c0
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Jan 17 15:27:12 2017 +0100
+
+    List and InitializedList refactoring : base class is always a List , InitializedList is an utility to construct a initialized list.
+
+ QLNet/Extensions/ListExtension.cs                  |  7 +++++
+ QLNet/Instruments/Bonds/BTP.cs                     | 12 ++++----
+ QLNet/Instruments/Loan.cs                          |  7 +++--
+ QLNet/Instruments/Swap.cs                          | 32 ++++++++++++++++------
+ QLNet/Math/Interpolations/CubicInterpolation.cs    |  4 +--
+ QLNet/Math/Interpolations/Linearinterpolation.cs   |  2 +-
+ QLNet/Math/Optimization/Simplex.cs                 |  5 ++--
+ .../Shortrate/calibrationhelpers/caphelper.cs      |  2 +-
+ .../inflation/InflationCapFloorEngines.cs          |  7 +++--
+ Test/T_Bonds.cs                                    | 12 ++++----
+ Test/T_InflationCapFlooredCouponTest.cs            | 14 +++++-----
+ 11 files changed, 66 insertions(+), 38 deletions(-)
+
+commit 89158a3c8688d654bce232d3c129286267ee5ad4
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Jan 17 12:18:17 2017 +0100
+
+    Sorted modifiers.
+
+ QLNet/Instruments/AsianOption.cs           | 8 ++++----
+ QLNet/Instruments/BarrierOption.cs         | 4 ++--
+ QLNet/Instruments/BasisSwap.cs             | 2 +-
+ QLNet/Instruments/DividendVanillaOption.cs | 4 ++--
+ QLNet/Instruments/MultiAssetOption.cs      | 2 +-
+ QLNet/Instruments/OneAssetOption.cs        | 2 +-
+ QLNet/Instruments/VanillaSwap.cs           | 2 +-
+ 7 files changed, 12 insertions(+), 12 deletions(-)
+
+commit 1c30f44c4f6d16800fa4125c6b8af368cc7e497d
+Merge: cbe01ab b0fce11
 Author: Andrea Maggiulli <amaggiulli@users.noreply.github.com>
-Date:   Mon, 2 Dec 2013 03:29:18 -0800
+Date:   Fri Jan 13 14:57:49 2017 +0100
 
-    Merge pull request #4 from qusma/Ver-1.3.0.0
+    Merge pull request #116 from jiskin/BermudeanSwaption-fix
     
-    Moved Easter Monday offsets to a field, greatly improving performance of the easterMonday() functions.
-    Thanks qusma.
+    Issue with times in the TimeGrid
 
-commit 1dafb003cc494738a830f2825723c581f8578f89
-Author: qusma <qusmablog@gmail.com>
-Date:   Mon, 2 Dec 2013 01:43:14 +0200
+commit b0fce11897ae56022837be08046188522b52abfb
+Author: Andrea Maggiulli <amaggiulli@users.noreply.github.com>
+Date:   Fri Jan 13 14:51:47 2017 +0100
 
-    Moved Easter Monday offsets to a field, greatly improving performance of the easterMonday() functions.
+    Fix BermudaSwaption example
+    
+    Grid construction is wrong yes , this give also correct numbers.
 
-commit b468bb41a285d60e4190e8e2e283f212d360050e
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Fri, 29 Nov 2013 17:19:11 +0100
+ Examples/BermudanSwaption/BermudanSwaption.cs | 592 +++++++++++++-------------
+ 1 file changed, 296 insertions(+), 296 deletions(-)
 
-    ZeroCouponInflationSwap update.
+commit eec9f49481446084d0ce43be14ac6735e6c1748a
+Author: jiskin <tournier.jc@gmail.com>
+Date:   Fri Jan 13 14:03:17 2017 +0100
 
-commit 3cf271c1f576aa1c2953eec4f95cf9c54b8b7e0b
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Tue, 26 Nov 2013 16:44:37 +0100
+    Issue with times in the TimeGrid
+    
+    Not sure this is the expected results, but at least the example is running
 
-    formatting
+ Examples/BermudanSwaption/BermudanSwaption.cs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-commit 3c8ee280a214b3066859dfacbcd7f3949372223d
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Tue, 26 Nov 2013 16:38:51 +0100
+commit cbe01abeb181e3cc54759b240bb48ffac38af764
+Merge: f0fa658 213b554
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Fri Jan 13 10:44:06 2017 +0100
 
-    New instruments : Italian BTP (Buoni Poliennali del Tesoro), Italian CCTEU (Certificato di credito del tesoro)
+    Fix Issue #115
 
-commit 35e1d42bd3b243d4be7100f59f9e71ad1fcfff20
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Tue, 26 Nov 2013 16:35:36 +0100
+commit 213b554f5d1f3bfe53bc198e2ac799a43538b21f
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Fri Jan 13 10:43:14 2017 +0100
 
-    Fix Calendar comparison bug
+    Fix Issue #115
 
-commit d9b263287280c9c10c5b57b152bb45f06ef54bbf
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Wed, 20 Nov 2013 17:55:22 +0100
+ .../asian/mc_discr_arith_av_price.cs               | 12 ++--
+ Test/T_AsianOptions.cs                             | 68 ++++++++++++++++++++++
+ 2 files changed, 74 insertions(+), 6 deletions(-)
 
-    old code removed
+commit f0fa658c382639d320b8b03c9eb5b7045f951234
+Merge: e7f3c79 32e83c7
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Thu Jan 5 12:25:17 2017 +0100
 
-commit a76410c70fe25d0119dd122ff5e6b35020b55cb2
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Wed, 20 Nov 2013 16:43:00 +0100
+    Merge branch 'develop' of https://github.com/amaggiulli/qlnet into develop
 
-    Termstructure update, start credit implementation, various fixes
+commit e7f3c794292ba52a9fee64d2dde4fd12cefcb24f
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Thu Jan 5 12:24:55 2017 +0100
 
-commit d67e5938d5d74684c277c9454d92ab48a653e85e
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Wed, 6 Nov 2013 11:39:42 +0100
+    Added CPISwap with tests.
 
-    Update some base class : Event , CashFlow , Settings
+ QLNet/Instruments/CPISwap.cs | 327 +++++++++++++++++++++++++++
+ QLNet/QLNet.csproj           |   1 +
+ Test/T_CPISwap.cs            | 517 +++++++++++++++++++++++++++++++++++++++++++
+ Test/Test.csproj             |   1 +
+ 4 files changed, 846 insertions(+)
 
-commit fa47b02aaa93d9acd44e5b0edff0be5a401baaa3
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Tue, 5 Nov 2013 14:17:28 +0100
+commit 15c40dfae7af76dfd8982f3e2fa8e8b18dd3421f
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Thu Jan 5 12:15:28 2017 +0100
 
-    Remove IndexHistoryCleaner from T_AssetSwap tests ( it make fail tests when run all together )
+    BUGFIX : PricingEngineResults copy reference list instead of duplicate data.
+    This fix problems when pricing different Swaps with same engine loosing previous calculation.
 
-commit 466967174cb3ac05b7287337e24f6bc424698b9a
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Mon, 4 Nov 2013 15:45:51 +0100
+ QLNet/Instruments/Instrument.cs |  2 +-
+ QLNet/Instruments/Loan.cs       |  8 ++++----
+ QLNet/Instruments/Swap.cs       | 20 ++++++++++----------
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
-    New Instrument : AssetSwap ( with tests )
+commit 32e83c75392b0df343df8bb1489f5a4cd21b8172
+Merge: 0197f33 3a1c06f
+Author: Andrea Maggiulli <amaggiulli@users.noreply.github.com>
+Date:   Wed Jan 4 17:14:39 2017 +0100
 
-commit fdf772f12997ae71bd0004a3281f1dacd32fa789
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Thu, 31 Oct 2013 14:18:57 +0100
+    Merge pull request #113 from jiskin/develop
+    
+    Cast issue in TreeCallableBondEngine
 
-    Swap Update + cleanup commented code
+commit 0197f3300e08f68a0e93bcb2dacadd5813d8a162
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Jan 4 17:10:50 2017 +0100
 
-commit 81a0a11c2444eb78800acfeba259c9beee213c66
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Thu, 31 Oct 2013 12:36:38 +0100
+    Added CPICapFloor with engine and tests.
 
-    Bond Update
+ QLNet/Instruments/CPICapFloor.cs                   | 178 +++++++++
+ .../inflation/InterpolatingCPICapFloorEngine.cs    | 111 ++++++
+ QLNet/QLNet.csproj                                 |   3 +
+ .../Inflation/CPICapFloorTermPriceSurface.cs       | 346 ++++++++++++++++
+ Test/T_InflationCPICapFloor.cs                     | 444 +++++++++++++++++++++
+ Test/Test.csproj                                   |   1 +
+ 6 files changed, 1083 insertions(+)
 
-commit d2950f7fe69916f9b9c84021ce1503326fd03866
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Wed, 30 Oct 2013 17:21:12 +0100
+commit 3a1c06f85d987504ce17228a58a6f9bb126a91d4
+Author: jiskin <tournier.jc@gmail.com>
+Date:   Wed Jan 4 16:20:49 2017 +0100
 
-    Cashflows functions update
+    Add files via upload
+    
+    The Callable Bond example was raising an issue.
 
-commit 884a155a1338ced42c7cd22103048dcdbb2905a4
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Fri, 30 Aug 2013 14:37:37 +0200
+ QLNet/Pricingengines/Bond/TreeCallableBondEngine.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    Fix compilation Warnings
+commit e6686b894d3d1ed9a68ba9531c7533825d567ed8
+Merge: d1e3f65 9dde204
+Author: jiskin <tournier.jc@gmail.com>
+Date:   Wed Dec 28 11:10:35 2016 +0100
 
-commit 64cdeca5b0d465d1c9a198abe218ea500a5b5b96
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Fri, 30 Aug 2013 11:30:30 +0200
+    Merge pull request #1 from amaggiulli/develop
+    
+    integrate amaggiulli changes
 
-    Fix compilation Warnings ( Observer interface )
+commit 9dde204faa0689aeff2ecf0c687fc1049bd9854e
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Fri Dec 23 16:40:55 2016 +0100
 
-commit 55071b5b1fa4d8dd36c82a2900af3ac340ada996
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Fri, 30 Aug 2013 11:14:11 +0200
+    Issue #103 - This should fix issue.
 
-    Fix compilation Warnings
+ QLNet/Termstructures/Yield/ZeroCurve.cs | 21 +++++---
+ Test/T_TermStructures.cs                | 90 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 102 insertions(+), 9 deletions(-)
 
-commit 811b627162da5a4a38c9e9f1ba4467e2c47efff3
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Thu, 29 Aug 2013 16:15:44 +0200
+commit a29e83ce406d363f72f73caad8c8c3d16f8ba609
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Thu Dec 22 17:43:27 2016 +0100
 
-    Fix compilation Warnings
+    FX feature - Added DoubleBarrier Option, AnalyticDoubleBarrierEngine, VannaVolgaDoubleBarrierEngine, WulinYongDoubleBarrierEngine with tests.
 
-commit 2a497c4f06405566c0e18215dd60dcb707603428
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Thu, 29 Aug 2013 14:52:40 +0200
+ QLNet/Instruments/DoubleBarrierOption.cs           | 146 ++++++
+ .../barrier/AnalyticDoubleBarrierEngine.cs         | 237 ++++++++++
+ .../barrier/VannaVolgaDoubleBarrierEngine.cs       | 356 +++++++++++++++
+ .../barrier/WulinYongDoubleBarrierEngine.cs        | 172 +++++++
+ QLNet/QLNet.csproj                                 |   4 +
+ Test/T_DoubleBarrierOption.cs                      | 507 +++++++++++++++++++++
+ Test/Test.csproj                                   |   1 +
+ 7 files changed, 1423 insertions(+)
 
-    Fix compilation Warnings
+commit 8aa30c97d2d62cf6aef0bf05f0552141632673cd
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Thu Dec 22 14:18:18 2016 +0100
 
-commit 60afe4f5c5457075e46f8b72450be987adda2ca9
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Thu, 29 Aug 2013 14:49:55 +0200
+    FX feature - Added VannaVolga Interpolation and VannaVolga BarrierEngine with test.
 
-    Add Akima Interpolation
+ QLNet/Instruments/DividendBarrierOption.cs         |   2 +-
+ .../Math/Interpolations/VannaVolgaInterpolation.cs | 142 ++++++++
+ .../barrier/VannaVolgaBarrierEngine.cs             | 382 +++++++++++++++++++++
+ QLNet/QLNet.csproj                                 |   2 +
+ Test/T_BarrierOption.cs                            | 233 ++++++++++++-
+ 5 files changed, 759 insertions(+), 2 deletions(-)
 
-commit c661fbfa8255711fbd299058b7b56c646f0a1a29
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Thu, 29 Aug 2013 14:46:41 +0200
+commit 178ddce515e60ca3b5d4ea412490c8eddb506925
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Thu Dec 22 14:15:19 2016 +0100
 
-    Fix several compiler warnings
+    FX feature - Added Matrix inverse calculation with Crout's LU decomposition with test.
 
-commit 9bcde34582d95dc4787069a49e903bf8fde3b3ff
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Sun, 25 Aug 2013 19:07:07 +0200
+ QLNet/Math/Matrix.cs | 135 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ Test/T_Matrices.cs   |  38 ++++++++++++++-
+ 2 files changed, 169 insertions(+), 4 deletions(-)
 
-    Update holidays for 2013.
+commit c350b0b183571dc0d915cc1168fc80f1372f33ee
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Dec 20 14:38:18 2016 +0100
 
-commit 63bc1992dfc5d5c8b53fb16dc10df100be1102c1
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Sun, 25 Aug 2013 19:06:19 +0200
+    FX feature - Added BlackDeltaCalculator and DeltaVolQuote with tests.
 
-    Update Version info
+ QLNet/Pricingengines/BlackDeltaCalculator.cs | 406 ++++++++++++++++
+ QLNet/QLNet.csproj                           |   2 +
+ QLNet/Quotes/DeltaVolQuote.cs                |  85 ++++
+ Test/T_BlackDeltaCalculator.cs               | 701 +++++++++++++++++++++++++++
+ Test/Test.csproj                             |   1 +
+ 5 files changed, 1195 insertions(+)
 
-commit 063fdcabc6c8cf85a56497567f8598c9a93ce3f7
-Author: a.maggiulli <a.maggiulli@gmail.com>
-Date:   Sun, 25 Aug 2013 17:58:03 +0200
+commit f3abab53aeb0183fbce470ce5d71eea0c5e23b2d
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Dec 14 14:05:49 2016 +0100
 
-    Update QLNet information.
+    Added Digital Coupon tests.
+
+ Test/T_DigitalCoupon.cs | 1070 +++++++++++++++++++++++++++++++++++++++++++++++
+ Test/Test.csproj        |    1 +
+ 2 files changed, 1071 insertions(+)
+
+commit d1e3f65752a67bd798fb0827752793446bf56245
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Thu Dec 8 15:11:04 2016 +0100
+
+    Added Cliquet Option with pricing engines and tests.
+
+ QLNet/Instruments/CliquetOption.cs                 |  90 +++++++
+ .../Cliquet/AnalyticCliquetEngine.cs               | 108 ++++++++
+ .../Cliquet/AnalyticPerformanceEngine.cs           | 105 ++++++++
+ QLNet/QLNet.csproj                                 |   3 +
+ Test/T_CliquetOption.cs                            | 295 +++++++++++++++++++++
+ Test/Test.csproj                                   |   1 +
+ 6 files changed, 602 insertions(+)
+
+commit d32e5fe33fd98ed968b94dfa80e9f7539625159b
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Dec 7 17:26:20 2016 +0100
+
+    Added CapFloored coupon tests.
+
+ Test/T_CapFlooredCoupon.cs | 509 +++++++++++++++++++++++++++++++++++++++++++++
+ Test/Test.csproj           |   1 +
+ 2 files changed, 510 insertions(+)
+
+commit 9d26c0b8527cdde9542e9fc47e82707210f8e20d
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Dec 7 17:25:44 2016 +0100
+
+    fix CappedFlooredCoupon factory
+
+ QLNet/Cashflows/CappedFlooredCoupon.cs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 71a3ca69d3ded4a347611c71bbfbf9914d5d794a
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Dec 7 17:24:56 2016 +0100
+
+    optimize npvbps calculation
+
+ QLNet/Cashflows/CashFlows.cs | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+commit 847c5b28245ebb4d1c5ea182cfb648efa62b6aa1
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Dec 6 17:22:30 2016 +0100
+
+    Added Test : Chambers-Nawalkha implied vol approximation
+
+ Test/T_BlackFormula.cs | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+
+commit 11c95bf79b4e354f2f4a7c43044ed86d80450f08
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Dec 6 17:10:17 2016 +0100
+
+    Added AnalyticBinaryBarrierEngine with tests.
+
+ .../barrier/AnalyticBinaryBarrierEngine.cs         | 344 +++++++++++++++++++++
+ QLNet/QLNet.csproj                                 |   1 +
+ Test/T_BinaryOption.cs                             | 283 +++++++++++++++++
+ Test/Test.csproj                                   |   1 +
+ 4 files changed, 629 insertions(+)
+
+commit ff2d983f24091ba4303a30128f3d6e3ff6f150f0
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Dec 6 15:25:45 2016 +0100
+
+    Added BarrierOption with tests.
+
+ .../barrier/BinomialBarrierEngine.cs               | 182 +++++
+ .../barrier/DiscretizedBarrierOption.cs            | 243 +++++++
+ QLNet/QLNet.csproj                                 |   2 +
+ Test/T_BarrierOption.cs                            | 785 +++++++++++++++++++++
+ Test/Test.csproj                                   |   1 +
+ 5 files changed, 1213 insertions(+)
+
+commit 26465eb87736cf9bb15b352602e3d63f15460e50
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Dec 6 13:01:59 2016 +0100
+
+    Refactoring & Update BlackScholesProcess, LocalVolCurve, bsmlattice
+
+ QLNet/Methods/lattices/bsmlattice.cs               | 123 +++--
+ .../Volatility/equityfx/LocalVolCurve.cs           | 112 +++--
+ QLNet/processes/BlackScholesProcess.cs             | 520 ++++++++++++---------
+ 3 files changed, 462 insertions(+), 293 deletions(-)
+
+commit d364bd11df894762256e28d6f0291b2532dd754b
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Nov 30 12:01:02 2016 +0100
+
+    Added tests for China SSE and IB calendars and a missing Chinese holiday
+
+ QLNet/Time/Calendars/china.cs |  15 +++-
+ Test/T_Calendars.cs           | 169 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 180 insertions(+), 4 deletions(-)
+
+commit b8039da3cd702b108fdc1c078d94697f829719ae
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Nov 30 11:58:44 2016 +0100
+
+    Fixed United States holidays before 1971
+
+ QLNet/Time/Calendars/UnitedStates.cs | 487 ++++++++++++++++++++---------------
+ 1 file changed, 273 insertions(+), 214 deletions(-)
+
+commit 9830843dab74c1b34c52bc9434c2249587e18b0e
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Nov 30 11:58:09 2016 +0100
+
+    Fixed rule for the Japanese Mountain Day holiday
+
+ QLNet/Time/Calendars/japan.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d90c3ebd3b0233e3ae520e0d0f686e9115bb4228
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Nov 30 11:57:03 2016 +0100
+
+    Added ECB dates for 2017
+
+ QLNet/Time/ECB.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 881aa9e36e7fc9b51a69ef837fb7f1fb1b2c3dec
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Nov 30 11:43:24 2016 +0100
+
+    Allow negative jumps in yield term structures.
+
+ QLNet/Termstructures/YieldTermStructure.cs | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit 48cb25fde280719f672cd0bedae4b2423408706c
+Merge: 5c0eab7 07a5010
+Author: Andrea Maggiulli <amaggiulli@users.noreply.github.com>
+Date:   Tue Nov 29 10:40:46 2016 +0100
+
+    Merge pull request #111 from callmecary/feature/lianze
+    
+    made Bicubic inherited from IInterpolationFactory2D, so that vol surface like BlackVarianceSurface can set it to interpolation
+
+commit 07a5010d93ce29b87b0898730a35a9b329c9c1db
+Author: Ma, Lianze <lma@hartreepartners.com>
+Date:   Mon Nov 28 14:34:43 2016 -0500
+
+    made Bicubic inherited from IInterpolationFactory2D, so that vol surface like BlackVarianceSurface can set it to interpolation
+
+ .../Interpolations/BicubicSplineInterpolation.cs   | 80 +++++++++++-----------
+ 1 file changed, 40 insertions(+), 40 deletions(-)
+
+commit 5c0eab7d52e7a6b088abcfd920233fe355f95dbb
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Mon Nov 28 14:52:44 2016 +0100
+
+    Revert "Make theta pertubation in AmericanOption & DividendOption tests."
+    
+    This reverts commit 3bbf8f8049b468e20a107d61ed0336b1a202d967.
+
+ Test/T_AmericanOption.cs | 12 ++++++------
+ Test/T_DividendOption.cs | 18 +++++++++---------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 3bbf8f8049b468e20a107d61ed0336b1a202d967
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Mon Nov 28 14:02:53 2016 +0100
+
+    Make theta pertubation in AmericanOption & DividendOption tests.
+
+ Test/T_AmericanOption.cs | 12 ++++++------
+ Test/T_DividendOption.cs | 18 +++++++++---------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 0b972139989d3c9ba0ba3c9ebabb9c768e3103b3
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Nov 16 11:58:10 2016 +0100
+
+    Added new Ibor indexes : Aonia , Bbsw, Bkbm and Nzocr.
+
+ QLNet/Indexes/Ibor/Aonia.cs | 31 ++++++++++++++++
+ QLNet/Indexes/Ibor/Bbsw.cs  | 85 +++++++++++++++++++++++++++++++++++++++++++
+ QLNet/Indexes/Ibor/Bkbm.cs  | 88 +++++++++++++++++++++++++++++++++++++++++++++
+ QLNet/Indexes/Ibor/Nzocr.cs | 32 +++++++++++++++++
+ QLNet/QLNet.csproj          |  4 +++
+ 5 files changed, 240 insertions(+)
+
+commit 7de335002ee933c05720db9e6b7a884c1061082f
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Nov 16 10:15:46 2016 +0100
+
+    CMS Helper and tests
+
+ QLNet/Cashflows/ConundrumPricer.cs                 |  27 +-
+ QLNet/Cashflows/LinearTsrPricer.cs                 | 556 +++++++++++++++++++++
+ QLNet/Instruments/MakeCms.cs                       | 348 +++++++++++++
+ QLNet/QLNet.csproj                                 |   3 +
+ QLNet/Termstructures/Volatility/AtmSmileSection.cs |  45 ++
+ .../Termstructures/Volatility/FlatSmileSection.cs  |   2 +-
+ Test/T_Cms.cs                                      | 467 +++++++++++++++++
+ Test/Test.csproj                                   |   3 +
+ 8 files changed, 1442 insertions(+), 9 deletions(-)
+
+commit a21bb52afc3b123659da5a2b30aae55dbe319a71
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Mon Nov 14 14:14:52 2016 +0100
+
+    Added Swaption volatility cube with tests.
+
+ QLNet/QLNet.csproj                                 |   4 +
+ .../Volatility/InterpolatedSmileSection.cs         | 123 +--
+ QLNet/Termstructures/Volatility/Sabr.cs            |   6 +-
+ .../swaption/SpreadedSwaptionVolatility.cs         |  82 ++
+ .../Volatility/swaption/SwaptionVolCube1.cs        | 980 +++++++++++++++++++++
+ .../Volatility/swaption/SwaptionVolCube2.cs        | 115 +++
+ .../Volatility/swaption/SwaptionVolatilityCube.cs  | 218 +++++
+ .../swaption/SwaptionVolatilityStructure.cs        |  60 ++
+ .../Volatility/swaption/swaptionvoldiscrete.cs     |   8 +-
+ QLNet/Time/Period.cs                               |  13 +-
+ README.md                                          |   1 +
+ Test/T_SwaptionVolatilityCube.cs                   | 424 +++++++++
+ Test/Test.csproj                                   |   1 +
+ Test/Utilities.cs                                  | 269 ++++--
+ 14 files changed, 2163 insertions(+), 141 deletions(-)
+
+commit 0d37226a4445ddf78aacd922eec94410c930b50b
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Wed Oct 12 12:47:24 2016 +0200
+
+    Instruments feature : add LookbackOption with engines and tests.
+
+ QLNet/Instruments/LookbackOption.cs                | 223 +++++++++
+ .../AnalyticContinuousFixedLookbackEngine.cs       | 125 ++++++
+ .../AnalyticContinuousFloatingLookbackEngine.cs    |  89 ++++
+ ...AnalyticContinuousPartialFixedLookbackEngine.cs | 134 ++++++
+ ...lyticContinuousPartialFloatingLookbackEngine.cs | 155 +++++++
+ QLNet/QLNet.csproj                                 |   5 +
+ Test/T_LookbackOption.cs                           | 497 +++++++++++++++++++++
+ Test/Test.csproj                                   |   1 +
+ 8 files changed, 1229 insertions(+)
+
+commit afa34ae97e5a5911567ffbb75a305dc368511a21
+Author: Andrea Maggiulli <a.maggiulli@gmail.com>
+Date:   Tue Oct 11 12:42:42 2016 +0200
+
+    Instruments feature : add CompositeInstrument,DividendBarrierOption,ForwardVanillaOption with engine and tests.
+
+ .gitignore                                         |   1 +
+ QLNet/Instruments/CompositeInstrument.cs           |  72 +++
+ QLNet/Instruments/DividendBarrierOption.cs         |  75 +++
+ QLNet/Instruments/ForwardVanillaOption.cs          |  73 +++
+ .../Forward/ForwardPerformanceVanillaEngine.cs     |  64 +++
+ .../Pricingengines/Forward/ForwardVanillaEngine.cs | 128 +++++
+ QLNet/QLNet.csproj                                 |   6 +
+ .../Volatility/equityfx/ImpliedVolTermStructure.cs |  74 +++
+ Test/T_ForwardOption.cs                            | 538 +++++++++++++++++++++
+ Test/Test.csproj                                   |   1 +
+ 10 files changed, 1032 insertions(+)

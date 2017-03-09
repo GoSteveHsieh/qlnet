@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
@@ -10,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("QLNet")]
-[assembly: AssemblyCopyright("Copyright (c) 2008-2013 Andrea Maggiulli (a.maggiulli@gmail.com)")]
+[assembly: AssemblyCopyright("Copyright (c) 2008-2017 Andrea Maggiulli (a.maggiulli@gmail.com)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +30,5 @@ using System.Runtime.InteropServices;
 //
 // È possibile specificare tutti i valori o impostare come predefiniti i valori Numero revisione e Numero build 
 // utilizzando l'asterisco (*) come descritto di seguito:
-[assembly: AssemblyVersion("1.4.0.4")]
-[assembly: AssemblyFileVersion("1.4.0.4")]
+[assembly: AssemblyVersion( "1.9.1.0" )]
+[assembly: AssemblyFileVersion( "1.9.1.0" )]

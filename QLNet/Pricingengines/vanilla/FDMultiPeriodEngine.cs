@@ -2,7 +2,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008-2013  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public class FDMultiPeriodEngine : FDConditionEngineTemplate {
@@ -68,7 +66,7 @@ namespace QLNet {
         public override void setupArguments(IPricingEngineArguments a) {
             base.setupArguments(a);
             OneAssetOption.Arguments args = a as OneAssetOption.Arguments;
-            if (args == null) throw new ApplicationException("incorrect argument type");
+            if (args == null) throw new Exception("incorrect argument type");
             events_.Clear();
 
             int n = args.exercise.dates().Count;
@@ -79,7 +77,7 @@ namespace QLNet {
 
         public override void calculate(IPricingEngineResults r) {
             OneAssetOption.Results results = r as OneAssetOption.Results;
-            if (results == null) throw new ApplicationException("incorrect results type");
+            if (results == null) throw new Exception("incorrect results type");
 
             double beginDate, endDate;
             int dateNumber = stoppingTimes_.Count;
@@ -94,7 +92,7 @@ namespace QLNet {
 
             if (dateNumber > 0) {
                 if (!(getDividendTime(0) >= 0))
-                    throw new ApplicationException("first date (" + getDividendTime(0) + ") cannot be negative");
+                    throw new Exception("first date (" + getDividendTime(0) + ") cannot be negative");
                 if (getDividendTime(0) < getResidualTime() * dateTolerance) {
                     firstDateIsZero = true;
                     firstIndex = 0;
@@ -113,7 +111,7 @@ namespace QLNet {
                 if (dateNumber >= 2) {
                     for (j = 1; j < dateNumber; j++)
                         if (!(getDividendTime(j - 1) < getDividendTime(j)))
-                            throw new ApplicationException("dates must be in increasing order: "
+                            throw new Exception("dates must be in increasing order: "
                                    + getDividendTime(j - 1) + " is not strictly smaller than " + getDividendTime(j));
                 }
             }

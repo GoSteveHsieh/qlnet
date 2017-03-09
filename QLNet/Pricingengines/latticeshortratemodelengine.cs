@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet{
 
@@ -53,7 +50,7 @@ namespace QLNet{
             timeGrid_ = new TimeGrid(timeGrid.Last(),timeGrid.size()-1 /*timeGrid.dt(1) - timeGrid.dt(0)*/);
             timeGrid_=timeGrid;
             timeSteps_=0;
-            lattice_=this.model_.tree(timeGrid);
+            lattice_=this.model_.link.tree(timeGrid);
             //model_.registerWith(update); 
         }
 
@@ -76,7 +73,7 @@ namespace QLNet{
         public override void update()
         {
             if (!timeGrid_.empty())
-                lattice_ = this.model_.tree(timeGrid_);
+                lattice_ = this.model_.link.tree(timeGrid_);
             notifyObservers();
         }
         #endregion

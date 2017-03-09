@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public static partial class MatrixUtilitites {
@@ -31,7 +28,7 @@ namespace QLNet {
         public static void normalizePseudoRoot(Matrix matrix, Matrix pseudo) {
             int size = matrix.rows();
             if (size != pseudo.rows())
-                throw new ApplicationException("matrix/pseudo mismatch: matrix rows are " + size +
+                throw new Exception("matrix/pseudo mismatch: matrix rows are " + size +
                        " while pseudo rows are " + pseudo.columns());
             int pseudoCols = pseudo.columns();
 
@@ -68,7 +65,7 @@ namespace QLNet {
             }
 
             public override Vector values(Vector a) {
-                throw new ApplicationException("values method not implemented");
+                throw new Exception("values method not implemented");
             }
 
             public override double value(Vector x) {
@@ -257,7 +254,7 @@ namespace QLNet {
         private static Matrix projectToUnitDiagonalMatrix(Matrix M) {
             int size = M.rows();
             if (size != M.columns())
-                throw new ApplicationException("matrix not square");
+                throw new Exception("matrix not square");
 
             Matrix result = new Matrix(M);
             for (int i=0; i<size; ++i)
@@ -271,7 +268,7 @@ namespace QLNet {
         private static Matrix projectToPositiveSemidefiniteMatrix(Matrix M) {
             int size = M.rows();
             if (size != M.columns())
-                throw new ApplicationException("matrix not square");
+                throw new Exception("matrix not square");
 
             Matrix diagonal = new Matrix(size, size);
             SymmetricSchurDecomposition jd = new SymmetricSchurDecomposition(M);
@@ -354,7 +351,7 @@ namespace QLNet {
             checkSymmetry(matrix);
             #else
             if (size != matrix.columns())
-                throw new ApplicationException("non square matrix: " + size + " rows, " + matrix.columns() + " columns");
+                throw new Exception("non square matrix: " + size + " rows, " + matrix.columns() + " columns");
             #endif
 
             // spectral (a.k.a Principal Component) analysis
@@ -368,7 +365,7 @@ namespace QLNet {
                 case SalvagingAlgorithm.None:
                     // eigenvalues are sorted in decreasing order
                     if (!(jd.eigenvalues()[size-1]>=-1e-16))
-                        throw new ApplicationException("negative eigenvalue(s) (" + jd.eigenvalues()[size-1] + ")");
+                        throw new Exception("negative eigenvalue(s) (" + jd.eigenvalues()[size-1] + ")");
                     result = MatrixUtilities.CholeskyDecomposition(matrix, true);
                     break;
 
@@ -418,7 +415,7 @@ namespace QLNet {
                     break;
 
                 default:
-                    throw new ApplicationException("unknown salvaging algorithm");
+                    throw new Exception("unknown salvaging algorithm");
             }
 
             return result;
@@ -435,17 +432,17 @@ namespace QLNet {
                 checkSymmetry(matrix);
             #else
             if (size != matrix.columns())
-                throw new ApplicationException("non square matrix: " + size + " rows, " + matrix.columns() + " columns");
+                throw new Exception("non square matrix: " + size + " rows, " + matrix.columns() + " columns");
             #endif
 
             if (!(componentRetainedPercentage > 0.0))
-                throw new ApplicationException("no eigenvalues retained");
+                throw new Exception("no eigenvalues retained");
 
             if (!(componentRetainedPercentage <= 1.0))
-                throw new ApplicationException("percentage to be retained > 100%");
+                throw new Exception("percentage to be retained > 100%");
 
             if (!(maxRank >= 1))
-                throw new ApplicationException("max rank required < 1");
+                throw new Exception("max rank required < 1");
 
             // spectral (a.k.a Principal Component) analysis
             SymmetricSchurDecomposition jd = new SymmetricSchurDecomposition(matrix);
@@ -457,7 +454,7 @@ namespace QLNet {
                 case SalvagingAlgorithm.None:
                     // eigenvalues are sorted in decreasing order
                     if (!(eigenValues[size - 1] >= -1e-16))
-                        throw new ApplicationException("negative eigenvalue(s) (" + eigenValues[size - 1] + ")");
+                        throw new Exception("negative eigenvalue(s) (" + eigenValues[size - 1] + ")");
                     break;
                 case SalvagingAlgorithm.Spectral:
                     // negative eigenvalues set to zero
@@ -474,7 +471,7 @@ namespace QLNet {
                     }
                     break;
                 default:
-                    throw new ApplicationException("unknown or invalid salvaging algorithm");
+                    throw new Exception("unknown or invalid salvaging algorithm");
 
             }
 

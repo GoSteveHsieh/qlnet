@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public class FiniteDifferenceModel<Evolver> where Evolver : IMixedScheme, ISchemeFactory, new() {
@@ -56,7 +55,7 @@ namespace QLNet {
 
         private void rollbackImpl(ref object o, double from, double to, int steps, IStepCondition<Vector> condition) {
 
-            if (!(from >= to)) throw new ApplicationException("trying to roll back from " + from + " to " + to);
+            if (!(from >= to)) throw new Exception("trying to roll back from " + from + " to " + to);
 
             double dt = (from - to) / steps, t = from;
             evolver_.setStep(dt);

@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -46,17 +43,17 @@ namespace QLNet {
 			PlainVanillaPayoff payoff = arguments_.payoff as PlainVanillaPayoff;
 
 			if (payoff == null)
-                throw new ApplicationException("non-plain payoff given");
+                throw new Exception("non-plain payoff given");
 			if (!(payoff.strike()>0.0))
-                throw new ApplicationException("strike must be positive");
+                throw new Exception("strike must be positive");
 
 			double strike = payoff.strike();
 			double spot = process_.x0();
 
 			if (!(spot >= 0.0))
-                throw new ApplicationException("negative or null underlying given");
+                throw new Exception("negative or null underlying given");
 			if (triggered(spot))
-                throw new ApplicationException("barrier touched");
+                throw new Exception("barrier touched");
 	
 			Barrier.Type barrierType = arguments_.barrierType;
 	
@@ -121,7 +118,7 @@ namespace QLNet {
 				}
 				break;
 			  default:
-                throw new ApplicationException("unknown type");
+                throw new Exception("unknown type");
 			}
 		}
 		private GeneralizedBlackScholesProcess process_;
@@ -136,7 +133,7 @@ namespace QLNet {
 		{
             PlainVanillaPayoff payoff = arguments_.payoff as PlainVanillaPayoff;
             if (payoff == null)
-                throw new ApplicationException("non-plain payoff given");
+                throw new Exception("non-plain payoff given");
 			return payoff.strike();
 		}
 		private double residualTime()

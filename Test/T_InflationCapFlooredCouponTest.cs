@@ -1,12 +1,12 @@
 ﻿/*
- Copyright (C) 2008-2014 Andrea Maggiulli (a.maggiulli@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -18,16 +18,45 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
-	[TestClass()]
-	public class T_InflationCapFlooredCouponTest
+#if QL_DOTNET_FRAMEWORK
+   [TestClass()]
+#endif
+   public class T_InflationCapFlooredCouponTest : IDisposable
 	{
+      #region Initialize&Cleanup
+      private SavedSettings backup;
+      #if QL_DOTNET_FRAMEWORK
+      [TestInitialize]
+      public void testInitialize()
+      {
+      #else
+      public T_InflationCapFlooredCouponTest()
+      {
+      #endif
+         backup = new SavedSettings();
+      }
+      #if QL_DOTNET_FRAMEWORK
+      [TestCleanup]
+      #endif
+      public void testCleanup()
+      {
+         Dispose();
+      }
+      public void Dispose()
+      {
+         backup.Dispose();
+      }
+      #endregion
+
 		class CommonVars
 		{
 		   // common data
@@ -50,10 +79,6 @@ namespace TestSuite
          public RelinkableHandle<YieldTermStructure> nominalTS = new RelinkableHandle<YieldTermStructure>();
          public YoYInflationTermStructure yoyTS;
          public RelinkableHandle<YoYInflationTermStructure> hy = new RelinkableHandle<YoYInflationTermStructure>();
-
-		   // cleanup
-
-		   SavedSettings backup = new SavedSettings();
 
          // setup
          public CommonVars() 
@@ -150,8 +175,8 @@ namespace TestSuite
                               BusinessDayConvention.Unadjusted,// ref periods & acc periods
                               DateGeneration.Rule.Forward, false);
 
-            InitializedList<double> gearingVector = new InitializedList<double>(length, gearing);
-            InitializedList<double> spreadVector = new InitializedList<double>(length, spread);
+            List<double> gearingVector = new InitializedList<double>(length, gearing);
+            List<double> spreadVector = new InitializedList<double>(length, spread);
 
             return new yoyInflationLeg(schedule, calendar, ii, observationLag)
             .withPaymentDayCounter(dc)
@@ -167,7 +192,7 @@ namespace TestSuite
             Schedule schedule = new Schedule(startDate, endDate, new Period(frequency), calendar,
                               convention, convention,
                               DateGeneration.Rule.Forward, false);
-            InitializedList<double> coupons = new InitializedList<double>(length, 0.0);
+            List<double> coupons = new InitializedList<double>(length, 0.0);
             return new FixedRateLeg(schedule)
             .withCouponRates(coupons, dc)
             .withNotionals(nominals);
@@ -204,14 +229,14 @@ namespace TestSuite
                     pricer = new BachelierYoYInflationCouponPricer(vol);
                     break;
                 default:
-                    Assert.Fail("unknown coupon pricer request: which = "+which
+                    QAssert.Fail("unknown coupon pricer request: which = "+which
                                +"should be 0=Black,1=DD,2=Bachelier");
                     break;
             }
 
 
-            InitializedList<double> gearingVector = new InitializedList<double>(length, gearing);
-            InitializedList<double> spreadVector = new InitializedList<double>(length, spread);
+            List<double> gearingVector = new InitializedList<double>(length, gearing);
+            List<double> spreadVector = new InitializedList<double>(length, spread);
 
             YoYInflationIndex ii = iir as YoYInflationIndex;
             Date endDate = calendar.advance(startDate,new Period(length,TimeUnit.Years),BusinessDayConvention.Unadjusted);
@@ -266,7 +291,7 @@ namespace TestSuite
                     return new YoYInflationBachelierCapFloorEngine(iir, vol);
                     //break;
                 default:
-                    Assert.Fail("unknown engine request: which = "+which
+                    QAssert.Fail("unknown engine request: which = "+which
                                +"should be 0=Black,1=DD,2=Bachelier");
                     break;
             }
@@ -321,7 +346,11 @@ namespace TestSuite
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testDecomposition() 
       {
          // Testing collared coupon against its decomposition...
@@ -333,9 +362,9 @@ namespace TestSuite
          double error;
          double floorstrike = 0.05;
          double capstrike = 0.10;
-         InitializedList<double> caps = new InitializedList<double>(vars.length,capstrike);
+         List<double> caps = new InitializedList<double>(vars.length,capstrike);
          List<double> caps0 = new List<double>();
-         InitializedList<double> floors = new InitializedList<double>(vars.length,floorstrike);
+         List<double> floors = new InitializedList<double>(vars.length,floorstrike);
          List<double> floors0 = new List<double>();
          double gearing_p = 0.5;
          double spread_p = 0.002;
@@ -384,7 +413,7 @@ namespace TestSuite
          error = Math.Abs(npvCappedLeg - (npvVanilla-npvCap));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Capped Leg: gearing=1, spread=0%, strike=" + capstrike*100 +
+            QAssert.Fail("\nYoY Capped Leg: gearing=1, spread=0%, strike=" + capstrike*100 +
                         "%\n" +
                         "  Capped Floating Leg NPV: " + npvCappedLeg + "\n" +
                         "  Floating Leg NPV - Cap NPV: " + (npvVanilla - npvCap) + "\n" +
@@ -410,7 +439,7 @@ namespace TestSuite
          error = Math.Abs(npvFlooredLeg-(npvVanilla + npvFloor));
          if (error>tolerance) 
          {
-            Assert.Fail("YoY Floored Leg: gearing=1, spread=0%, strike=" + floorstrike *100 +
+            QAssert.Fail("YoY Floored Leg: gearing=1, spread=0%, strike=" + floorstrike *100 +
                         "%\n" +
                         "  Floored Floating Leg NPV: " + npvFlooredLeg + "\n" +
                         "  Floating Leg NPV + Floor NPV: " + (npvVanilla + npvFloor) + "\n" +
@@ -436,7 +465,7 @@ namespace TestSuite
          error = Math.Abs(npvCollaredLeg -(npvVanilla - npvCollar));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Collared Leg: gearing=1, spread=0%, strike=" +
+            QAssert.Fail("\nYoY Collared Leg: gearing=1, spread=0%, strike=" +
                         floorstrike*100 + "% and " + capstrike*100 + "%\n" +
                         "  Collared Floating Leg NPV: " + npvCollaredLeg + "\n" +
                         "  Floating Leg NPV - Collar NPV: " + (npvVanilla - npvCollar) + "\n" +
@@ -469,7 +498,7 @@ namespace TestSuite
          error = Math.Abs(npvCappedLeg - (npvVanilla-npvCap));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Capped Leg: gearing=" + gearing_p + ", " +
+            QAssert.Fail("\nYoY Capped Leg: gearing=" + gearing_p + ", " +
                         "spread= " + spread_p *100 +
                         "%, strike=" + capstrike*100  + "%, " +
                         "effective strike= " + (capstrike-spread_p)/gearing_p*100 +
@@ -494,7 +523,7 @@ namespace TestSuite
          error = Math.Abs(npvCappedLeg - (npvVanilla+ gearing_n*npvFloor));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Capped Leg: gearing=" + gearing_n + ", " +
+            QAssert.Fail("\nYoY Capped Leg: gearing=" + gearing_n + ", " +
                         "spread= " + spread_n *100 +
                         "%, strike=" + capstrike*100  + "%, " +
                         "effective strike= " + ((capstrike-spread_n)/gearing_n*100) +
@@ -532,7 +561,7 @@ namespace TestSuite
          error = Math.Abs(npvFlooredLeg - (npvVanilla+npvFloor));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Floored Leg: gearing=" + gearing_p + ", "
+            QAssert.Fail("\nYoY Floored Leg: gearing=" + gearing_p + ", "
                         + "spread= " + spread_p *100+ "%, strike=" + floorstrike *100 + "%, "
                         + "effective strike= " + (floorstrike-spread_p)/gearing_p*100
                         + "%\n" +
@@ -555,7 +584,7 @@ namespace TestSuite
          error = Math.Abs(npvFlooredLeg - (npvVanilla - gearing_n*npvCap));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Capped Leg: gearing=" + gearing_n + ", " +
+            QAssert.Fail("\nYoY Capped Leg: gearing=" + gearing_n + ", " +
                         "spread= " + spread_n *100 +
                         "%, strike=" + floorstrike*100  + "%, " +
                         "effective strike= " + (floorstrike-spread_n)/gearing_n*100 +
@@ -587,7 +616,7 @@ namespace TestSuite
          error = Math.Abs(npvCollaredLeg - (npvVanilla - npvCollar));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Collared Leg: gearing=" + gearing_p + ", "
+            QAssert.Fail("\nYoY Collared Leg: gearing=" + gearing_p + ", "
                         + "spread= " + spread_p*100 + "%, strike="
                         + floorstrike*100 + "% and " + capstrike*100
                         + "%, "
@@ -615,7 +644,7 @@ namespace TestSuite
          error = Math.Abs(npvCollaredLeg - (npvVanilla - gearing_n*npvCollar));
          if (error>tolerance) 
          {
-            Assert.Fail("\nYoY Collared Leg: gearing=" + gearing_n + ", "
+            QAssert.Fail("\nYoY Collared Leg: gearing=" + gearing_n + ", "
                         + "spread= " + spread_n*100 + "%, strike="
                         + floorstrike*100 + "% and " + capstrike*100
                         + "%, "
@@ -629,10 +658,14 @@ namespace TestSuite
                         "  Diff: " + error );
          }
          // remove circular refernce
-         vars.hy.linkTo(new YoYInflationTermStructure());
+         vars.hy.linkTo(null);
    }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testInstrumentEquality() 
       {
 
@@ -706,7 +739,7 @@ namespace TestSuite
                         double capped = CashFlows.npv(leg2,vars.nominalTS,false);
                         if ( Math.Abs(capped - (swap.NPV() - cap.NPV())) > 1.0e-6) 
                         {
-                           Assert.Fail(
+                           QAssert.Fail(
                                        "capped coupon != swap(0) - cap:\n"
                                        + "    length:      " + lengths[i] + " years\n"
                                        + "    volatility:  " + vols[k] + "\n"
@@ -721,7 +754,7 @@ namespace TestSuite
                         double floored = CashFlows.npv(leg3,vars.nominalTS,false);
                         if ( Math.Abs(floored - (swap.NPV() + floor.NPV())) > 1.0e-6) 
                         {
-                           Assert.Fail(
+                           QAssert.Fail(
                                        "floored coupon != swap(0) + floor :\n"
                                        + "    length:      " + lengths[i] + " years\n"
                                        + "    volatility:  " + vols[k] + "\n"
@@ -736,7 +769,7 @@ namespace TestSuite
          
          }
          // remove circular refernce
-         vars.hy.linkTo(new YoYInflationTermStructure());
+         vars.hy.linkTo(null);
       }
    }
 }

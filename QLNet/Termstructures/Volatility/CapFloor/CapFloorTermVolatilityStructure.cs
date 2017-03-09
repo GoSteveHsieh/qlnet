@@ -1,7 +1,7 @@
 ﻿/*
- Copyright (C) 2008 Andrea Maggiulli
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,9 +18,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -28,7 +25,7 @@ namespace QLNet
    /*! This class is purely abstract and defines the interface of concrete
        structures which will be derived from this one.
    */
-   public class CapFloorTermVolatilityStructure : VolatilityTermStructure 
+   public abstract class CapFloorTermVolatilityStructure : VolatilityTermStructure 
    {
       #region Constructors
       /*! \warning term structures initialized by means of this
@@ -75,6 +72,6 @@ namespace QLNet
       #endregion
       
       //! implements the actual volatility calculation in derived classes
-      protected virtual double volatilityImpl(double length,  double strike) { throw new NotSupportedException(); }
-    }
+      protected abstract double volatilityImpl(double length, double strike);
+   }
 }

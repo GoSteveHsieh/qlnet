@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -40,15 +39,15 @@ namespace QLNet
             Matrix sqrtCorr = new Matrix(size_ - 1, factors_, 1.0);
             if (correlation.empty()) {
                 if(!(factors_ == 1))
-                    throw new ApplicationException("correlation matrix must be given for "+
+                    throw new Exception("correlation matrix must be given for "+
                                                     "multi factor models");
             } else {
                 if(!(correlation.rows() == size_-1
                    && correlation.rows() == correlation.columns()))
-                   throw new ApplicationException("wrong dimesion of the correlation matrix");
+                   throw new Exception("wrong dimesion of the correlation matrix");
 
                 if(!(factors_ <= size_-1))
-                    throw new ApplicationException("too many factors for given LFM process");
+                    throw new Exception("too many factors for given LFM process");
 
                 Matrix tmpSqrtCorr =MatrixUtilitites.pseudoSqrt(correlation,
                                                MatrixUtilitites.SalvagingAlgorithm.Spectral);
@@ -127,11 +126,8 @@ namespace QLNet
            return tmp;
         }
 
-        public override Matrix integratedCovariance(double t){
-            return integratedCovariance(t, null);
-        }
 
-        public override Matrix integratedCovariance(double t, Vector x) {
+        public override Matrix integratedCovariance(double t, Vector x = null) {
             Matrix tmp=new Matrix(size_, size_, 0.0);
             int last = fixingTimes_.BinarySearch(t);
             if (last < 0)

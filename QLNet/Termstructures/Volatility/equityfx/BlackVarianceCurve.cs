@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Black volatility curve modelled as variance curve
@@ -46,7 +45,7 @@ namespace QLNet {
         Interpolation varianceCurve_;
 
         // required for Handle
-        public BlackVarianceCurve() { }
+        //public BlackVarianceCurve() { }
 
         //public BlackVarianceCurve(Date referenceDate, List<Date> dates, List<double> blackVolCurve, DayCounter dayCounter,
         //                          bool forceMonotoneVariance = true);
@@ -58,13 +57,13 @@ namespace QLNet {
             maxDate_ = dates.Last();
 
             if (!(dates.Count == blackVolCurve.Count))
-                throw new ApplicationException("mismatch between date vector and black vol vector");
+                throw new Exception("mismatch between date vector and black vol vector");
 
             // cannot have dates[0]==referenceDate, since the
             // value of the vol at dates[0] would be lost
             // (variance at referenceDate must be zero)
             if (!(dates[0]>referenceDate))
-                throw new ApplicationException("cannot have dates[0] <= referenceDate");
+                throw new Exception("cannot have dates[0] <= referenceDate");
 
             variances_ = new InitializedList<double>(dates.Count+1);
             times_ = new InitializedList<double>(dates.Count + 1);
@@ -74,10 +73,10 @@ namespace QLNet {
                 times_[j] = timeFromReference(dates[j-1]);
 
                 if (!(times_[j]>times_[j-1]))
-                    throw new ApplicationException("dates must be sorted unique!");
+                    throw new Exception("dates must be sorted unique!");
                 variances_[j] = times_[j] * blackVolCurve[j-1]*blackVolCurve[j-1];
                 if (!(variances_[j]>=variances_[j-1] || !forceMonotoneVariance))
-                    throw new ApplicationException("variance must be non-decreasing");
+                    throw new Exception("variance must be non-decreasing");
             }
 
             // default: linear interpolation

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008, 2009 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! general linear least squares regression
@@ -54,8 +53,8 @@ namespace QLNet {
             residuals_ = new Vector(x.Count, 0);
             standardErrors_ = new Vector(v.Count, 0);
 
-            if (x.Count != y.Count) throw new ApplicationException("sample set need to be of the same size");
-            if (!(x.Count >= v.Count)) throw new ApplicationException("sample set is too small");
+            if (x.Count != y.Count) throw new Exception("sample set need to be of the same size");
+            if (!(x.Count >= v.Count)) throw new Exception("sample set is too small");
 
             int i;
             int n = x.Count;
@@ -69,7 +68,7 @@ namespace QLNet {
             Matrix V = svd.V();
             Matrix U = svd.U();
             Vector w = svd.singularValues();
-            double threshold = n*Const.QL_Epsilon;
+            double threshold = n*Const.QL_EPSILON;
 
             for (i=0; i<m; ++i) {
                 if (w[i] > threshold) {
@@ -103,7 +102,7 @@ namespace QLNet {
 
         //! multi dimensional linear regression
         public LinearRegression(List<List<double>> x, List<double> y) {
-            reg_ = new LinearLeastSquaresRegression<List<double>>(x, y, linearFcts(x.Count));
+            reg_ = new LinearLeastSquaresRegression<List<double>>(x, y, linearFcts(x[0].Count));
         }
 
         //! returns paramters {a_0, a_1, ..., a_n}

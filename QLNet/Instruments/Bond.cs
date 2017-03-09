@@ -2,7 +2,7 @@
  Copyright (C) 2008, 2009 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008-2013 Andrea Maggiulli (a.maggiulli@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,7 +17,7 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -83,12 +83,12 @@ namespace QLNet
          maturityDate_ = maturityDate;
          issueDate_ = issueDate;
 
-         if (cashflows.Count != 0)
+         if (cashflows_.Count != 0)
          {
             cashflows_.Sort(0, cashflows_.Count - 1, null);
 
             if (maturityDate_ ==null)
-                maturityDate_ = CashFlows.maturityDate(cashflows);
+                maturityDate_ = CashFlows.maturityDate(cashflows_);
 
             if (issueDate_ != null)
             {
@@ -170,12 +170,12 @@ namespace QLNet
          return redemptions_.Last();
       }
       public Date startDate() { return BondFunctions.startDate(this);}
-      public Date maturityDate() { return (maturityDate_ != null) ? maturityDate_ : BondFunctions.maturityDate(this); }
+      public Date maturityDate() { return maturityDate_ ?? BondFunctions.maturityDate(this); }
       public Date issueDate() { return issueDate_; }
       public bool isTradable(Date d = null)  { return BondFunctions.isTradable(this, d); }
       public Date settlementDate(Date date = null)
       {
-         Date d = (date == null ? Settings.evaluationDate() : date);
+         Date d = (date ?? Settings.evaluationDate());
 
          // usually, the settlement is at T+n...
          Date settlement = calendar_.advance(d, settlementDays_, TimeUnit.Days);
@@ -385,9 +385,9 @@ namespace QLNet
             cashflows_.Add(payment);
             redemptions_.Add(payment);
          }
-         // stable_sort now moves the redemptions to the right places
+         // stable_sort now moves the AmortizingPayment and Redemptions to the right places
          // while ensuring that they follow coupons with the same date.
-         cashflows_.Sort();
+         cashflows_ = cashflows_.OrderBy( x => x.date() ).ToList();
       }
 
       /*! This method can be called by derived classes in order to

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,7 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 
 namespace QLNet {
     //! Tree-based lattice-method base class
@@ -66,7 +65,7 @@ namespace QLNet {
 
         public TreeLattice(TimeGrid timeGrid, int n) : base(timeGrid) {
             n_ = n;
-            if (!(n>0)) throw new ApplicationException("there is no zeronomial lattice!");
+            if (!(n>0)) throw new Exception("there is no zeronomial lattice!");
             statePrices_ = new InitializedList<Vector>(1, new Vector(1, 1.0));
             statePricesLimit_ = 0;
         }
@@ -89,7 +88,7 @@ namespace QLNet {
 
             if (Utils.close(from,to)) return;
 
-            if (!(from > to)) throw new ApplicationException("cannot roll the asset back to" + to
+            if (!(from > to)) throw new Exception("cannot roll the asset back to" + to
                        + " (it is already at t = " + from + ")");
 
             int iFrom = t_.index(from);

@@ -2,12 +2,12 @@
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
  Copyright (C) 2008-2014 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -20,23 +20,51 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
-    [TestClass()]
-    public class T_LiborMarketModel
+#if QL_DOTNET_FRAMEWORK
+   [TestClass()]
+#endif
+   public class T_LiborMarketModel : IDisposable
     {
+       #region Initialize&Cleanup
+       private SavedSettings backup;
+       #if QL_DOTNET_FRAMEWORK
+       [TestInitialize]
+       public void testInitialize()
+       {
+       #else
+       public T_LiborMarketModel()
+       {
+       #endif
+          backup = new SavedSettings();
+       }
+       #if QL_DOTNET_FRAMEWORK
+       [TestCleanup]
+       #endif
+       public void testCleanup()
+       {
+          Dispose();
+       }
+       public void Dispose()
+       {
+          backup.Dispose();
+       }
+       #endregion
 
         IborIndex makeIndex(List<Date> dates,
                             List<double> rates)
         {
             DayCounter dayCounter = new Actual360();
 
-            RelinkableHandle<YieldTermStructure> termStructure = new RelinkableHandle<YieldTermStructure>(); ;
+            RelinkableHandle<YieldTermStructure> termStructure = new RelinkableHandle<YieldTermStructure>(); 
             IborIndex index = new Euribor6M(termStructure);
 
             Date todaysDate =
@@ -81,14 +109,15 @@ namespace TestSuite
             return new CapletVarianceCurve(todaysDate, dates,
                                            capletVols,new Actual360());
         }
-        
-        [TestMethod()]
+
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testSimpleCovarianceModels() 
         {
-            //"Testing simple covariance models...";
-
-            //SavedSettings backup;
-
+            // Testing simple covariance models
             const int size = 10;
             const double tolerance = 1e-14;
             int i;
@@ -101,7 +130,7 @@ namespace TestSuite
             for (i=0; i<size; ++i) {
                 for (int j=0; j<size; ++j) {
                     if (Math.Abs(recon[i,j]) > tolerance)
-                        Assert.Fail("Failed to reproduce correlation matrix"
+                        QAssert.Fail("Failed to reproduce correlation matrix"
                                     + "\n    calculated: " + recon[i,j]
                                     + "\n    expected:   " + 0);
                 }
@@ -132,7 +161,7 @@ namespace TestSuite
                 for (int k=0; k<size; ++k) {
                     for (int j=0; j<size; ++j) {
                         if (Math.Abs(recon[k,j]) > tolerance)
-                            Assert.Fail("Failed to reproduce correlation matrix"
+                            QAssert.Fail("Failed to reproduce correlation matrix"
                                         + "\n    calculated: " + recon[k,j]
                                         + "\n    expected:   " + 0);
                     }
@@ -148,20 +177,21 @@ namespace TestSuite
                     }
 
                     if (Math.Abs(expected - volatility[k]) > tolerance)
-                        Assert.Fail("Failed to reproduce volatities"
+                        QAssert.Fail("Failed to reproduce volatities"
                                     + "\n    calculated: " + volatility[k]
                                     + "\n    expected:   " + expected);
                 }
             }
         }
 
-        [TestMethod()]
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testCapletPricing() 
         {
-            //"Testing caplet pricing...";
-
-            //SavedSettings backup;
-
+            // Testing caplet pricing
             const int size = 10;
             #if QL_USE_INDEXED_COUPON
             const double tolerance = 1e-5;
@@ -195,18 +225,19 @@ namespace TestSuite
             double calculated = cap1.NPV();
 
             if (Math.Abs(expected - calculated) > tolerance)
-                Assert.Fail("Failed to reproduce npv"
+                QAssert.Fail("Failed to reproduce npv"
                             + "\n    calculated: " + calculated
                             + "\n    expected:   " + expected);
         }
     
-        [TestMethod()]
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testCalibration()
         {
-            //("Testing calibration of a Libor forward model...");
-
-            //SavedSettings backup;
-
+            // Testing calibration of a Libor forward model
             const int size = 14;
             const double tolerance = 8e-3;
 
@@ -295,18 +326,19 @@ namespace TestSuite
             }
 
             if (Math.Sqrt(calculated) > tolerance)
-                Assert.Fail("Failed to calibrate libor forward model"
+                QAssert.Fail("Failed to calibrate libor forward model"
                             + "\n    calculated diff: " + Math.Sqrt(calculated)
                             + "\n    expected : smaller than  " + tolerance);
         }
 
-        [TestMethod()]
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testSwaptionPricing() 
         {
-            //"Testing forward swap and swaption pricing...");
-
-            //SavedSettings backup;
-
+            // Testing forward swap and swaption pricing
             const int size  = 10;
             const int steps = 8*size;
             #if QL_USE_INDEXED_COUPON
@@ -338,7 +370,7 @@ namespace TestSuite
             // set-up a small Monte-Carlo simulation to price swations
             List<double> tmp = process.fixingTimes();
            
-            TimeGrid grid=new TimeGrid(tmp ,steps);
+            TimeGrid grid=new TimeGrid(tmp ,tmp.Count, steps);
 
             List<int> location=new List<int>();
             for (int i=0; i < tmp.Count; ++i) {
@@ -388,7 +420,7 @@ namespace TestSuite
                     double calculated = liborModel.S_0(i-1,i+j-1);
 
                     if (Math.Abs(expected - calculated) > tolerance)
-                        Assert.Fail("Failed to reproduce fair forward swap rate"
+                        QAssert.Fail("Failed to reproduce fair forward swap rate"
                                     + "\n    calculated: " + calculated
                                     + "\n    expected:   " + expected);
 
@@ -412,13 +444,14 @@ namespace TestSuite
                         GeneralStatistics stat = new GeneralStatistics();
 
                         for (int n=0; n<nrTrails; ++n) {
-                            Sample<MultiPath> path = (n%2!=0) ? generator.antithetic()
+                           Sample<IPath> path = ( n % 2 != 0 ) ? generator.antithetic()
                                                      : generator.next();
-                            
+                           MultiPath value = path.value as MultiPath;
+                           Utils.QL_REQUIRE( value != null, () => "Invalid Path" );
                             //Sample<MultiPath> path = generator.next();
                             List<double> rates_ = new InitializedList<double>(size);
                             for (int k=0; k<process.size(); ++k) {
-                                rates_[k] = path.value[k][location[i]];
+                                rates_[k] = value[k][location[i]];
                             }
                             List<double> dis = process.discountBond(rates_);
 
@@ -433,7 +466,7 @@ namespace TestSuite
 
                         if (Math.Abs(swaption.NPV() - stat.mean())
                             > stat.errorEstimate()*2.35)
-                            Assert.Fail("Failed to reproduce swaption npv"
+                            QAssert.Fail("Failed to reproduce swaption npv"
                                         + "\n    calculated: " + stat.mean()
                                         + "\n    expected:   " + swaption.NPV());
                     }

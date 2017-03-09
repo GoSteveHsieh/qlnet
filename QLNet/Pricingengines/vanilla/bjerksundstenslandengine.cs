@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Bjerksund and Stensland pricing engine for American options (1993)
@@ -40,22 +37,22 @@ namespace QLNet {
         public override void calculate() {
 
             if (!(arguments_.exercise.type() == Exercise.Type.American))
-                throw new ApplicationException("not an American Option");
+                throw new Exception("not an American Option");
 
             AmericanExercise ex = arguments_.exercise as AmericanExercise;
-            if(ex == null) throw new ApplicationException("non-American exercise given");
+            if(ex == null) throw new Exception("non-American exercise given");
             
-            if(ex.payoffAtExpiry()) throw new ApplicationException("payoff at expiry not handled");
+            if(ex.payoffAtExpiry()) throw new Exception("payoff at expiry not handled");
 
             PlainVanillaPayoff payoff = arguments_.payoff as PlainVanillaPayoff;
-            if(payoff == null) throw new ApplicationException("non-plain payoff given");
+            if(payoff == null) throw new Exception("non-plain payoff given");
 
             double variance = process_.blackVolatility().link.blackVariance(ex.lastDate(), payoff.strike());
             double dividendDiscount = process_.dividendYield().link.discount(ex.lastDate());
             double riskFreeDiscount = process_.riskFreeRate().link.discount(ex.lastDate());
             
             double spot = process_.stateVariable().link.value();
-            if (!(spot > 0.0)) throw new ApplicationException("negative or null underlying given");
+            if (!(spot > 0.0)) throw new Exception("negative or null underlying given");
             
             double strike = payoff.strike();
 
@@ -108,8 +105,9 @@ namespace QLNet {
             double lambda = (-rT + gamma * bT + 0.5 * gamma * (gamma - 1.0) * variance);
             double d = -(Math.Log(S / H) + (bT + (gamma - 0.5) * variance) ) / Math.Sqrt(variance);
             double kappa = 2.0 * bT / variance + (2.0 * gamma - 1.0);
-            return Math.Exp(lambda) * Math.Pow(S, gamma) * (cumNormalDist.value(d) - Math.Pow((I / S), kappa) *
-                cumNormalDist.value(d - 2.0 * Math.Log(I/S) / Math.Sqrt(variance)));
+            return Math.Exp(lambda) * (cumNormalDist.value(d)
+                   - Math.Pow((I / S), kappa) *
+                   cumNormalDist.value(d - 2.0 * Math.Log(I/S) / Math.Sqrt(variance)));
         }
 
 
@@ -127,16 +125,16 @@ namespace QLNet {
             // investigate what happen to I for dD->0.0
             double I = B0 + (BInfinity - B0) * (1 - Math.Exp(ht));
             if (!(I >= X))
-                throw new ApplicationException("Bjerksund-Stensland approximation not applicable to this set of parameters");
+                throw new Exception("Bjerksund-Stensland approximation not applicable to this set of parameters");
             if (S >= I) {
                 return S - X;
             } else {
                 // investigate what happen to alpha for dD->0.0
                 double alpha = (I - X) * Math.Pow(I, (-beta));
-                return alpha * Math.Pow(S, beta)
-                    - alpha * phi(S, beta, I, I, rT, bT, variance)
-                    +         phi(S,  1.0, I, I, rT, bT, variance)
-                    -         phi(S,  1.0, X, I, rT, bT, variance)
+                return (I - X) * Math.Pow(S/I, beta)
+                        *(1 - phi(S, beta, I, I, rT, bT, variance))
+                    +    S *  phi(S,  1.0, I, I, rT, bT, variance)
+                    -    S *  phi(S,  1.0, X, I, rT, bT, variance)
                     -    X *  phi(S,  0.0, I, I, rT, bT, variance)
                     +    X *  phi(S,  0.0, X, I, rT, bT, variance);
             }

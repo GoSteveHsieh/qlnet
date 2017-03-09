@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -18,16 +18,44 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
+#if QL_DOTNET_FRAMEWORK
    [TestClass()]
-   public class T_EuropeanOption
+#endif
+   public class T_EuropeanOption : IDisposable
    {
+      #region Initialize&Cleanup
+      private SavedSettings backup;
+      #if QL_DOTNET_FRAMEWORK
+      [TestInitialize]
+      public void testInitialize()
+      {
+      #else
+      public T_EuropeanOption()
+      {
+      #endif
+         backup = new SavedSettings();
+      }
+      #if QL_DOTNET_FRAMEWORK
+      [TestCleanup]
+      #endif
+      public void testCleanup()
+      {
+        Dispose();
+      }
+      public void Dispose()
+      {
+         backup.Dispose();
+      }
+      #endregion
 
       enum EngineType
       {
@@ -39,13 +67,14 @@ namespace TestSuite
       };
 
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testJRBinomialEngines()
       {
-         //("Testing JR binomial European engines against analytic results...");
-
-         //SavedSettings backup;
-
+         // Testing JR binomial European engines against analytic results
          EngineType engine = EngineType.JR;
          int steps = 251;
          int samples = 0;
@@ -56,14 +85,14 @@ namespace TestSuite
          relativeTol.Add("theta", 0.03);
          testEngineConsistency(engine, steps, samples, relativeTol, true);
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testCRRBinomialEngines()
       {
-
-         //("Testing CRR binomial European engines against analytic results...");
-
-         //SavedSettings backup;
-
+         // Testing CRR binomial European engines against analytic results
          EngineType engine = EngineType.CRR;
          int steps = 501;
          int samples = 0;
@@ -74,14 +103,14 @@ namespace TestSuite
          relativeTol.Add("theta", 0.03);
          testEngineConsistency(engine, steps, samples, relativeTol, true);
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testEQPBinomialEngines()
       {
-
-         //("Testing EQP binomial European engines against analytic results...");
-
-         //SavedSettings backup;
-
+         // Testing EQP binomial European engines against analytic results
          EngineType engine = EngineType.EQP;
          int steps = 501;
          int samples = 0;
@@ -92,14 +121,14 @@ namespace TestSuite
          relativeTol.Add("theta", 0.03);
          testEngineConsistency(engine, steps, samples, relativeTol, true);
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testTGEOBinomialEngines()
       {
-
-         //("Testing TGEO binomial European engines " against analytic results...");
-
-         //SavedSettings backup;
-
+         // Testing TGEO binomial European engines " against analytic results
          EngineType engine = EngineType.TGEO;
          int steps = 251;
          int samples = 0;
@@ -110,14 +139,14 @@ namespace TestSuite
          relativeTol.Add("theta", 0.03);
          testEngineConsistency(engine, steps, samples, relativeTol, true);
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testTIANBinomialEngines()
       {
-
-         //("Testing TIAN binomial European engines against analytic results...");
-
-         //SavedSettings backup;
-
+         // Testing TIAN binomial European engines against analytic results
          EngineType engine = EngineType.TIAN;
          int steps = 251;
          int samples = 0;
@@ -128,14 +157,14 @@ namespace TestSuite
          relativeTol.Add("theta", 0.03);
          testEngineConsistency(engine, steps, samples, relativeTol, true);
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testLRBinomialEngines()
       {
-
-         //"Testing LR binomial European engines against analytic results...");
-
-         //SavedSettings backup;
-
+         // Testing LR binomial European engines against analytic results
          EngineType engine = EngineType.LR;
          int steps = 251;
          int samples = 0;
@@ -146,14 +175,14 @@ namespace TestSuite
          relativeTol.Add("theta", 0.03);
          testEngineConsistency(engine, steps, samples, relativeTol, true);
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testJOSHIBinomialEngines()
       {
-
-         //("Testing Joshi binomial European engines against analytic results...");
-
-         //SavedSettings backup;
-
+         // Testing Joshi binomial European engines against analytic results
          EngineType engine = EngineType.JOSHI;
          int steps = 251;
          int samples = 0;
@@ -166,7 +195,11 @@ namespace TestSuite
       }
 
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testFdEngines()
       {
 
@@ -252,8 +285,7 @@ namespace TestSuite
          return option;
       }
 
-      //void testEngineConsistency(EngineType engine, int binomialSteps, int samples, Dictionary<string,double> tolerance,
-      //                           bool testGreeks = false) {
+
       void testEngineConsistency(EngineType engine, int binomialSteps, int samples, Dictionary<string, double> tolerance,
                                  bool testGreeks)
       {
@@ -360,7 +392,7 @@ namespace TestSuite
       void REPORT_FAILURE(string greekName, StrikedTypePayoff payoff, Exercise exercise, double s, double q, double r,
               Date today, double v, double expected, double calculated, double error, double tolerance)
       {
-         Assert.Fail(exercise + " "
+         QAssert.Fail(exercise + " "
                 + payoff.optionType() + " option with "
                 + payoff + " payoff:\n"
                 + "    spot value:       " + s + "\n"

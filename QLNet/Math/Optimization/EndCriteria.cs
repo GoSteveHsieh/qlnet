@@ -2,7 +2,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,9 +18,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -57,10 +54,10 @@ namespace QLNet
 				maxStationaryStateIterations_ = Math.Min((int)(maxIterations/2), (int)(100));
 
             if (!(maxStationaryStateIterations_ > 1))
-                throw new ApplicationException("maxStationaryStateIterations_ (" + maxStationaryStateIterations_ + ") must be greater than one");
+                throw new Exception("maxStationaryStateIterations_ (" + maxStationaryStateIterations_ + ") must be greater than one");
 
             if (!(maxStationaryStateIterations_ < maxIterations_))
-                throw new ApplicationException("maxStationaryStateIterations_ (" + maxStationaryStateIterations_ + ") must be less than maxIterations_ (" + maxIterations_ + ")");
+                throw new Exception("maxStationaryStateIterations_ (" + maxStationaryStateIterations_ + ") must be less than maxIterations_ (" + maxIterations_ + ")");
 
 			if (gradientNormEpsilon_ == null)
 				gradientNormEpsilon_ = functionEpsilon_;

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,7 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! single-factor random walk
@@ -27,6 +25,18 @@ namespace QLNet {
 
         \note the path includes the initial asset value as its first point.
     */
+
+    public interface IPath : ICloneable
+    {
+       int length();
+    }
+
+    public interface IPathGenerator<GSG>
+    {
+       Sample<IPath> next();
+       Sample<IPath> antithetic();
+    }
+
     public class Path : ICloneable, IPath {
         private TimeGrid timeGrid_;
         private Vector values_;
@@ -42,7 +52,7 @@ namespace QLNet {
                 values_ = new Vector(timeGrid_.size());
 
             if (values_.size() != timeGrid_.size())
-                throw new ApplicationException("different number of times and asset values");
+                throw new Exception("different number of times and asset values");
         }
 
         //! \name inspectors

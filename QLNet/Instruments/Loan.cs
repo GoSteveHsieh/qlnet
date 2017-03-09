@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -33,10 +32,10 @@ namespace QLNet
          Step = 2,
          French = 3
       }
-      protected InitializedList<List<CashFlow>> legs_;
-      protected InitializedList<double> payer_;
+      protected List<List<CashFlow>> legs_;
+      protected List<double> payer_;
       protected List<double> notionals_;
-      protected InitializedList<double?> legNPV_;
+      protected List<double?> legNPV_;
 
       public Loan(int legs)
       {
@@ -80,7 +79,7 @@ namespace QLNet
          {
             if (results.legNPV.Count != legNPV_.Count)
                throw new ArgumentException("wrong number of leg NPV returned");
-            legNPV_ = results.legNPV;
+            legNPV_ = new List<double?>(results.legNPV);
          }
          else
          {
@@ -103,12 +102,15 @@ namespace QLNet
 
       public new class Results : Instrument.Results
       {
-         public InitializedList<double?> legNPV = new InitializedList<double?>();
+         public List<double?> legNPV ;
          public override void reset()
          {
             base.reset();
             // clear all previous results
-            legNPV.Erase();
+            if (legNPV==null)
+               legNPV = new List<double?>();
+            else
+               legNPV.Clear();
          }
       }
 
@@ -300,7 +302,7 @@ namespace QLNet
          {
             FixedRateCoupon c = (FixedRateCoupon)fixedLeg[i];
             n = i > 0 ? notionals_.Last() : c.nominal();
-            notionals_.Add ( n /(1+(c.rate()* c.dayCounter().yearFraction(c.refPeriodStart, c.refPeriodEnd))));
+            notionals_.Add ( n /(1+(c.rate()* c.dayCounter().yearFraction(c.referencePeriodStart, c.referencePeriodEnd))));
          }
 
          // New Leg

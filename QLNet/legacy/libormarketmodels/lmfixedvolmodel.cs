@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -36,14 +35,14 @@ namespace QLNet
             volatilities_ = volatilities;
             startTimes_ = startTimes;
             if (!(startTimes_.Count > 1))
-                throw new ApplicationException("too few dates"); 
+                throw new Exception("too few dates"); 
 
             if (!(volatilities_.size() == startTimes_.Count))
-                throw new ApplicationException("volatility array and fixing time array have to have the same size"); 
+                throw new Exception("volatility array and fixing time array have to have the same size"); 
 
             for (int i = 1; i < startTimes_.Count; i++) {
                 if (!(startTimes_[i] > startTimes_[i-1]))
-                    throw new ApplicationException( "invalid time ("+startTimes_[i]+", vs "+startTimes_[i-1]+")"); 
+                    throw new Exception( "invalid time ("+startTimes_[i]+", vs "+startTimes_[i-1]+")"); 
             }
         }
 
@@ -54,7 +53,7 @@ namespace QLNet
         public override Vector volatility(double t, Vector x)
         {
             if (!(t >= startTimes_.First() && t <= startTimes_.Last()))
-                throw new ApplicationException("invalid time given for volatility model"); 
+                throw new Exception("invalid time given for volatility model"); 
 
             int ti = startTimes_.GetRange(0,startTimes_.Count -1).BinarySearch(t);
             if (ti < 0)
@@ -80,7 +79,7 @@ namespace QLNet
         public override double volatility(int i, double t, Vector x)
         {
             if (!(t >= startTimes_.First() && t <= startTimes_.Last()))
-                throw new ApplicationException("invalid time given for volatility model");
+                throw new Exception("invalid time given for volatility model");
 
             int ti = startTimes_.GetRange(0, startTimes_.Count - 1).BinarySearch(t);
             if (ti < 0)

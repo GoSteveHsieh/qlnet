@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -18,16 +18,46 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
+#if QL_DOTNET_FRAMEWORK
    [TestClass()]
-   public class T_OvernightIndexedSwap
+#endif
+   public class T_OvernightIndexedSwap : IDisposable
    {
+      #region Initialize&Cleanup
+      private SavedSettings backup;
+      #if QL_DOTNET_FRAMEWORK
+      [TestInitialize]
+      public void testInitialize()
+      {
+      #else
+      public T_OvernightIndexedSwap()
+      {
+      #endif
+
+         backup = new SavedSettings();
+      }
+      #if QL_DOTNET_FRAMEWORK
+      [TestCleanup]
+      #endif
+      public void testCleanup()
+      {
+         Dispose();
+      }
+      public void Dispose()
+      {
+         backup.Dispose();
+      }
+      #endregion
+
       public struct Datum
       {
          public int settlementDays;
@@ -168,9 +198,6 @@ namespace TestSuite
          public IborIndex swapIndex;
          public RelinkableHandle<YieldTermStructure> swapTermStructure = new RelinkableHandle<YieldTermStructure>();
 
-         // cleanup
-         public SavedSettings backup;
-
          // utilities
          public OvernightIndexedSwap makeSwap(Period length,
                                        double fixedRate,
@@ -208,7 +235,11 @@ namespace TestSuite
       }
 
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testFairRate()
       {
          // Testing Eonia-swap calculation of fair fixed rate...
@@ -229,7 +260,7 @@ namespace TestSuite
                if (Math.Abs(swap.NPV()) > 1.0e-10)
                {
 
-                  Assert.Fail("recalculating with implied rate:\n"
+                  QAssert.Fail("recalculating with implied rate:\n"
                             + "    length: " + lengths[i] + " \n"
                             + "    floating spread: "
                             + (spreads[j]) + "\n"
@@ -240,10 +271,13 @@ namespace TestSuite
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testFairSpread() 
       {
-
          // Testing Eonia-swap calculation of fair floating spread...
          CommonVars vars = new CommonVars();
 
@@ -264,7 +298,7 @@ namespace TestSuite
 
                if (Math.Abs(swap.NPV()) > 1.0e-10) 
                {
-                   Assert.Fail("Recalculating with implied spread:" +
+                   QAssert.Fail("Recalculating with implied spread:" +
                                "\n     length: " + lengths[i] +
                                "\n fixed rate: " + rates[j] +
                                "\nfair spread: " + fairSpread +
@@ -273,8 +307,12 @@ namespace TestSuite
             }
          }
       }
-      
-      [TestMethod()]
+
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testCachedValue() 
       {
          // Testing Eonia-swap calculation against cached value...
@@ -290,13 +328,17 @@ namespace TestSuite
          double tolerance = 1.0e-11;
     
          if (Math.Abs(swap.NPV()-cachedNPV) > tolerance)
-            Assert.Fail("\nfailed to reproduce cached swap value:" +
+            QAssert.Fail("\nfailed to reproduce cached swap value:" +
                         "\ncalculated: " + swap.NPV() +
                         "\n  expected: " + cachedNPV +
                         "\n tolerance:" + tolerance);
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testBootstrap() 
       {
          // Testing Eonia-swap curve building...
@@ -404,7 +446,7 @@ namespace TestSuite
             double? calculated = 100.0 * swap.fairRate();
 
             if (Math.Abs(expected-calculated.Value) > tolerance)
-               Assert.Fail("curve inconsistency:\n"
+               QAssert.Fail("curve inconsistency:\n"
                            + "    swap length:     " + term + "\n"
                            + "    quoted rate:     " + expected + "\n"
                            + "    calculated rate: " + calculated);

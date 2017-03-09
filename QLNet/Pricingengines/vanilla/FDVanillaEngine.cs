@@ -2,7 +2,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008-2013  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Finite-differences pricing engine for BSM one asset options
@@ -32,7 +30,6 @@ namespace QLNet {
         protected GeneralizedBlackScholesProcess process_;
         protected int timeSteps_, gridPoints_;
         protected bool timeDependent_;
-        protected double requiredGridValue_;
         protected Date exerciseDate_;
         protected Payoff payoff_;
         protected TridiagonalOperator finiteDifferenceOperator_;
@@ -76,7 +73,8 @@ namespace QLNet {
         }
 
         protected void setGridLimits(double center, double t) {
-            if (!(center > 0.0)) throw new ApplicationException("negative or null underlying given");
+            if (!(center > 0.0)) throw new Exception("negative or null underlying given");
+            Utils.QL_REQUIRE( t > 0.0,()=> "negative or zero residual time" );
             center_ = center;
             int newGridPoints = safeGridPoints(gridPoints_, t);
             if (newGridPoints > intrinsicValues_.size()) {
@@ -144,11 +142,10 @@ namespace QLNet {
 
         public virtual void setupArguments(IPricingEngineArguments a) {
             OneAssetOption.Arguments args = a as OneAssetOption.Arguments;
-            if (args == null) throw new ApplicationException("incorrect argument type");
+            if (args == null) throw new Exception("incorrect argument type");
 
             exerciseDate_ = args.exercise.lastDate();
             payoff_ = args.payoff;
-            requiredGridValue_ = ((StrikedTypePayoff)payoff_).strike();
         }
         public virtual void calculate(IPricingEngineResults r) { throw new NotSupportedException(); }
     }
@@ -193,14 +190,18 @@ namespace QLNet {
 
         #region Observer & Observable
         // observable interface
-        public event Callback notifyObserversEvent;
+        private readonly WeakEventSource eventSource = new WeakEventSource();
+        public event Callback notifyObserversEvent
+        {
+           add { eventSource.Subscribe(value); }
+           remove { eventSource.Unsubscribe(value); }
+        }
+
         public void registerWith(Callback handler) { notifyObserversEvent += handler; }
         public void unregisterWith(Callback handler) { notifyObserversEvent -= handler; }
-        protected void notifyObservers() {
-            Callback handler = notifyObserversEvent;
-            if (handler != null) {
-                handler();
-            }
+        protected void notifyObservers()
+        {
+           eventSource.Raise();
         }
 
         public void update() { notifyObservers(); }

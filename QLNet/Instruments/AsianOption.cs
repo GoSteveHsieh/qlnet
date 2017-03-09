@@ -1,7 +1,8 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
+ Copyright (C) 2008-2016  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +19,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -30,7 +29,7 @@ namespace QLNet {
 //    
 	public class ContinuousAveragingAsianOption : OneAssetOption
 	{
-		new public class Arguments : OneAssetOption.Arguments
+		public new class Arguments : OneAssetOption.Arguments
 		{
 			public Arguments()
 			{
@@ -41,12 +40,12 @@ namespace QLNet {
 				base.validate();
 
                 if (averageType == Average.Type.NULL)
-                    throw new ApplicationException("unspecified average type");
+                    throw new Exception("unspecified average type");
 			}
 			public Average.Type averageType;
 		}
 
- 	    new public class Engine: GenericEngine<ContinuousAveragingAsianOption.Arguments, ContinuousAveragingAsianOption.Results> 
+ 	    public new class Engine: GenericEngine<ContinuousAveragingAsianOption.Arguments, ContinuousAveragingAsianOption.Results> 
         {
         }
 
@@ -61,7 +60,7 @@ namespace QLNet {
 	
 			ContinuousAveragingAsianOption.Arguments moreArgs = args as ContinuousAveragingAsianOption.Arguments;
 			if (!(moreArgs != null))
-                throw new ApplicationException("wrong argument type");
+                throw new Exception("wrong argument type");
 			moreArgs.averageType = averageType_;
 		}
 		protected Average.Type averageType_;
@@ -71,7 +70,7 @@ namespace QLNet {
 	//! \ingroup instruments 
 	public class DiscreteAveragingAsianOption : OneAssetOption
 	{
-		new public class Arguments : OneAssetOption.Arguments
+		public new class Arguments : OneAssetOption.Arguments
 		{
             public Arguments()
 			{
@@ -84,26 +83,26 @@ namespace QLNet {
 				base.validate();
 
                 if (averageType == Average.Type.NULL)
-                    throw new ApplicationException("unspecified average type");
+                    throw new Exception("unspecified average type");
 
 				if (!(pastFixings != null))
-                    throw new ApplicationException("null past-fixing number");
+                    throw new Exception("null past-fixing number");
 
 				if (!(runningAccumulator != null))
-                    throw new ApplicationException("null running product");
+                    throw new Exception("null running product");
 
 				switch (averageType)
 				{
 					case Average.Type.Arithmetic:
 						if (!(runningAccumulator >= 0.0))
-                            throw new ApplicationException("non negative running sum required: " + runningAccumulator + " not allowed");
+                            throw new Exception("non negative running sum required: " + runningAccumulator + " not allowed");
 						break;
 					case Average.Type.Geometric:
 						if (!(runningAccumulator > 0.0))
-                            throw new ApplicationException("positive running product required: " + runningAccumulator + " not allowed");
+                            throw new Exception("positive running product required: " + runningAccumulator + " not allowed");
 						break;
 					default:
-                        throw new ApplicationException("invalid average type");
+                        throw new Exception("invalid average type");
 				}
 		
 				// check fixingTimes_ here
@@ -114,11 +113,11 @@ namespace QLNet {
             public List<Date> fixingDates;
 		}
 
- 	    new public class Engine: GenericEngine<DiscreteAveragingAsianOption.Arguments, DiscreteAveragingAsianOption.Results> 
+ 	    public new class Engine: GenericEngine<DiscreteAveragingAsianOption.Arguments, DiscreteAveragingAsianOption.Results> 
         {
         }
 
-        public DiscreteAveragingAsianOption(Average.Type averageType, double runningAccumulator, int pastFixings, List<Date> fixingDates, StrikedTypePayoff payoff, Exercise exercise)
+        public DiscreteAveragingAsianOption(Average.Type averageType, double? runningAccumulator, int? pastFixings, List<Date> fixingDates, StrikedTypePayoff payoff, Exercise exercise)
             : base(payoff, exercise)
 		{
 			averageType_ = averageType;
@@ -137,7 +136,7 @@ namespace QLNet {
 	
 			DiscreteAveragingAsianOption.Arguments moreArgs = args as DiscreteAveragingAsianOption.Arguments;
 			if (!(moreArgs != null))
-                throw new ApplicationException("wrong argument type");
+                throw new Exception("wrong argument type");
 
 			moreArgs.averageType = averageType_;
 			moreArgs.runningAccumulator = runningAccumulator_;

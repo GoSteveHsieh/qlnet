@@ -1,7 +1,8 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,10 +17,8 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet 
 {
@@ -28,7 +27,7 @@ namespace QLNet
 
        Volatilities are assumed to be expressed on an annual basis.
    */
-   public class LocalVolTermStructure : VolatilityTermStructure 
+   public abstract class LocalVolTermStructure : VolatilityTermStructure 
    {
       #region Constructors
       //! default constructor
@@ -36,8 +35,8 @@ namespace QLNet
                    constructor must manage their own reference date
                    by overriding the referenceDate() method.
       */
-      public LocalVolTermStructure()
-         : base(BusinessDayConvention.Following, null) { }
+      //public LocalVolTermStructure()
+      //   : base(BusinessDayConvention.Following, null) { }
 
       public LocalVolTermStructure(BusinessDayConvention bdc = BusinessDayConvention.Following, DayCounter dc = null)
          :base(bdc, dc) {}
@@ -80,9 +79,9 @@ namespace QLNet
       */
       
       //! local vol calculation
-      protected virtual double localVolImpl(double t, double strike) { throw new NotSupportedException(); }
+      protected abstract double localVolImpl(double t, double strike);
 
       #endregion
-    }
+   }
 
 }

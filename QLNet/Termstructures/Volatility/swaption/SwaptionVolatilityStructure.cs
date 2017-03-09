@@ -1,7 +1,8 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +18,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet 
 {
@@ -27,15 +25,15 @@ namespace QLNet
    /*! This abstract class defines the interface of concrete swaption
       volatility structures which will be derived from this one.
    */
-   public class SwaptionVolatilityStructure : VolatilityTermStructure 
+   public abstract class SwaptionVolatilityStructure : VolatilityTermStructure 
    {
       #region Constructors
       /*! \warning term structures initialized by means of this
                    constructor must manage their own reference date
                    by overriding the referenceDate() method.
       */
-      public SwaptionVolatilityStructure()
-         : base(BusinessDayConvention.Following, null) { }
+      //public SwaptionVolatilityStructure()
+      //   : base(BusinessDayConvention.Following, null) { }
 
       public SwaptionVolatilityStructure(BusinessDayConvention bdc, DayCounter dc = null)
          : base(bdc, dc) {}
@@ -149,6 +147,52 @@ namespace QLNet
          return v * v * optionTime;
       }
 
+      
+      //! returns the shift for a given option tenor and swap tenor
+      public double shift( Period optionTenor, Period swapTenor,bool extrapolate = false)
+      {
+         Date optionDate = optionDateFromTenor( optionTenor );
+         return shift( optionDate, swapTenor, extrapolate );
+      }
+      //! returns the shift for a given option date and swap tenor
+      public double shift( Date optionDate, Period swapTenor,bool extrapolate = false)
+      {
+         checkSwapTenor( swapTenor, extrapolate );
+         checkRange( optionDate, extrapolate );
+         return shiftImpl( optionDate, swapTenor );
+      }
+      //! returns the shift for a given option time and swap tenor
+      public double shift( double optionTime, Period swapTenor,bool extrapolate = false)
+      {
+         checkSwapTenor( swapTenor, extrapolate );
+         checkRange( optionTime, extrapolate );
+         double length = swapLength( swapTenor );
+         return shiftImpl( optionTime, length );
+      }
+      //! returns the shift for a given option tenor and swap length
+      public double shift( Period optionTenor, double swapLength, bool extrapolate = false)
+      {
+         Date optionDate = optionDateFromTenor( optionTenor );
+         return shift( optionDate, swapLength, extrapolate );
+      }
+      //! returns the shift for a given option date and swap length
+      public double shift( Date optionDate, double swapLength, bool extrapolate = false)
+      {
+         checkSwapTenor( swapLength, extrapolate );
+         checkRange( optionDate, extrapolate );
+         double optionTime = timeFromReference( optionDate );
+         return shiftImpl( optionTime, swapLength );
+      }
+      //! returns the shift for a given option time and swap length
+      public double shift( double optionTime, double swapLength,bool extrapolate = false)
+      {
+         checkSwapTenor( swapLength, extrapolate );
+         checkRange( optionTime, extrapolate );
+         return shiftImpl( optionTime, swapLength );
+      }
+
+
+
       //! returns the smile for a given option tenor and swap tenor
       public SmileSection smileSection(Period optionTenor, Period swapTenor, bool extr = false)
       {
@@ -187,12 +231,15 @@ namespace QLNet
       #region Limits
 
       //! the largest length for which the term structure can return vols
-      public virtual  Period maxSwapTenor()  { throw new NotSupportedException(); }
+      public abstract Period maxSwapTenor();
 
       //! the largest swapLength for which the term structure can return vols
       public double maxSwapLength() { return swapLength(maxSwapTenor()); }
 
       #endregion
+
+      //! volatility type
+      public virtual VolatilityType volatilityType() {return VolatilityType.ShiftedLognormal;}
 
       //! implements the conversion between swap tenor and swap (time) length
       public double swapLength(Period swapTenor)
@@ -225,14 +272,25 @@ namespace QLNet
          return smileSectionImpl(timeFromReference(optionDate), swapLength(swapTenor));
       }
 
-      protected virtual SmileSection smileSectionImpl(double optionTime, double swapLength)   { throw new NotSupportedException(); }
+      protected abstract SmileSection smileSectionImpl(double optionTime, double swapLength);
 
       protected virtual double volatilityImpl(Date optionDate, Period swapTenor, double strike)
       {
          return volatilityImpl(timeFromReference(optionDate), swapLength(swapTenor),  strike);
       }
 
-      protected virtual double volatilityImpl(double optionTime, double swapLength, double strike) { throw new NotSupportedException(); }
+      protected abstract double volatilityImpl(double optionTime, double swapLength, double strike);
+
+      protected virtual double shiftImpl( Date optionDate, Period swapTenor)
+      {
+         return shiftImpl( timeFromReference( optionDate ), swapLength( swapTenor ) );
+      }
+      protected virtual double shiftImpl( double optionTime, double swapLength)
+      {
+         Utils.QL_REQUIRE(volatilityType() == VolatilityType.ShiftedLognormal,()=>
+           "shift parameter only makes sense for lognormal volatilities" );
+         return 0.0;
+      }
 
       protected void checkSwapTenor(Period swapTenor, bool extrapolate)
       {

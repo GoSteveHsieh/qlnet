@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Pricing engine for European vanilla options using analytical formulae
@@ -61,18 +58,18 @@ namespace QLNet {
         public override void calculate() {
 
             if(arguments_.exercise.type() != Exercise.Type.European)
-                throw new ApplicationException("not an European option");
+                throw new Exception("not an European option");
 
             StrikedTypePayoff payoff = arguments_.payoff as StrikedTypePayoff;
             if (payoff == null)
-                throw new ApplicationException("non-striked payoff given");
+                throw new Exception("non-striked payoff given");
 
             double variance = process_.blackVolatility().link.blackVariance(arguments_.exercise.lastDate(), payoff.strike());
             double dividendDiscount = process_.dividendYield().link.discount(arguments_.exercise.lastDate());
             double riskFreeDiscount = process_.riskFreeRate().link.discount(arguments_.exercise.lastDate());
             double spot = process_.stateVariable().link.value();
             if (!(spot > 0.0))
-                throw new ApplicationException("negative or null underlying given");
+                throw new Exception("negative or null underlying given");
             double forwardPrice = spot * dividendDiscount / riskFreeDiscount;
 
             BlackCalculator black = new BlackCalculator(payoff, forwardPrice, Math.Sqrt(variance), riskFreeDiscount);

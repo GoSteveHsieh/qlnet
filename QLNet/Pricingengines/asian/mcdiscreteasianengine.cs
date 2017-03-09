@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -62,7 +61,7 @@ namespace QLNet
              int requiredSamples,
              double requiredTolerance,
              int maxSamples,
-             ulong seed) : base(controlVariate,antitheticVariate)
+             ulong seed) : base(antitheticVariate, controlVariate)
         {      
             process_=process;
             maxTimeStepsPerYear_ = maxTimeStepsPerYear;
@@ -86,9 +85,9 @@ namespace QLNet
         protected override TimeGrid timeGrid() {
             Date referenceDate = process_.riskFreeRate().link.referenceDate();
             DayCounter voldc = process_.blackVolatility().link.dayCounter() ;
-            List<double> fixingTimes = new  InitializedList<double>(arguments_.fixingDates.Count());
+            List<double> fixingTimes = new  InitializedList<double>(arguments_.fixingDates.Count);
             
-            for (int i=0; i<arguments_.fixingDates.Count(); i++) {
+            for (int i=0; i<arguments_.fixingDates.Count; i++) {
                 if (arguments_.fixingDates[i]>=referenceDate) {
                     double t = voldc.yearFraction(referenceDate,
                         arguments_.fixingDates[i]);
@@ -96,10 +95,10 @@ namespace QLNet
                 }
             }
             // handle here maxStepsPerYear
-            return new TimeGrid(fixingTimes.Last(), fixingTimes.Count());
+            return new TimeGrid(fixingTimes.Last(), fixingTimes.Count);
         }
 
-        protected override PathGenerator<IRNG> pathGenerator() {
+        protected override IPathGenerator<IRNG> pathGenerator() {
 
             TimeGrid grid = this.timeGrid();
             IRNG gen = (IRNG)new  RNG().make_sequence_generator(grid.size()-1,seed_);
@@ -110,7 +109,7 @@ namespace QLNet
         protected override double controlVariateValue() {
             IPricingEngine controlPE = this.controlPricingEngine(); 
             if(controlPE==null)
-                throw new ApplicationException( "engine does not provide " +
+                throw new Exception( "engine does not provide " +
                                                 "control variation pricing engine");
 
             DiscreteAveragingAsianOption.Arguments controlArguments =
@@ -139,14 +138,18 @@ namespace QLNet
 
         #region Observer & Observable
         // observable interface
-        public event Callback notifyObserversEvent;
+        private readonly WeakEventSource eventSource = new WeakEventSource();
+        public event Callback notifyObserversEvent
+        {
+           add { eventSource.Subscribe(value); }
+           remove { eventSource.Unsubscribe(value); }
+        }
+
         public void registerWith(Callback handler) { notifyObserversEvent += handler; }
         public void unregisterWith(Callback handler) { notifyObserversEvent -= handler; }
-        protected void notifyObservers() {
-            Callback handler = notifyObserversEvent;
-            if (handler != null) {
-                handler();
-            }
+        protected void notifyObservers()
+        {
+           eventSource.Raise();
         }
 
         public void update() { notifyObservers(); }

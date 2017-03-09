@@ -1,8 +1,8 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
- Copyright (C) 2008-2013 Andrea Maggiulli (a.maggiulli@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,11 +18,9 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace QLNet {
-    public class Period {
+    public class Period : IComparable {
         private int length_;
         private TimeUnit unit_;
 
@@ -180,12 +178,12 @@ namespace QLNet {
                    case TimeUnit.Weeks:
                    case TimeUnit.Days:
                       if ( p1.length() != 0 )
-                         throw new ApplicationException(
+                         throw new Exception(
                                "impossible addition between " + p1 +
                                " and " + p2);
                       break;
                    default:
-                      throw new ApplicationException("unknown time unit (" 
+                      throw new Exception("unknown time unit (" 
                             + p2.units() + ")");
                 }
                 break;
@@ -199,12 +197,12 @@ namespace QLNet {
                   case TimeUnit.Weeks:
                   case TimeUnit.Days:
                     if (p1.length() != 0)
-                       throw new ApplicationException(
+                       throw new Exception(
                              "impossible addition between " + p1 +
                              " and " + p2);
                     break;
                   default:
-                    throw new ApplicationException("unknown time unit ("
+                    throw new Exception("unknown time unit ("
                           + p2.units() + ")");
                 }
                 break;
@@ -219,12 +217,12 @@ namespace QLNet {
                   case TimeUnit.Years:
                   case TimeUnit.Months:
                     if (p1.length() != 0)
-                       throw new ApplicationException(
+                       throw new Exception(
                              "impossible addition between " + p1 +
                              " and " + p2);
                     break;
                   default:
-                    throw new ApplicationException("unknown time unit ("
+                    throw new Exception("unknown time unit ("
                           + p2.units() + ")");
                 }
                 break;
@@ -238,18 +236,18 @@ namespace QLNet {
                   case TimeUnit.Years:
                   case TimeUnit.Months:
                     if (p1.length() != 0)
-                       throw new ApplicationException(
+                       throw new Exception(
                              "impossible addition between " + p1 +
                              " and " + p2);
                     break;
                   default:
-                    throw new ApplicationException("unknown time unit ("
+                    throw new Exception("unknown time unit ("
                           + p2.units() + ")");
                 }
                 break;
 
               default:
-                throw new ApplicationException("unknown time unit (" + units_ + ")");
+                throw new Exception("unknown time unit (" + units_ + ")");
              }
           }
           return new Period(length_,units_);
@@ -350,8 +348,17 @@ namespace QLNet {
                 case TimeUnit.Years:
                     return result + n + "Y";
                 default:
-                    throw new ApplicationException("unknown time unit (" + units() + ")");
+                    throw new Exception("unknown time unit (" + units() + ")");
             }
+        }
+
+        public int CompareTo( object obj )
+        {
+           if ( this < (Period)obj )
+              return -1;
+           else if ( this == (Period)obj )
+              return 0;
+           else return 1;
         }
     }
 }

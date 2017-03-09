@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2010 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,9 +18,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 
 /*! \file chisquaredistribution.hpp
     \brief Chi-square (central and non-central) distributions
@@ -60,8 +58,8 @@ namespace QLNet {
         double f_x_2n = df_ - x;
 
         double t = 0.0;
-        if (f2 * Const.QL_Epsilon > 0.125 &&
-            Math.Abs(x2-f2) < Math.Sqrt(Const.QL_Epsilon)*f2) {
+        if (f2 * Const.QL_EPSILON > 0.125 &&
+            Math.Abs(x2-f2) < Math.Sqrt(Const.QL_EPSILON)*f2) {
             t = Math.Exp((1 - t) *
                          (2 - t / (f2 + 1))) / Math.Sqrt(2.0 * Const.M_PI * (f2 + 1.0));
         }
@@ -103,7 +101,7 @@ namespace QLNet {
             }
         }
     L_End:
-        if (bound > errmax) throw new ApplicationException("didn't converge");
+        if (bound > errmax) throw new Exception("didn't converge");
         return (ans);
         }
     }

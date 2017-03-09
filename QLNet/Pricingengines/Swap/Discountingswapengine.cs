@@ -2,7 +2,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008-2013 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,9 +18,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet 
 {
@@ -104,17 +101,25 @@ namespace QLNet
                 results_.legNPV[i] = npv *arguments_.payer[i];
                 results_.legBPS[i] = bps *arguments_.payer[i];
 
-                Date d1 = CashFlows.startDate(arguments_.legs[i]);
-                if (d1>=refDate)
-                   results_.startDiscounts[i] = discountCurve_.link.discount(d1);
-                else
-                   results_.startDiscounts[i] = null;
+                if ( !arguments_.legs[i].empty() )
+                {
+                   Date d1 = CashFlows.startDate( arguments_.legs[i] );
+                   if ( d1 >= refDate )
+                      results_.startDiscounts[i] = discountCurve_.link.discount( d1 );
+                   else
+                      results_.startDiscounts[i] = null;
 
-                Date d2 = CashFlows.maturityDate(arguments_.legs[i]);
-                if (d2>=refDate)
-                   results_.endDiscounts[i] = discountCurve_.link.discount(d2);
+                   Date d2 = CashFlows.maturityDate( arguments_.legs[i] );
+                   if ( d2 >= refDate )
+                      results_.endDiscounts[i] = discountCurve_.link.discount( d2 );
+                   else
+                      results_.endDiscounts[i] = null;
+                }
                 else
+                {
+                   results_.startDiscounts[i] = null;
                    results_.endDiscounts[i] = null;
+                }
 
             } 
             catch (Exception e) 

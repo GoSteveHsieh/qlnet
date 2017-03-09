@@ -1,8 +1,8 @@
 /*
  Copyright (C) 2008, 2009 Siarhei Novik (snovik@gmail.com)
- Copyright (C) 2008-2013 Andrea Maggiulli (a.maggiulli@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -105,8 +105,8 @@ namespace QLNet
             Coupon coupon = leg[i] as Coupon;
             if (coupon != null) 
             {
-               refStartDate = coupon.refPeriodStart;
-               refEndDate = coupon.refPeriodEnd;
+               refStartDate = coupon.referencePeriodStart;
+               refEndDate = coupon.referencePeriodEnd;
             } 
             else 
             {
@@ -170,8 +170,8 @@ namespace QLNet
             Coupon coupon = leg[i] as Coupon;
             if (coupon != null) 
             {
-               refStartDate = coupon.refPeriodStart;
-               refEndDate = coupon.refPeriodEnd;
+               refStartDate = coupon.referencePeriodStart;
+               refEndDate = coupon.referencePeriodEnd;
             } 
             else 
             {
@@ -360,11 +360,12 @@ namespace QLNet
          // visitor classes should implement the generic visit method in the following form
          public void visit(object o) 
          {
-               Type[] types = new Type[] { o.GetType() };
-               MethodInfo methodInfo = this.GetType().GetMethod("visit", types);
-               if (methodInfo != null) {
+            Type[] types = new Type[] { o.GetType() };
+            MethodInfo methodInfo = Utils.GetMethodInfo( this, "visit", types );
+
+            if (methodInfo != null) {
                   methodInfo.Invoke(this, new object[] { o });
-               }
+            }
          }
          public void visit(Coupon c) 
          {
@@ -434,7 +435,7 @@ namespace QLNet
       {
          if (leg.empty()) return null;
 
-         Date d = (settlementDate == null ? Settings.evaluationDate() : settlementDate);
+         Date d = (settlementDate ?? Settings.evaluationDate());
          return  leg.LastOrDefault(x => x.hasOccurred(d, includeSettlementDateFlows));
       }
       //! the first cashflow paying after the given date
@@ -442,7 +443,7 @@ namespace QLNet
       {
          if (leg.empty()) return null;
 
-         Date d = (settlementDate == null ? Settings.evaluationDate() : settlementDate);
+         Date d = (settlementDate ?? Settings.evaluationDate());
 
          // the first coupon paying after d is the one we're after
          return leg.FirstOrDefault(x => !x.hasOccurred(d, includeSettlementDateFlows));
@@ -555,7 +556,7 @@ namespace QLNet
          {
             Coupon cp = x as Coupon;
             if (cp != null)
-               return cp.refPeriodStart;
+               return cp.referencePeriodStart;
          }
          return null;
       }
@@ -569,7 +570,7 @@ namespace QLNet
          {
             Coupon cp = x as Coupon;
             if (cp != null)
-               return cp.refPeriodEnd;
+               return cp.referencePeriodEnd;
          }
          return null;
       }
@@ -725,27 +726,29 @@ namespace QLNet
       public static void npvbps(Leg leg,YieldTermStructure discountCurve, bool includeSettlementDateFlows,
                                 Date settlementDate, Date npvDate, out double npv,out double bps) 
       {
-         npv = 0.0;
+         npv = bps = 0.0;
          if (leg.empty())
          {
             bps = 0.0;
             return;
          }
 
-         BPSCalculator calc = new BPSCalculator(discountCurve);
          for (int i=0; i<leg.Count; ++i) 
          {
             CashFlow cf = leg[i];
 				if (!cf.hasOccurred(settlementDate, includeSettlementDateFlows) &&
 					 !cf.tradingExCoupon(settlementDate)) 
             {
-               npv += cf.amount() * discountCurve.discount(cf.date());
-               cf.accept(calc);
+               Coupon cp = leg[i] as Coupon;
+               double df = discountCurve.discount( cf.date() );
+               npv += cf.amount() * df;
+               if ( cp != null )
+                  bps += cp.nominal() * cp.accrualPeriod() * df;
             }
          }
          double d = discountCurve.discount(npvDate);
          npv /= d;
-         bps = basisPoint_ * calc.bps() / d;
+         bps = basisPoint_ * bps / d;
       }
 
       // At-the-money rate of the cash flows.
@@ -827,8 +830,8 @@ namespace QLNet
             Coupon coupon = leg[i] as Coupon;
             if (coupon != null ) 
             {
-                refStartDate = coupon.refPeriodStart;
-                refEndDate = coupon.refPeriodEnd;
+                refStartDate = coupon.referencePeriodStart;
+                refEndDate = coupon.referencePeriodEnd;
             } 
             else 
             {
@@ -1048,8 +1051,8 @@ namespace QLNet
             Coupon coupon = leg[i] as Coupon;
             if (coupon != null ) 
             {
-                refStartDate = coupon.refPeriodStart;
-                refEndDate = coupon.refPeriodEnd;
+                refStartDate = coupon.referencePeriodStart;
+                refEndDate = coupon.referencePeriodEnd;
             } 
             else 
             {

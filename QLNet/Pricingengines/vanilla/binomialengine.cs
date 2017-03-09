@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Pricing engine for vanilla options using binomial trees
@@ -42,7 +39,7 @@ namespace QLNet {
             process_ = process;
             timeSteps_ = timeSteps;
 
-            if (!(timeSteps>0)) throw new ApplicationException("timeSteps must be positive, " + timeSteps + " not allowed");
+            if (!(timeSteps>0)) throw new Exception("timeSteps must be positive, " + timeSteps + " not allowed");
 
             process_.registerWith(update);
         }
@@ -55,7 +52,7 @@ namespace QLNet {
             Calendar volcal = process_.blackVolatility().link.calendar();
 
             double s0 = process_.stateVariable().link.value();
-            if (!(s0 > 0.0)) throw new ApplicationException("negative or null underlying given");
+            if (!(s0 > 0.0)) throw new Exception("negative or null underlying given");
             double v = process_.blackVolatility().link.blackVol(arguments_.exercise.lastDate(), s0);
             Date maturityDate = arguments_.exercise.lastDate();
             double r = process_.riskFreeRate().link.zeroRate(maturityDate, rfdc, Compounding.Continuous, Frequency.NoFrequency).rate();
@@ -68,7 +65,7 @@ namespace QLNet {
             var flatVol = new Handle<BlackVolTermStructure>(new BlackConstantVol(referenceDate, volcal, v, voldc));
 
             PlainVanillaPayoff payoff = arguments_.payoff as PlainVanillaPayoff;
-            if (payoff== null) throw new ApplicationException("non-plain payoff given");
+            if (payoff== null) throw new Exception("non-plain payoff given");
 
             double maturity = rfdc.yearFraction(referenceDate, maturityDate);
 
@@ -92,7 +89,7 @@ namespace QLNet {
             // option values (p2) at this point
             option.rollback(grid[2]);
             Vector va2 = new Vector(option.values());
-            if (!(va2.size() == 3)) throw new ApplicationException("Expect 3 nodes in grid at second step");
+            if (!(va2.size() == 3)) throw new Exception("Expect 3 nodes in grid at second step");
             double p2h = va2[2]; // high-price
             double s2 = lattice.underlying(2, 2); // high price
 
@@ -100,7 +97,7 @@ namespace QLNet {
             // this point
             option.rollback(grid[1]);
             Vector va = new Vector(option.values());
-            if (!(va.size() == 2)) throw new ApplicationException("Expect 2 nodes in grid at first step");
+            if (!(va.size() == 2)) throw new Exception("Expect 2 nodes in grid at first step");
             double p1 = va[1];
 
             // Finally, rollback to t=0

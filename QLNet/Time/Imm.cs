@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,7 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Main cycle of the International %Money Market (a.k.a. %IMM) months
@@ -60,12 +58,12 @@ namespace QLNet {
                 return false;
 
             string str1 = "0123456789";
-            if (!str1.Contains(s[1]))
+            if (!str1.Contains(s[1].ToString()))
                 return false;
 
             if (mainCycle) str1 = "hmzuHMZU";
             else           str1 = "fghjkmnquvxzFGHJKMNQUVXZ";
-            if (!str1.Contains(s[0]))
+            if (!str1.Contains(s[0].ToString()))
                 return false;
 
             return true;
@@ -82,7 +80,7 @@ namespace QLNet {
         public static Date date(string immCode, Date refDate) {
             if (!isIMMcode(immCode, false)) throw new ArgumentException(immCode + " is not a valid IMM code");
 
-            Date referenceDate = (refDate != null ? refDate : Settings.evaluationDate());
+            Date referenceDate = (refDate ?? Settings.evaluationDate());
 
             int m = "FGHJKMNQUVXZ".IndexOf(immCode.ToUpper()[0]) + 1;
             if (m == 0)
@@ -111,7 +109,7 @@ namespace QLNet {
         public static Date nextDate() { return nextDate((Date)null, true); }
         public static Date nextDate(Date d) { return nextDate(d, true); }
         public static Date nextDate(Date date, bool mainCycle) {
-            Date refDate = (date == null ? Settings.evaluationDate() : date);
+            Date refDate = (date ?? Settings.evaluationDate());
 
             int y = refDate.Year;
             int m = refDate.Month;

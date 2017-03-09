@@ -1,7 +1,8 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,12 +19,10 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
-    public class SwaptionVolatilityDiscrete : SwaptionVolatilityStructure//, IObservable, IObserver                                   
+    public abstract class SwaptionVolatilityDiscrete : SwaptionVolatilityStructure//, IObservable, IObserver                                   
     {
         protected int nOptionTenors_;
         protected List<Period> optionTenors_;
@@ -171,7 +170,13 @@ namespace QLNet
             if (moving_){
                 initializeOptionDatesAndTimes();
                 initializeSwapLengths();
+                optionInterpolator_.update();
             }
+        }
+        //! additional inspectors
+        public Date optionDateFromTime(double optionTime)
+        {
+           return new Date(  (int)optionInterpolator_.value( optionTime )  );
         }
 
         private void checkOptionDates() {

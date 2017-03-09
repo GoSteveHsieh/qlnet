@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,56 +17,54 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Brazilian calendar
-    /*! Banking holidays:
-        <ul>
-        <li>Saturdays</li>
-        <li>Sundays</li>
-        <li>New Year's Day, January 1st</li>
-        <li>Tiradentes's Day, April 21th</li>
-        <li>Labour Day, May 1st</li>
-        <li>Independence Day, September 7th</li>
-        <li>Nossa Sra. Aparecida Day, October 12th</li>
-        <li>All Souls Day, November 2nd</li>
-        <li>Republic Day, November 15th</li>
-        <li>Christmas, December 25th</li>
-        <li>Passion of Christ</li>
-        <li>Carnival</li>
-        <li>Corpus Christi</li>
-        </ul>
+   /*! Banking holidays:
+       <ul>
+       <li>Saturdays</li>
+       <li>Sundays</li>
+       <li>New Year's Day, January 1st</li>
+       <li>Tiradentes's Day, April 21th</li>
+       <li>Labour Day, May 1st</li>
+       <li>Independence Day, September 7th</li>
+       <li>Nossa Sra. Aparecida Day, October 12th</li>
+       <li>All Souls Day, November 2nd</li>
+       <li>Republic Day, November 15th</li>
+       <li>Christmas, December 25th</li>
+       <li>Passion of Christ</li>
+       <li>Carnival</li>
+       <li>Corpus Christi</li>
+       </ul>
 
-        Holidays for the Bovespa stock exchange
-        <ul>
-        <li>Saturdays</li>
-        <li>Sundays</li>
-        <li>New Year's Day, January 1st</li>
-        <li>Sao Paulo City Day, January 25th</li>
-        <li>Tiradentes's Day, April 21th</li>
-        <li>Labour Day, May 1st</li>
-        <li>Revolution Day, July 9th</li>
-        <li>Independence Day, September 7th</li>
-        <li>Nossa Sra. Aparecida Day, October 12th</li>
-        <li>All Souls Day, November 2nd</li>
-        <li>Republic Day, November 15th</li>
-        <li>Black Consciousness Day, November 20th (since 2007)</li>
-        <li>Christmas, December 25th</li>
-        <li>Passion of Christ</li>
-        <li>Carnival</li>
-        <li>Corpus Christi</li>
-        <li>the last business day of the year</li>
-        </ul>
+       Holidays for the Bovespa stock exchange
+       <ul>
+       <li>Saturdays</li>
+       <li>Sundays</li>
+       <li>New Year's Day, January 1st</li>
+       <li>Sao Paulo City Day, January 25th</li>
+       <li>Tiradentes's Day, April 21th</li>
+       <li>Labour Day, May 1st</li>
+       <li>Revolution Day, July 9th</li>
+       <li>Independence Day, September 7th</li>
+       <li>Nossa Sra. Aparecida Day, October 12th</li>
+       <li>All Souls Day, November 2nd</li>
+       <li>Republic Day, November 15th</li>
+       <li>Black Consciousness Day, November 20th (since 2007)</li>
+       <li>Christmas Eve, December 24th</li>
+       <li>Christmas, December 25th</li>
+       <li>Passion of Christ</li>
+       <li>Carnival</li>
+       <li>Corpus Christi</li>
+       <li>the last business day of the year</li>
+       </ul>
 
-        \ingroup calendars
+       \ingroup calendars
 
-        \test the correctness of the returned results is tested
-              against a list of known holidays.
-    */
-    public class Brazil : Calendar {
+       \test the correctness of the returned results is tested
+             against a list of known holidays.
+   */
+   public class Brazil : Calendar {
         //! Brazilian calendars
         public enum Market { Settlement,            //!< generic settlement calendar
                              Exchange               //!< BOVESPA calendar
@@ -83,7 +81,7 @@ namespace QLNet {
                     calendar_  = ExchangeImpl.Singleton;
                     break;
                 default:
-                    throw new ApplicationException("unknown market");
+                    throw new Exception("unknown market");
             }
         }
 
@@ -164,6 +162,8 @@ namespace QLNet {
                     || (d == 15 && m == Month.November)
                     // Black Consciousness Day
                     || (d == 20 && m == Month.November && y >= 2007)
+                    // Christmas Eve
+                    || ( d == 24 && m == Month.December )
                     // Christmas
                     || (d == 25 && m == Month.December)
                     // Passion of Christ

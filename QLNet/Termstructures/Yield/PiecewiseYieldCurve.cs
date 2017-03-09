@@ -1,9 +1,9 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
- Copyright (C) 2008-2014  Andrea Maggiulli (a.maggiulli@gmail.com)
+ Copyright (C) 2008-2016  Andrea Maggiulli (a.maggiulli@gmail.com)
  Copyright (C) 2014 Edem Dawui (edawui@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     // this is an abstract class to give access to all properties and methods of PiecewiseYieldCurve and avoiding generics
@@ -65,7 +64,15 @@ namespace QLNet {
       public List<Date> dates_ { get; set; }
       public List<Date> dates() { calculate(); return dates_; }
       // here we do not refer to the base curve as in QL because our base curve is YieldTermStructure and not Traits::base_curve
-      public override Date maxDate() { calculate(); return dates_.Last(); }
+      public Date maxDate_ { get; set; }
+      public override Date maxDate()
+      {
+         calculate();
+         if ( maxDate_ != null )
+            return maxDate_;
+
+         return dates_.Last();
+      }
 
       public List<double> data_ { get; set; }
       public List<double> data() { calculate(); return data_; }
@@ -135,7 +142,7 @@ namespace QLNet {
 			{
 				//todo edem 
 				List<BootstrapHelper<YieldTermStructure>> instruments = new List<BootstrapHelper<YieldTermStructure>>();
-				_instruments_.ForEach( x => instruments.Add( x ) );
+				_instruments_.ForEach((i, x) => instruments.Add( x ) );
 				return instruments;
 			}
 		}

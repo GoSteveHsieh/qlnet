@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,11 +16,7 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -46,7 +42,7 @@ namespace QLNet
                              Date refPeriodStart = null,
                              Date refPeriodEnd = null,
                              Date exCouponDate = null)
-         : base(nominal, paymentDate, startDate, endDate, refPeriodStart, refPeriodEnd, exCouponDate)  // ref period is before lag
+         : base( paymentDate, nominal, startDate, endDate, refPeriodStart, refPeriodEnd, exCouponDate )  // ref period is before lag
       {
          index_ = index;
          observationLag_ = observationLag;
@@ -85,7 +81,7 @@ namespace QLNet
      public override double rate()
      {
         if (pricer_ == null)
-           throw new ApplicationException("pricer not set");
+           throw new Exception("pricer not set");
 
         // we know it is the correct type because checkPricerImpl checks on setting
         // in general pricer_ will be a derived class, as will *this on calling
@@ -122,7 +118,7 @@ namespace QLNet
       public void setPricer(InflationCouponPricer pricer) 
       {
          if (!checkPricerImpl(pricer))
-            throw new ApplicationException("pricer given is wrong type");
+            throw new Exception("pricer given is wrong type");
 
          if (pricer_ != null)
             pricer_.unregisterWith(update);

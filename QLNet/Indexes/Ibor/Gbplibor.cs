@@ -2,7 +2,7 @@
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,37 +17,41 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace QLNet {
+namespace QLNet
+{
 
-    //! %GBP %LIBOR rate
-    //    ! Pound Sterling LIBOR fixed by BBA.
-    //
-    //        See <http://www.bba.org.uk/bba/jsp/polopoly.jsp?d=225&a=1414>.
-    //    
-    public class GBPLibor : Libor {
-        public GBPLibor(Period tenor)
-            : base("GBPLibor", tenor, 0, new GBPCurrency(), new UnitedKingdom(UnitedKingdom.Market.Exchange), new Actual365Fixed(),
-            new Handle<YieldTermStructure>()) {
-        }
-        public GBPLibor(Period tenor, Handle<YieldTermStructure> h)
-            : base("GBPLibor", tenor, 0, new GBPCurrency(), new UnitedKingdom(UnitedKingdom.Market.Exchange), new Actual365Fixed(), h) {
-        }
-    }
+   //! %GBP %LIBOR rate
+   /*! Pound Sterling LIBOR fixed by ICE.
 
-    //! base class for the one day deposit BBA %GBP %LIBOR indexes
-    public class DailyTenorGBPLibor : DailyTenorLibor {
-        public DailyTenorGBPLibor(int settlementDays, Handle<YieldTermStructure> h)
-            : base("GBPLibor", settlementDays, new GBPCurrency(), new UnitedKingdom(UnitedKingdom.Market.Exchange),
-                    new Actual365Fixed(), h) {}
-    }
+       See <https://www.theice.com/marketdata/reports/170>.
+   */
+   public class GBPLibor : Libor
+   {
+      public GBPLibor( Period tenor )
+         : base( "GBPLibor", tenor, 0, new GBPCurrency(), new UnitedKingdom( UnitedKingdom.Market.Exchange ), new Actual365Fixed(),
+         new Handle<YieldTermStructure>() )
+      {}
 
-    //! Overnight %GBP %Libor index
-    public class GBPLiborON : DailyTenorGBPLibor {
-        public GBPLiborON(Handle<YieldTermStructure> h) : base(0, h) {}
-    }
+      public GBPLibor( Period tenor, Handle<YieldTermStructure> h )
+         : base( "GBPLibor", tenor, 0, new GBPCurrency(), new UnitedKingdom( UnitedKingdom.Market.Exchange ), new Actual365Fixed(), h )
+      {}
+
+   }
+
+   //! Base class for the one day deposit ICE %GBP %LIBOR indexes
+   public class DailyTenorGBPLibor : DailyTenorLibor
+   {
+      public DailyTenorGBPLibor( int settlementDays, Handle<YieldTermStructure> h )
+         : base( "GBPLibor", settlementDays, new GBPCurrency(), new UnitedKingdom( UnitedKingdom.Market.Exchange ),
+                 new Actual365Fixed(), h ) 
+      {}
+   }
+
+   //! Overnight %GBP %Libor index
+   public class GBPLiborON : DailyTenorGBPLibor
+   {
+      public GBPLiborON( Handle<YieldTermStructure> h ) : base( 0, h ) 
+      {}
+   }
 }

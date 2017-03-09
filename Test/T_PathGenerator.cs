@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -19,16 +19,46 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
-    [TestClass()]
-    public class T_Pathgenerator
+#if QL_DOTNET_FRAMEWORK
+   [TestClass()]
+#endif
+   public class T_Pathgenerator : IDisposable
     {
+       #region Initialize&Cleanup
+       private SavedSettings backup;
+       #if QL_DOTNET_FRAMEWORK
+       [TestInitialize]
+       public void testInitialize()
+       {
+       #else
+       public T_Pathgenerator()
+       {
+       #endif
+
+          backup = new SavedSettings();
+       }
+       #if QL_DOTNET_FRAMEWORK
+       [TestCleanup]
+       #endif
+       public void testCleanup()
+       {
+          Dispose();
+       }
+       public void Dispose()
+       {
+          backup.Dispose();
+       }
+       #endregion
+
         public void testSingle(StochasticProcess1D process,
                         string tag, 
                         bool brownianBridge,
@@ -54,13 +84,15 @@ namespace TestSuite
             for (i=0; i<100; i++)
                 generator.next();
 
-            Sample<Path> sample = generator.next();
-            double calculated = sample.value.back();
+            Sample<IPath> sample = generator.next();
+            Path value = sample.value as Path;
+            Utils.QL_REQUIRE(value != null ,()=> "Invalid Path");
+            double calculated = value.back();
             double error = Math.Abs(calculated-expected);
             double tolerance = 2.0e-8;
             if (error > tolerance) 
             {
-                Assert.Fail("using " + tag + " process "
+                QAssert.Fail("using " + tag + " process "
                             + (brownianBridge ? "with " : "without ")
                             + "brownian bridge:\n"
                             //+ std::setprecision(13)
@@ -71,12 +103,14 @@ namespace TestSuite
             }
 
             sample = generator.antithetic();
-            calculated = sample.value.back();
+            value = sample.value as Path;
+            Utils.QL_REQUIRE( value != null, () => "Invalid Path" );
+            calculated = value.back();
             error = Math.Abs(calculated-antithetic);
             tolerance = 2.0e-7;
             if (error > tolerance) 
             {
-                Assert.Fail("using " + tag + " process "
+                QAssert.Fail("using " + tag + " process "
                         + (brownianBridge ? "with " : "without ")
                         + "brownian bridge:\n"
                         + "antithetic sample:\n"
@@ -111,17 +145,19 @@ namespace TestSuite
             for (i=0; i<100; i++)
                 generator.next();
 
-            Sample<MultiPath> sample = generator.next();
+            Sample<IPath> sample = generator.next();
+            MultiPath value = sample.value as MultiPath;
+            Utils.QL_REQUIRE( value != null, () => "Invalid Path" );
             Vector calculated = new Vector(assets);
             double error, tolerance = 2.0e-7;
             
             for (int j=0; j<assets; j++)
-                calculated[j] = sample.value[j].back() ;
+                calculated[j] =value[j].back() ;
             
             for (int j=0; j<assets; j++) {
                 error = Math.Abs(calculated[j]-expected[j]);
                 if (error > tolerance) {
-                    Assert.Fail("using " + tag + " process "
+                    QAssert.Fail("using " + tag + " process "
                                 + "(" + j+1 + " asset:)\n"
                                 //+ std::setprecision(13)
                                 + "    calculated: " + calculated[j] + "\n"
@@ -132,12 +168,14 @@ namespace TestSuite
             }
 
             sample = generator.antithetic();
+            value = sample.value as MultiPath;
+            Utils.QL_REQUIRE( value != null, () => "Invalid Path" );
             for (int j=0; j<assets; j++)
-                calculated[j] = sample.value[j].back();
+                calculated[j] = value[j].back();
             for (int j=0; j<assets; j++) {
                 error = Math.Abs(calculated[j]-antithetic[j]);
                 if (error > tolerance) {
-                    Assert.Fail("using " + tag + " process "
+                    QAssert.Fail("using " + tag + " process "
                                 + "(" + j+1 + " asset:)\n"
                                 + "antithetic sample:\n"
                                 //+ std::setprecision(13)
@@ -149,13 +187,14 @@ namespace TestSuite
             }
         }
 
-        [TestMethod()]
-        public void testPathGenerator() {
-
-            //"Testing 1-D path generation against cached values...");
-
-            //SavedSettings backup;
-
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
+        public void testPathGenerator() 
+        {
+            // Testing 1-D path generation against cached values
             Settings.setEvaluationDate(new Date(26,4,2005));
 
             Handle<Quote> x0=new Handle<Quote> (new SimpleQuote(100.0));
@@ -182,14 +221,14 @@ namespace TestSuite
                        "square-root", false, 1.70608664108, 6.024200546031);
         }
 
-        [TestMethod()]
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testMultiPathGenerator()
         {
-
-            //("Testing n-D path generation against cached values...");
-
-            //SavedSettings backup;
-
+            // Testing n-D path generation against cached values
             Settings.setEvaluationDate(new Date(26,4,2005));
 
             Handle<Quote> x0=new Handle<Quote> (new SimpleQuote(100.0));

@@ -2,7 +2,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -115,7 +113,7 @@ namespace QLNet
                payer_[1] = -1.0;
                break;
             default:
-               throw new ApplicationException("Unknown vanilla-swap type");
+               throw new Exception("Unknown vanilla-swap type");
          }
       }
 
@@ -271,7 +269,7 @@ namespace QLNet
 
 
       //! %Arguments for simple swap calculation
-      new public class Arguments : Swap.Arguments
+      public new class Arguments : Swap.Arguments
       {
          public Type type;
          public double nominal;
@@ -325,5 +323,7 @@ namespace QLNet
             fairRate = fairSpread = null;
          }
       }
+
+      public abstract class Engine : GenericEngine<VanillaSwap.Arguments, VanillaSwap.Results> { }
    }
 }

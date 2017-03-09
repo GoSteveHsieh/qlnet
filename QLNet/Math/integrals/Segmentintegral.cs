@@ -2,7 +2,7 @@
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com) 
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,9 +18,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -48,7 +45,7 @@ namespace QLNet {
             intervals_ = intervals;
 
             if (!(intervals > 0))
-                throw new ApplicationException("at least 1 interval needed, 0 given");
+                throw new Exception("at least 1 interval needed, 0 given");
         }
 
         // inline and template definitions

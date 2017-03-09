@@ -32,24 +32,47 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\Debug\net40\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;QL_DOTNET_FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Release\net40\</OutputPath>
+    <DefineConstants>TRACE;QL_DOTNET_FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-net45|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\net45\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;QL_DOTNET_FRAMEWORK</DefineConstants>
+    <DebugType>full</DebugType>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-net45|AnyCPU'">
+    <OutputPath>bin\Release\net45\</OutputPath>
+    <DefineConstants>TRACE;QL_DOTNET_FRAMEWORK</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
@@ -59,9 +82,31 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="T_BarrierOption.cs" />
+    <Compile Include="T_BasketOption.cs" />
+    <Compile Include="T_BinaryOption.cs" />
+    <Compile Include="T_BlackDeltaCalculator.cs" />
+    <Compile Include="T_BusinessDayConvention.cs" />
+    <Compile Include="T_CapFlooredCoupon.cs" />
+    <Compile Include="T_CliquetOption.cs" />
+    <Compile Include="T_Cms.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="T_CPISwap.cs" />
+    <Compile Include="T_DigitalCoupon.cs" />
+    <Compile Include="T_DigitalOption.cs" />
+    <Compile Include="T_DoubleBarrierOption.cs" />
+    <Compile Include="T_ForwardOption.cs" />
+    <Compile Include="T_Functions.cs" />
+    <Compile Include="T_HestonModel.cs" />
+    <Compile Include="T_HybridHestonHullWhiteProcess.cs" />
+    <Compile Include="T_InflationCPICapFloor.cs" />
+    <Compile Include="T_LookbackOption.cs" />
+    <Compile Include="T_OptionletStripper.cs" />
     <Compile Include="T_PiecewiseZeroSpreadedTermStructure.cs" />
     <Compile Include="T_AsianOptions.cs" />
     <Compile Include="T_AssetSwap.cs" />
@@ -105,6 +150,7 @@
     <Compile Include="T_Solvers.cs" />
     <Compile Include="T_Stats.cs" />
     <Compile Include="T_Swaps.cs" />
+    <Compile Include="T_SwaptionVolatilityCube.cs" />
     <Compile Include="T_TermStructures.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="T_LiborMarketModel.cs" />

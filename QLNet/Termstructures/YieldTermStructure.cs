@@ -1,8 +1,8 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
- Copyright (C) 2008 Andrea Maggiulli 
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com) 
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,7 +18,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace QLNet
@@ -31,15 +30,15 @@ namespace QLNet
 
       \test observability against evaluation date changes is checked.
    */
-   public class YieldTermStructure : TermStructure 
+   public abstract class YieldTermStructure : TermStructure 
    {
       private const double dt = 0.0001;
 
       #region Constructors
 
-      public YieldTermStructure()
-         : this(dc: null,jumps: null,jumpDates: null)
-      {}
+      //public YieldTermStructure()
+      //   : this(dc: null,jumps: null,jumpDates: null)
+      //{}
 
       public YieldTermStructure(DayCounter dc = null,List<Handle<Quote> > jumps = null,List<Date> jumpDates = null)
          :base(dc)
@@ -130,9 +129,12 @@ namespace QLNet
             if (jumpTimes_[i]>0 && jumpTimes_[i]<t) 
             {
                Utils.QL_REQUIRE( jumps_[i].link.isValid(), () => "invalid " + ( i + 1 ) + " jump quote" );
-                double thisJump = jumps_[i].link.value();
-                Utils.QL_REQUIRE( thisJump > 0.0 && thisJump <= 1.0, () => "invalid " + ( i + 1 ) + " jump value: " + thisJump );
-                jumpEffect *= thisJump;
+               double thisJump = jumps_[i].link.value();
+               Utils.QL_REQUIRE(thisJump > 0.0,()=> "invalid " + (i+1) + " jump value: " + thisJump);
+               #if !QL_NEGATIVE_RATES
+               Utils.QL_REQUIRE(thisJump <= 1.0,()=> "invalid " + (i+1) + " jump value: " + thisJump);
+               #endif
+               jumpEffect *= thisJump;
             }
          }
          return jumpEffect * discountImpl(t);
@@ -273,7 +275,7 @@ namespace QLNet
       //    must assume that extrapolation is required.
 
       //! discount factor calculation
-      protected virtual double discountImpl(double d) { throw new NotSupportedException(); }
+      protected abstract double discountImpl(double d);
       
       #endregion
       

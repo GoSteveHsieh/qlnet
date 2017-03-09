@@ -1,12 +1,12 @@
 /*
  Copyright (C) 2008 Andrea Maggiulli
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -17,16 +17,18 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
-using System.Diagnostics;
 
 namespace TestSuite
 {
+#if QL_DOTNET_FRAMEWORK
    [TestClass()]
+#endif
    public class T_Rounding
    {
       public struct TestCase
@@ -75,7 +77,11 @@ namespace TestSuite
            new TestCase(7.89428221, 2, 7.89, 7.90, 7.89, 7.89, 7.89 ) 
         };
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testClosest()
       {
          for (int i = 0; i < testData.Length; i++)
@@ -85,10 +91,14 @@ namespace TestSuite
             double calculated = closest.Round(testData[i].x);
             double expected = testData[i].closest;
             if (!Utils.close(calculated, expected, 1))
-               Assert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
+               QAssert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
          }
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testUp()
       {
          for (int i = 0; i < testData.Length; i++)
@@ -98,11 +108,15 @@ namespace TestSuite
             double calculated = up.Round(testData[i].x);
             double expected = testData[i].up;
             if (!Utils.close(calculated, expected, 1))
-               Assert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
+               QAssert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testDown()
       {
          for (int i = 0; i < testData.Length; i++)
@@ -112,11 +126,15 @@ namespace TestSuite
             double calculated = down.Round(testData[i].x);
             double expected = testData[i].down;
             if (!Utils.close(calculated, expected, 1))
-               Assert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
+               QAssert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testFloor()
       {
          for (int i = 0; i < testData.Length; i++)
@@ -126,11 +144,15 @@ namespace TestSuite
             double calculated = floor.Round(testData[i].x);
             double expected = testData[i].floor;
             if (!Utils.close(calculated, expected, 1))
-               Assert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
+               QAssert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testCeiling()
       {
          for (int i = 0; i < testData.Length; i++)
@@ -140,7 +162,7 @@ namespace TestSuite
             double calculated = ceiling.Round(testData[i].x);
             double expected = testData[i].ceiling;
             if (!Utils.close(calculated, expected, 1))
-               Assert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
+               QAssert.Fail("Original number: " + testData[i].x + "Expected: " + expected + "Calculated: " + calculated);
          }
       }
 

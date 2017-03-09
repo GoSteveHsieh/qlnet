@@ -1,7 +1,8 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
-  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
+ 
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -20,30 +21,35 @@
 namespace QLNet
 {
 
-    public class GenericModelEngine<ModelType,ArgumentsType, ResultsType>
-        :  GenericEngine<ArgumentsType, ResultsType>
-        where ArgumentsType : IPricingEngineArguments, new()
-        where ResultsType : IPricingEngineResults, new()
-        where ModelType : IObservable
-    {
-            public GenericModelEngine() {}
-            public GenericModelEngine(ModelType model)
-            {
-                model_=model;
-                model_.registerWith(update);
-            }
+   public class GenericModelEngine<ModelType, ArgumentsType, ResultsType>
+       : GenericEngine<ArgumentsType, ResultsType>
+      where ArgumentsType : IPricingEngineArguments, new()
+      where ResultsType : IPricingEngineResults, new()
+      where ModelType : IObservable
+   {
+      public GenericModelEngine() { }
+      public GenericModelEngine( Handle<ModelType> model )
+      {
+         model_ = model;
+         model_.registerWith( update );
+      }
+      public GenericModelEngine(ModelType model )
+      {
+         model_  = new Handle<ModelType>(model);
+         model_.registerWith( update );
+      }
+      public void setModel( Handle<ModelType> model )
+      {
+         if ( model_ != null )
+            model_.unregisterWith( update );
+         model_ = model;
+         if ( model_ != null )
+            model_.registerWith( update );
+         update();
+      }
 
-            public void setModel(ModelType model) {
-                if (model_ != null)
-                    model_.unregisterWith(update);
-                model_ = model;
-                if (model_ != null)
-                    model_.registerWith(update);
-                update();
-            }
+      protected Handle<ModelType> model_;
 
-            protected ModelType model_;
-            
-       
-    }
-    }
+
+   }
+}

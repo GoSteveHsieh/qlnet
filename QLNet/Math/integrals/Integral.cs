@@ -2,7 +2,7 @@
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,23 +18,21 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
     public abstract class Integrator {
-        private double absoluteAccuracy_;
+        private double? absoluteAccuracy_;
         private double absoluteError_;
         private int maxEvaluations_;
         private int evaluations_;
 
-        public Integrator(double absoluteAccuracy, int maxEvaluations) {
+        public Integrator(double? absoluteAccuracy, int maxEvaluations) {
             absoluteAccuracy_ = absoluteAccuracy;
             maxEvaluations_ = maxEvaluations;
-            if (!(absoluteAccuracy > ((Double.Epsilon))))
-                throw new ApplicationException("required tolerance (" + absoluteAccuracy + ") not allowed. It must be > " + Double.Epsilon);
+            if ( absoluteAccuracy != null)
+               if (!(absoluteAccuracy > ((Double.Epsilon))))
+                   throw new Exception("required tolerance (" + absoluteAccuracy + ") not allowed. It must be > " + Double.Epsilon);
         }
 
         public double value(Func<double, double> f, double a, double b) {
@@ -59,7 +57,7 @@ namespace QLNet {
 
         //! \name Inspectors
         //@{
-        public double absoluteAccuracy() {
+        public double? absoluteAccuracy() {
             return absoluteAccuracy_;
         }
         public int maxEvaluations() {

@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -19,12 +19,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite {
-    [TestClass()]
+#if QL_DOTNET_FRAMEWORK
+   [TestClass()]
+#endif
     public class T_Optimizers {
         List<CostFunction> costFunctions_ = new List<CostFunction>();
         List<Constraint> constraints_ = new List<Constraint>();
@@ -45,11 +50,20 @@ namespace TestSuite {
         enum OptimizationMethodType {
             simplex,
             levenbergMarquardt,
+            levenbergMarquardt2,
             conjugateGradient,
-            steepestDescent
+            conjugateGradient_goldstein,
+            steepestDescent,
+            steepestDescent_goldstein,
+            bfgs,
+            bfgs_goldstein
         }
 
+#if QL_DOTNET_FRAMEWORK
         [TestMethod()]
+#else
+       [Fact]
+#endif
         public void OptimizersTest() {
             //("Testing optimizers...");
 
@@ -80,7 +94,7 @@ namespace TestSuite {
                         if (endCriteriaResult==EndCriteria.Type.None ||
                             endCriteriaResult==EndCriteria.Type.MaxIterations ||
                             endCriteriaResult==EndCriteria.Type.Unknown)
-                            Assert.Fail("function evaluations: " + problem.functionEvaluation()  +
+                            QAssert.Fail("function evaluations: " + problem.functionEvaluation()  +
                                       " gradient evaluations: " + problem.gradientEvaluation() +
                                       " x expected:           " + xMinExpected_[i] +
                                       " x calculated:         " + xMinCalculated +
@@ -96,7 +110,11 @@ namespace TestSuite {
             }
         }
 
+#if QL_DOTNET_FRAMEWORK
         [TestMethod()]
+#else
+       [Fact]
+#endif
         public void nestedOptimizationTest() {
             //("Testing nested optimizations...");
             OptimizationBasedCostFunction optimizationBasedCostFunction = new OptimizationBasedCostFunction();
@@ -143,7 +161,13 @@ namespace TestSuite {
             OptimizationMethodType[] optimizationMethodTypes = {
                 OptimizationMethodType.simplex, 
                 OptimizationMethodType.levenbergMarquardt, 
-                OptimizationMethodType.conjugateGradient/*, steepestDescent*/};
+                OptimizationMethodType.levenbergMarquardt2, 
+                OptimizationMethodType.conjugateGradient/*, steepestDescent*/,
+                OptimizationMethodType.conjugateGradient_goldstein,
+                OptimizationMethodType.steepestDescent_goldstein,
+                OptimizationMethodType.bfgs,
+                OptimizationMethodType.bfgs_goldstein
+                                                               };
 
             double simplexLambda = 0.1;                   // characteristic search length for simplex
             double levenbergMarquardtEpsfcn = 1.0e-8;     // parameters specific for Levenberg-Marquardt
@@ -172,12 +196,22 @@ namespace TestSuite {
                     return new Simplex(simplexLambda);
                 case OptimizationMethodType.levenbergMarquardt:
                     return new LevenbergMarquardt(levenbergMarquardtEpsfcn, levenbergMarquardtXtol, levenbergMarquardtGtol);
+                case OptimizationMethodType.levenbergMarquardt2:
+                    return new LevenbergMarquardt( levenbergMarquardtEpsfcn, levenbergMarquardtXtol, levenbergMarquardtGtol,true );
                 case OptimizationMethodType.conjugateGradient:
                     return new ConjugateGradient();
                 case OptimizationMethodType.steepestDescent:
                     return new SteepestDescent();
+                case OptimizationMethodType.bfgs:
+                    return new BFGS();
+                case OptimizationMethodType.conjugateGradient_goldstein:
+                    return new ConjugateGradient(new GoldsteinLineSearch());
+                case OptimizationMethodType.steepestDescent_goldstein:
+                    return new SteepestDescent(new GoldsteinLineSearch());
+                case OptimizationMethodType.bfgs_goldstein:
+                    return new BFGS(new GoldsteinLineSearch());
                 default:
-                    throw new ApplicationException("unknown OptimizationMethod type");
+                    throw new Exception("unknown OptimizationMethod type");
             }
         }      
 
@@ -207,12 +241,22 @@ namespace TestSuite {
                     return "Simplex";
                 case OptimizationMethodType.levenbergMarquardt:
                     return "Levenberg Marquardt";
+                case OptimizationMethodType.levenbergMarquardt2:
+                    return "Levenberg Marquardt (cost function's jacbobian)";
                 case OptimizationMethodType.conjugateGradient:
                     return "Conjugate Gradient";
                 case OptimizationMethodType.steepestDescent:
                     return "Steepest Descent";
+                case OptimizationMethodType.bfgs:
+                    return "BFGS";
+                case OptimizationMethodType.conjugateGradient_goldstein:
+                    return "Conjugate Gradient (Goldstein line search)";
+                case OptimizationMethodType.steepestDescent_goldstein:
+                    return "Steepest Descent (Goldstein line search)";
+                case OptimizationMethodType.bfgs_goldstein:
+                    return "BFGS (Goldstein line search)";
                 default:
-                    throw new ApplicationException("unknown OptimizationMethod type");
+                    throw new Exception("unknown OptimizationMethod type");
             }
         }
     }
@@ -227,7 +271,7 @@ namespace TestSuite {
         }
 
         public override double value(Vector x) {
-            if(x.size()!=1) throw new ApplicationException("independent variable must be 1 dimensional");
+            if(x.size()!=1) throw new Exception("independent variable must be 1 dimensional");
             double y = 0;
             for (int i=0; i<=polynomialDegree_; ++i)
                 y += coefficients_[i]*Utils.Pow(x[0],i);
@@ -235,7 +279,7 @@ namespace TestSuite {
         }
 
         public override Vector values(Vector x) {
-            if(x.size()!=1) throw new ApplicationException("independent variable must be 1 dimensional");
+            if(x.size()!=1) throw new Exception("independent variable must be 1 dimensional");
             Vector y = new Vector(1);
             y[0] = value(x);
             return y;

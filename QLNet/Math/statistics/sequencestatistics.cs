@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace QLNet {
@@ -56,10 +54,10 @@ namespace QLNet {
         //! returns the covariance Matrix
         public Matrix covariance() {
             double sampleWeight = weightSum();
-            if (!(sampleWeight > 0.0)) throw new ApplicationException("sampleWeight=0, unsufficient");
+            if (!(sampleWeight > 0.0)) throw new Exception("sampleWeight=0, unsufficient");
 
             double sampleNumber = samples();
-            if (!(sampleNumber > 1.0)) throw new ApplicationException("sample number <=1, unsufficient");
+            if (!(sampleNumber > 1.0)) throw new Exception("sample number <=1, unsufficient");
 
             List<double> m = mean();
             double inv = 1.0/sampleWeight;
@@ -106,7 +104,7 @@ namespace QLNet {
         private List<double> noArg(string method) {
             // do not check for null - in this case we throw anyways
             for (int i = 0; i < dimension_; i++) {
-                MethodInfo methodInfo = stats_[i].GetType().GetMethod(method);
+                MethodInfo methodInfo = Utils.GetMethodInfo( stats_[i], method );
                 results_[i] = (double)methodInfo.Invoke(stats_[i], new object[] { });
             }
             return results_;
@@ -115,7 +113,7 @@ namespace QLNet {
         private List<double> singleArg(double x, string method) {
             // do not check for null - in this case we throw anyways
             for (int i = 0; i < dimension_; i++) {
-                MethodInfo methodInfo = stats_[i].GetType().GetMethod(method);
+                MethodInfo methodInfo = Utils.GetMethodInfo( stats_[i], method );
                 results_[i] = (double)methodInfo.Invoke(stats_[i], new object[] { x });
             }
             return results_;
@@ -202,12 +200,12 @@ namespace QLNet {
             if (dimension_ == 0) {
                 // stat wasn't initialized yet
                 int dimension = begin.Count;
-                if(!(dimension>0)) throw new ApplicationException("sample error: end<=begin");
+                if(!(dimension>0)) throw new Exception("sample error: end<=begin");
                 reset(dimension);
             }
 
             if (begin.Count != dimension_) 
-                throw new ApplicationException("sample size mismatch: " + dimension_ +
+                throw new Exception("sample size mismatch: " + dimension_ +
                        " required, " + begin.Count + " provided");
 
             quadraticSum_ += weight * Matrix.outerProduct(begin, begin);

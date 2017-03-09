@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,29 +16,22 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace QLNet {
+namespace QLNet
+{
 
-	//! %AUD %LIBOR rate
-//    ! Australian Dollar LIBOR fixed by BBA.
-//
-//        See <http://www.bba.org.uk/bba/jsp/polopoly.jsp?d=225&a=1414>.
-//    
-	public class AUDLibor : Libor
-	{
-        public AUDLibor(Period tenor)
-            : base("AUDLibor", tenor, 2, new AUDCurrency(), new Australia(), new Actual360(), new Handle<YieldTermStructure>())
-        {
-        }
+   //! %AUD %LIBOR rate
+   /*! Australian Dollar LIBOR discontinued as of 2013.
+   */
+   public class AUDLibor : Libor
+   {
+      public AUDLibor( Period tenor )
+         : base( "AUDLibor", tenor, 2, new AUDCurrency(), new Australia(), new Actual360(), new Handle<YieldTermStructure>() )
+      {}
 
-        public AUDLibor(Period tenor, Handle<YieldTermStructure> h)
-            : base("AUDLibor", tenor, 2, new AUDCurrency(), new Australia(), new Actual360(), h)
-		{
-		}
-	}
+      public AUDLibor( Period tenor, Handle<YieldTermStructure> h )
+         : base( "AUDLibor", tenor, 2, new AUDCurrency(), new Australia(), new Actual360(), h )
+      {}
+   }
 
 }

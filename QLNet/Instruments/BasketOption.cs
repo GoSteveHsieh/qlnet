@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,10 +16,7 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -98,6 +95,17 @@ namespace QLNet {
 		private Vector weights_;
 	}
 
+   public class SpreadBasketPayoff : BasketPayoff 
+   {
+      public SpreadBasketPayoff(Payoff p)
+        : base(p) {}
+      public override double accumulate (Vector a) 
+      {
+         Utils.QL_REQUIRE(a.size() == 2, ()=> "payoff is only defined for two underlyings");
+         return a[0]-a[1];
+        
+      }
+    }
 
 	//! Basket option on a number of assets
 	//! \ingroup instruments 

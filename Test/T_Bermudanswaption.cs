@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2010 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -19,16 +19,45 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
-    [TestClass()]
-    public class T_Bermudanswaption
+#if QL_DOTNET_FRAMEWORK
+   [TestClass()]
+#endif
+   public class T_Bermudanswaption : IDisposable
     {
+       #region Initialize&Cleanup
+       private SavedSettings backup;
+       #if QL_DOTNET_FRAMEWORK
+       [TestInitialize]
+       public void testInitialize()
+       {
+       #else
+       public T_Bermudanswaption()
+       {
+       #endif
+          backup = new SavedSettings();
+       }
+       #if QL_DOTNET_FRAMEWORK
+       [TestCleanup]
+       #endif
+       public void testCleanup()
+       {
+          Dispose();
+       }
+       public void Dispose()
+       {
+          backup.Dispose();
+       }
+       #endregion
+
         public class CommonVars
         {
             // global data
@@ -46,9 +75,6 @@ namespace TestSuite
             public int settlementDays;
 
             public RelinkableHandle<YieldTermStructure> termStructure;
-
-            // cleanup
-            public SavedSettings backup;
 
             // setup
             public CommonVars()
@@ -100,7 +126,11 @@ namespace TestSuite
             }
         }
 
+#if QL_DOTNET_FRAMEWORK
         [TestMethod()]
+#else
+       [Fact]
+#endif
         public void testCachedValues() {
 
             //("Testing Bermudan swaption against cached values...");
@@ -147,21 +177,21 @@ namespace TestSuite
             Swaption swaption = new Swaption(itmSwap, exercise);
             swaption.setPricingEngine(engine);
             if (Math.Abs(swaption.NPV()-itmValue) > tolerance)
-                Assert.Fail("failed to reproduce cached in-the-money swaption value:\n"
+                QAssert.Fail("failed to reproduce cached in-the-money swaption value:\n"
                             + "calculated: " + swaption.NPV() + "\n"
                             + "expected:   " + itmValue);
             
             swaption = new Swaption(atmSwap, exercise);
             swaption.setPricingEngine(engine);
             if (Math.Abs(swaption.NPV()-atmValue) > tolerance)
-                Assert.Fail("failed to reproduce cached at-the-money swaption value:\n"
+                QAssert.Fail("failed to reproduce cached at-the-money swaption value:\n"
                             + "calculated: " + swaption.NPV() + "\n"
                             + "expected:   " + atmValue);
             
             swaption = new Swaption(otmSwap, exercise);
             swaption.setPricingEngine(engine);
             if (Math.Abs(swaption.NPV()-otmValue) > tolerance)
-                Assert.Fail("failed to reproduce cached out-of-the-money "
+                QAssert.Fail("failed to reproduce cached out-of-the-money "
                             + "swaption value:\n"
                             + "calculated: " + swaption.NPV() + "\n"
                             + "expected:   " + otmValue);
@@ -179,21 +209,21 @@ namespace TestSuite
             swaption = new Swaption(itmSwap, exercise);
             swaption.setPricingEngine(engine);
             if (Math.Abs(swaption.NPV()-itmValue) > tolerance)
-                Assert.Fail("failed to reproduce cached in-the-money swaption value:\n"
+                QAssert.Fail("failed to reproduce cached in-the-money swaption value:\n"
                             + "calculated: " + swaption.NPV() + "\n"
                             + "expected:   " + itmValue);
             
             swaption = new Swaption(atmSwap, exercise);
             swaption.setPricingEngine(engine);
             if (Math.Abs(swaption.NPV()-atmValue) > tolerance)
-                Assert.Fail("failed to reproduce cached at-the-money swaption value:\n"
+                QAssert.Fail("failed to reproduce cached at-the-money swaption value:\n"
                             + "calculated: " + swaption.NPV() + "\n"
                             + "expected:   " + atmValue);
             
             swaption = new Swaption(otmSwap, exercise);
             swaption.setPricingEngine(engine);
             if (Math.Abs(swaption.NPV()-otmValue) > tolerance)
-                Assert.Fail("failed to reproduce cached out-of-the-money "
+                QAssert.Fail("failed to reproduce cached out-of-the-money "
                             + "swaption value:\n"
                             + "calculated: " + swaption.NPV() + "\n"
                             + "expected:   " + otmValue);

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 /*! \file mc_discr_arith_av_strike.hpp
     \brief Monte Carlo engine for discrete arithmetic average-strike Asian
@@ -51,11 +48,11 @@ namespace QLNet {
         protected override PathPricer<IPath> pathPricer(){
             PlainVanillaPayoff payoff = (PlainVanillaPayoff)(this.arguments_.payoff);
             if (payoff == null)
-                throw new ApplicationException("non-plain payoff given");
+                throw new Exception("non-plain payoff given");
 
             EuropeanExercise exercise = (EuropeanExercise)this.arguments_.exercise;
             if (exercise == null)
-                throw new ApplicationException("wrong exercise given");
+                throw new Exception("wrong exercise given");
 
             return (PathPricer<IPath>)new ArithmeticASOPathPricer(
                     payoff.optionType(),
@@ -95,7 +92,7 @@ namespace QLNet {
         public double value(Path path){
             int n = path.length();
             if(!(n > 1))
-                throw new ApplicationException("the path cannot be empty");
+                throw new Exception("the path cannot be empty");
             double averageStrike=runningSum_;
             if (path.timeGrid().mandatoryTimes()[0]==0.0) {
                 //averageStrike =
@@ -152,7 +149,7 @@ namespace QLNet {
 
            Utils.QL_REQUIRE( samples_ == null, () => "number of samples already set" );
             if ((new RNG().allowsErrorEstimate == 0))
-                throw new ApplicationException("chosen random generator policy " +
+                throw new Exception("chosen random generator policy " +
                                                "does not allow an error estimate");
             tolerance_ = tolerance;
             return this;

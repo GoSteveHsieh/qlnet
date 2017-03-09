@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,8 +16,6 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-using System;
-using System.Collections.Generic;
 
 namespace QLNet
 {
@@ -38,7 +36,7 @@ namespace QLNet
             public override int dayCount(Date d1, Date d2) { return (d2 - d1); }
             public override double yearFraction(Date d1, Date d2, Date refPeriodStart, Date refPeriodEnd)
             {
-                return dayCount(d1, d2) / 365.0;
+               return Date.daysBetween( d1, d2 ) / 365.0;
             }
 
         }

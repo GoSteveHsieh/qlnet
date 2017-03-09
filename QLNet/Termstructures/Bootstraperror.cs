@@ -3,7 +3,7 @@
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
  Copyright (C) 2014  Edem Dawui (edawui@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -39,7 +39,7 @@ namespace QLNet {
 
         public override double value(double guess) 
 		  {
-            curve_.updateGuess(curve_.data(), guess, segment_);
+            curve_.updateGuess(curve_.data_, guess, segment_);
             curve_.interpolation_.update();
             return helper_.quoteError();
         }

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace QLNet {
@@ -43,15 +40,15 @@ namespace QLNet {
             variance_ = stdDev*stdDev;
 
             if (!(forward>0.0))
-                throw new ApplicationException("positive forward value required: " + forward + " not allowed");
+                throw new Exception("positive forward value required: " + forward + " not allowed");
 
             if (!(stdDev>=0.0))
-                throw new ApplicationException("non-negative standard deviation required: " + stdDev + " not allowed");
+                throw new Exception("non-negative standard deviation required: " + stdDev + " not allowed");
 
             if (!(discount>0.0))
-                throw new ApplicationException("positive discount required: " + discount + " not allowed");
+                throw new Exception("positive discount required: " + discount + " not allowed");
 
-            if (stdDev_>=Const.QL_Epsilon) {
+            if (stdDev_>=Const.QL_EPSILON) {
                 if (strike_==0.0) {
                     n_d1_ = 0.0;
                     n_d2_ = 0.0;
@@ -131,7 +128,7 @@ namespace QLNet {
         /*! Sensitivity to change in the underlying spot price. */
         public virtual double delta(double spot) {
             if (!(spot > 0.0))
-                throw new ApplicationException("positive spot value required: " + spot + " not allowed");
+                throw new Exception("positive spot value required: " + spot + " not allowed");
 
             double DforwardDs = forward_ / spot;
 
@@ -149,9 +146,9 @@ namespace QLNet {
         public double elasticityForward() {
             double val = value();
             double del = deltaForward();
-            if (val > Const.QL_Epsilon)
+            if (val > Const.QL_EPSILON)
                 return del/val*forward_;
-            else if (Math.Abs(del)<Const.QL_Epsilon)
+            else if (Math.Abs(del)<Const.QL_EPSILON)
                 return 0.0;
             else if (del>0.0)
                 return double.MaxValue;
@@ -164,9 +161,9 @@ namespace QLNet {
         public virtual double elasticity(double spot) {
             double val = value();
             double del = delta(spot);
-            if (val>Const.QL_Epsilon)
+            if (val>Const.QL_EPSILON)
                 return del/val*spot;
-            else if (Math.Abs(del) < Const.QL_Epsilon)
+            else if (Math.Abs(del) < Const.QL_EPSILON)
                 return 0.0;
             else if (del>0.0)
                 return double.MaxValue;
@@ -196,7 +193,7 @@ namespace QLNet {
         public virtual double gamma(double spot) {
 
             if (!(spot > 0.0))
-                throw new ApplicationException("positive spot value required: " + spot + " not allowed");
+                throw new Exception("positive spot value required: " + spot + " not allowed");
 
             double DforwardDs = forward_ / spot;
 
@@ -218,7 +215,7 @@ namespace QLNet {
 
             if (maturity==0.0) return 0.0;
             if (!(maturity>0.0))
-                throw new ApplicationException("non negative maturity required: " + maturity + " not allowed");
+                throw new Exception("non negative maturity required: " + maturity + " not allowed");
             //vol = stdDev_ / std::sqrt(maturity);
             //rate = -std::log(discount_)/maturity;
             //dividendRate = -std::log(forward_ / spot * discount_)/maturity;
@@ -238,7 +235,7 @@ namespace QLNet {
         /*! Sensitivity to volatility. */
         public double vega(double maturity) {
             if (!(maturity>=0.0))
-                throw new ApplicationException("negative maturity not allowed");
+                throw new Exception("negative maturity not allowed");
 
             double temp = Math.Log(strike_/forward_)/variance_;
             // actually DalphaDsigma / SQRT(T)
@@ -254,7 +251,7 @@ namespace QLNet {
         /*! Sensitivity to discounting rate. */
         public double rho(double maturity) {
             if (!(maturity >= 0.0))
-                throw new ApplicationException("negative maturity not allowed");
+                throw new Exception("negative maturity not allowed");
 
             // actually DalphaDr / T
             double DalphaDr = DalphaDd1_ / stdDev_;
@@ -267,7 +264,7 @@ namespace QLNet {
         /*! Sensitivity to dividend/growth rate. */
         public double dividendRho(double maturity) {
             if (!(maturity >= 0.0))
-                throw new ApplicationException("negative maturity not allowed");
+                throw new Exception("negative maturity not allowed");
 
             // actually DalphaDq / T
             double DalphaDq = -DalphaDd1_ / stdDev_;
@@ -323,7 +320,7 @@ namespace QLNet {
 
             public void visit(object o) {
                 Type[] types = new Type[] { o.GetType() };
-                MethodInfo methodInfo = this.GetType().GetMethod("visit", types);
+                MethodInfo methodInfo = Utils.GetMethodInfo( this, "visit", types );
                 if (methodInfo != null) {
                     methodInfo.Invoke(this, new object[] { o });
                 }

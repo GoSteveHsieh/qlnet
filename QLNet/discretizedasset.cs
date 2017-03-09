@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Discretized asset class used by numerical 
@@ -176,7 +174,7 @@ namespace QLNet {
 
         public override void reset(int size) {
             if (method() != underlying_.method())
-                throw new ApplicationException("option and underlying were initialized on different methods");
+                throw new Exception("option and underlying were initialized on different methods");
             values_ = new Vector(size, 0.0);
             adjustValues();
         }
@@ -211,7 +209,7 @@ namespace QLNet {
                     }
                     break;
                 default:
-                    throw new ApplicationException("invalid exercise type");
+                    throw new Exception("invalid exercise type");
             }
             underlying_.postAdjustValues();
         }

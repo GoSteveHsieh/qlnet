@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -81,7 +80,7 @@ namespace QLNet
         DayCounter dayCounter;
 
         ITermStructureConsistentModel tsmodel =
-            (ITermStructureConsistentModel)base.model_;
+            (ITermStructureConsistentModel)base.model_.link;
         try {
             if (tsmodel!=null) {
                 referenceDate = tsmodel.termStructure().link.referenceDate();
@@ -103,8 +102,8 @@ namespace QLNet
             lattice = lattice_;
         } else {
             List<double> times = swaption.mandatoryTimes();
-            TimeGrid timeGrid = new TimeGrid(times, timeSteps_);
-            lattice = model_.tree(timeGrid);
+            TimeGrid timeGrid = new TimeGrid( times, times.Count, timeSteps_ );
+            lattice = model_.link.tree(timeGrid);
         }
 
         List<double> stoppingTimes = new InitializedList<double>(arguments_.exercise.dates().Count);

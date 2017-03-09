@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008-2013  Andrea Maggiulli (a.maggiulli@gmail.com)
 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -34,12 +32,12 @@ namespace QLNet
    {
       public CCTEU(Date maturityDate,double spread,Handle<YieldTermStructure> fwdCurve = null,
                    Date startDate = null,Date issueDate = null)
-         :base(3, 100.0,
+         :base(2, 100.0,
                        new Schedule(startDate,
                                 maturityDate, new Period(6,TimeUnit.Months),
                                 new NullCalendar(), BusinessDayConvention.Unadjusted, BusinessDayConvention.Unadjusted,
                                 DateGeneration.Rule.Backward, true),
-                       new Euribor6M(fwdCurve != null ? fwdCurve : new Handle<YieldTermStructure>() ),
+                       new Euribor6M(fwdCurve ?? new Handle<YieldTermStructure>() ),
                        new Actual360(),
                        BusinessDayConvention.Following,
                        new Euribor6M().fixingDays(),
@@ -72,7 +70,7 @@ namespace QLNet
    public class BTP : FixedRateBond 
    {
       public BTP(Date maturityDate,double fixedRate,Date startDate = null,Date issueDate = null)
-         :base(3, 100.0,new Schedule(startDate,
+         :base(2, 100.0,new Schedule(startDate,
                              maturityDate, new Period(6,TimeUnit.Months),
                              new NullCalendar(), BusinessDayConvention.Unadjusted, BusinessDayConvention.Unadjusted,
                              DateGeneration.Rule.Backward, true),
@@ -84,7 +82,7 @@ namespace QLNet
           As of today the only remaining one is IT123456789012
           that will redeem 99.999 on xx-may-2037 */
       public BTP(Date maturityDate, double fixedRate, double redemption,Date startDate = null,Date issueDate = null)
-      :base(3, 100.0, new Schedule(startDate,
+      :base(2, 100.0, new Schedule(startDate,
                              maturityDate, new Period(6,TimeUnit.Months),
                              new NullCalendar(), BusinessDayConvention.Unadjusted, BusinessDayConvention.Unadjusted,
                              DateGeneration.Rule.Backward, true),
@@ -173,16 +171,18 @@ namespace QLNet
       #endregion
 
       #region Observer & observable
-      public event Callback notifyObserversEvent;
+      private readonly WeakEventSource eventSource = new WeakEventSource();
+      public event Callback notifyObserversEvent
+      {
+         add { eventSource.Subscribe(value); }
+         remove { eventSource.Unsubscribe(value); }
+      }
+
       public void registerWith(Callback handler) { notifyObserversEvent += handler; }
       public void unregisterWith(Callback handler) { notifyObserversEvent -= handler; }
       protected void notifyObservers()
       {
-         Callback handler = notifyObserversEvent;
-         if (handler != null)
-         {
-            handler();
-         }
+         eventSource.Raise();
       }
 
       // observer interface
@@ -254,17 +254,17 @@ namespace QLNet
       }
       // swaps
       public List<double> swapLengths() { return swapLenghts_; }
-      public InitializedList<double?> swapRates()
+      public List<double?> swapRates()
       {
          calculate();
          return swapRates_;
       }
-      public InitializedList<double?> swapYields()
+      public List<double?> swapYields()
       {
          calculate();
          return swapBondYields_;
       }
-      public InitializedList<double?> swapDurations()
+      public List<double?> swapDurations()
       {
          calculate();
          return swapBondDurations_;
@@ -334,7 +334,7 @@ namespace QLNet
          //                              basket_->weights().end(),
          //                              durations_.begin(), 0.0);
 
-         int settlDays = 3;
+         int settlDays = 2;
          DayCounter fixedDayCount = swaps_[0].fixedDayCount();
          equivalentSwapIndex_ = nSwaps_-1;
          swapRates_[0]= swaps_[0].fairRate();
@@ -395,7 +395,7 @@ namespace QLNet
       private Euribor euriborIndex_;
       private Handle<YieldTermStructure> discountCurve_;
 
-      private InitializedList<double> yields_;
+      private List<double> yields_;
       private List<double> durations_;
       private double duration_;
       private int equivalentSwapIndex_;
@@ -403,8 +403,8 @@ namespace QLNet
       private int nSwaps_;
       private List<VanillaSwap> swaps_;
       private List<double> swapLenghts_;
-      private InitializedList<double?> swapBondDurations_;
-      private InitializedList<double?> swapBondYields_, swapRates_;
+      private List<double?> swapBondDurations_;
+      private List<double?> swapBondYields_, swapRates_;
     }
 
    //! RendistatoCalculator equivalent swap lenth Quote adapter

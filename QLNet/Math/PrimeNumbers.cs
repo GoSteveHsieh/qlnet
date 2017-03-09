@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 
 // ===========================================================================
@@ -54,22 +53,17 @@ namespace QLNet
         public  static ulong get(int absoluteIndex)
         {        
             if (primeNumbers_.empty()) 
-            {
-                //int n = sizeof(firstPrimes)/sizeof(firstPrimes[0]);
-                int n = 8*sizeof(ulong)/sizeof(ulong);
-                //primeNumbers_.insert(primeNumbers_.end(),firstPrimes, firstPrimes+n);
-                //IEnumerable<ulong> colection=firstPrimes..ForEach((i, x) => i <n));
-                primeNumbers_.AddRange( firstPrimes.ToList<ulong>().GetRange(0,n));
-            }
-            while (primeNumbers_.Count<=absoluteIndex)
+                primeNumbers_.AddRange(firstPrimes);
+
+			while (primeNumbers_.Count<=absoluteIndex)
                 nextPrimeNumber();
-            return primeNumbers_[absoluteIndex];
+            
+			return primeNumbers_[absoluteIndex];
         }
 
         private static ulong nextPrimeNumber()
         {
-            //ulong p, n, m = primeNumbers_.back();
-            ulong p, n, m = primeNumbers_.First(); 
+            ulong p, n, m = primeNumbers_.Last(); 
             do {
                 // skip the even numbers
                 m += 2;
@@ -80,12 +74,10 @@ namespace QLNet
                     p = primeNumbers_[i];
                     ++i;
                 }
-                while ((m % p==1) && p <= n);//while ( m%p && p<=n );
+                while ((m % p != 0) && p <= n);
             } while ( p<=n );
             primeNumbers_.Add(m);
             return m;
         }
-    
     }
-
 }

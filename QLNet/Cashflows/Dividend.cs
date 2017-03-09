@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -81,7 +79,7 @@ namespace QLNet
       //! \name Dividend interface
       public override double amount()
       {
-         if (nominal_ == null) throw new ApplicationException("no nominal given");
+         if (nominal_ == null) throw new Exception("no nominal given");
          return rate_ * nominal_.GetValueOrDefault();
       }
 
@@ -98,7 +96,7 @@ namespace QLNet
       {
 
          if (dividendDates.Count != dividends.Count)
-            throw new ApplicationException("size mismatch between dividend dates and amounts");
+            throw new Exception("size mismatch between dividend dates and amounts");
 
          List<Dividend> items = new List<Dividend>(dividendDates.Count);
          for (int i = 0; i < dividendDates.Count; i++)

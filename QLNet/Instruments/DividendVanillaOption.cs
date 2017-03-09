@@ -2,7 +2,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008-2013  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Single-asset vanilla option (no barriers) with discrete dividends
@@ -42,7 +40,7 @@ namespace QLNet {
 				 double accuracy = 1.0e-4, int maxEvaluations = 100, double minVol = 1.0e-7, double maxVol = 4.0)
 		  {
 
-					 if (isExpired()) throw new ApplicationException("option expired");
+					 if (isExpired()) throw new Exception("option expired");
 
 					 SimpleQuote volQuote = new SimpleQuote();
 
@@ -59,7 +57,7 @@ namespace QLNet {
 							engine = new FDDividendAmericanEngine(newProcess);
 							break;
 						 case Exercise.Type.Bermudan:
-							 throw new ApplicationException("engine not available for Bermudan option with dividends");
+							 throw new Exception("engine not available for Bermudan option with dividends");
 						 default:
 							 throw new ArgumentException("unknown exercise type");
 					 }
@@ -73,32 +71,30 @@ namespace QLNet {
             base.setupArguments(args);
 
             Arguments arguments = args as Arguments;
-            if (arguments == null) throw new ApplicationException("wrong engine type");
+            if (arguments == null) throw new Exception("wrong engine type");
 
             arguments.cashFlow = cashFlow_;
         }
 
 
         //! %Arguments for dividend vanilla option calculation
-        new public class Arguments : OneAssetOption.Arguments {
+        public new class Arguments : OneAssetOption.Arguments {
             public List<Dividend> cashFlow;
-            
-            public Arguments() {}
-            
-            public override void validate() {
+
+           public override void validate() {
                 base.validate();
 
                 Date exerciseDate = exercise.lastDate();
 
                 for (int i = 0; i < cashFlow.Count; i++) {
                     if (!(cashFlow[i].date() <= exerciseDate))
-                        throw new ApplicationException((i+1) + " dividend date (" + cashFlow[i].date()
+                        throw new Exception((i+1) + " dividend date (" + cashFlow[i].date()
                                + ") is later than the exercise date (" + exerciseDate + ")");
                 }
             }
         }
 
         //! %Dividend-vanilla-option %engine base class
-        new public class Engine : GenericEngine<Arguments, Results> { }
+        public new class Engine : GenericEngine<Arguments, Results> { }
     }
 }

@@ -2,7 +2,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008-2013 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -40,7 +40,7 @@ namespace QLNet
                            Calendar exCouponCalendar = null,
 									BusinessDayConvention exCouponConvention = BusinessDayConvention.Unadjusted,
                            bool exCouponEndOfMonth = false)
-         : base(settlementDays, paymentCalendar == null ? schedule.calendar() : paymentCalendar, 
+         : base(settlementDays, paymentCalendar ?? schedule.calendar(), 
                 issueDate) 
       {
          frequency_ = schedule.tenor().frequency();
@@ -60,10 +60,10 @@ namespace QLNet
          addRedemptionsToCashflows(new List<double>() { redemption });
 
          if (cashflows().Count == 0)
-            throw new ApplicationException("bond with no cashflows!");
+            throw new Exception("bond with no cashflows!");
 
          if (redemptions_.Count != 1)
-            throw new ApplicationException("multiple redemptions created");
+            throw new Exception("multiple redemptions created");
       }
       
       /*! simple annual compounding coupon rates
@@ -88,7 +88,7 @@ namespace QLNet
                            Calendar exCouponCalendar = null,
 									BusinessDayConvention exCouponConvention = BusinessDayConvention.Unadjusted,
                            bool exCouponEndOfMonth = false)
-         : base(settlementDays, paymentCalendar == null ? calendar : paymentCalendar, 
+         : base(settlementDays, paymentCalendar ?? calendar, 
                 issueDate) 
       {
 
@@ -115,10 +115,10 @@ namespace QLNet
             case DateGeneration.Rule.ThirdWednesday:
             case DateGeneration.Rule.Twentieth:
             case DateGeneration.Rule.TwentiethIMM:
-               throw new ApplicationException("stub date (" + stubDate + ") not allowed with " + rule + " DateGeneration::Rule");
+               throw new Exception("stub date (" + stubDate + ") not allowed with " + rule + " DateGeneration::Rule");
               
             default:
-               throw new ApplicationException("unknown DateGeneration::Rule (" + rule + ")");
+               throw new Exception("unknown DateGeneration::Rule (" + rule + ")");
          }
 
 
@@ -142,10 +142,10 @@ namespace QLNet
 
 
          if (cashflows().Count == 0)
-            throw new ApplicationException("bond with no cashflows!");
+            throw new Exception("bond with no cashflows!");
          
          if (redemptions_.Count != 1)
-            throw new ApplicationException("multiple redemptions created");
+            throw new Exception("multiple redemptions created");
       }
 
       public FixedRateBond(int settlementDays,
@@ -161,7 +161,7 @@ namespace QLNet
 									BusinessDayConvention exCouponConvention = BusinessDayConvention.Unadjusted,
 									bool exCouponEndOfMonth = false)
 
-         : base(settlementDays,paymentCalendar == null ? schedule.calendar() : paymentCalendar,
+         : base(settlementDays,paymentCalendar ?? schedule.calendar(),
                 issueDate)
       {
       
@@ -183,10 +183,10 @@ namespace QLNet
 
 
         if (cashflows().Count == 0)
-         throw new ApplicationException("bond with no cashflows!");
+         throw new Exception("bond with no cashflows!");
         
         if (redemptions_.Count != 1)
-           throw new ApplicationException("multiple redemptions created");
+           throw new Exception("multiple redemptions created");
     }
       
       Frequency frequency() { return frequency_; }

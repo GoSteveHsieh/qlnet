@@ -3,7 +3,7 @@
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  Copyright (C) 2008, 2009 , 2010 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -33,8 +33,8 @@ namespace QLNet
       protected FloatingRateCouponPricer pricer_;
 
       // constructors
-      public FloatingRateCoupon(double nominal, 
-                                Date paymentDate, 
+      public FloatingRateCoupon(Date paymentDate, 
+                                double nominal, 
                                 Date startDate, 
                                 Date endDate, 
                                 int fixingDays, 
@@ -44,11 +44,11 @@ namespace QLNet
                                 Date refPeriodStart = null, 
                                 Date refPeriodEnd = null, 
                                 DayCounter dayCounter = null, 
-                                bool isInArrears = false) 
-         : base(nominal, paymentDate, startDate, endDate, refPeriodStart, refPeriodEnd)
+                                bool isInArrears = false)
+         : base( paymentDate, nominal, startDate, endDate, refPeriodStart, refPeriodEnd )
       {
          index_ = index;
-         dayCounter_ = dayCounter == null ? new DayCounter() : dayCounter ;
+         dayCounter_ = dayCounter ?? new DayCounter() ;
          fixingDays_ = fixingDays == default(int) ? index.fixingDays() : fixingDays;
          gearing_ = gearing;
          spread_ = spread;
@@ -165,7 +165,7 @@ namespace QLNet
                      InterestRateIndex index, double gearing, double spread,
                      Date refPeriodStart, Date refPeriodEnd, DayCounter dayCounter, bool isInArrears)
       {
-         return new FloatingRateCoupon(nominal, paymentDate, startDate, endDate, fixingDays,
+         return new FloatingRateCoupon( paymentDate, nominal, startDate, endDate, fixingDays,
                     index, gearing, spread, refPeriodStart, refPeriodEnd, dayCounter, isInArrears);
       }
    }

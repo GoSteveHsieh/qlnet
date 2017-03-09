@@ -2,12 +2,12 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -20,16 +20,45 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
+#if QL_DOTNET_FRAMEWORK
    [TestClass()]
-   public class T_TermStructures
+#endif
+   public class T_TermStructures : IDisposable
    {
+      #region Initialize&Cleanup
+      private SavedSettings backup;
+      #if QL_DOTNET_FRAMEWORK
+      [TestInitialize]
+      public void testInitialize()
+      {
+      #else
+      public T_TermStructures()
+      {
+      #endif
+         backup = new SavedSettings();
+      }
+      #if QL_DOTNET_FRAMEWORK
+      [TestCleanup]
+      #endif
+      public void testCleanup()
+      {
+         Dispose();
+      }
+      public void Dispose()
+      {
+         backup.Dispose();
+      }
+      #endregion
+
       public class CommonVars
       {
          #region Values
@@ -63,9 +92,6 @@ namespace TestSuite
          public YieldTermStructure termStructure;
          public YieldTermStructure dummyTermStructure;
 
-         // cleanup
-         // SavedSettings backup;
-
          // setup
          public CommonVars()
          {
@@ -97,11 +123,14 @@ namespace TestSuite
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testReferenceChange()
       {
-         // ("Testing term structure against evaluation date change...");
-
+         // Testing term structure against evaluation date change
          CommonVars vars = new CommonVars();
 
          SimpleQuote flatRate = new SimpleQuote();
@@ -124,17 +153,20 @@ namespace TestSuite
          for (int i = 0; i < days.Length; i++)
          {
             if (!Utils.close(expected[i], calculated[i]))
-               Console.WriteLine("\n  Discount at " + days[i] + " days:\n"
+               QAssert.Fail("\n  Discount at " + days[i] + " days:\n"
                            + "    before date change: " + expected[i] + "\n"
                            + "    after date change:  " + calculated[i]);
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testImplied()
       {
-         // ("Testing consistency of implied term structure...");
-
+         // Testing consistency of implied term structure
          CommonVars vars = new CommonVars();
 
          double tolerance = 1.0e-10;
@@ -147,16 +179,19 @@ namespace TestSuite
          double discount = vars.termStructure.discount(testDate);
          double impliedDiscount = implied.discount(testDate);
          if (Math.Abs(discount - baseDiscount * impliedDiscount) > tolerance)
-            Console.WriteLine("unable to reproduce discount from implied curve\n"
+            QAssert.Fail("unable to reproduce discount from implied curve\n"
                 + "    calculated: " + baseDiscount * impliedDiscount + "\n"
                 + "    expected:   " + discount);
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testImpliedObs()
       {
-         // ("Testing observability of implied term structure...");
-
+         // Testing observability of implied term structure
          CommonVars vars = new CommonVars();
 
          Date today = Settings.evaluationDate();
@@ -168,13 +203,17 @@ namespace TestSuite
          implied.registerWith(flag.update);
          h.linkTo(vars.termStructure);
          if (!flag.isUp())
-            Console.WriteLine("Observer was not notified of term structure change");
+            QAssert.Fail("Observer was not notified of term structure change");
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testFSpreaded()
       {
-         //("Testing consistency of forward-spreaded term structure...");
+         // Testing consistency of forward-spreaded term structure
          CommonVars vars = new CommonVars();
 
          double tolerance = 1.0e-10;
@@ -189,17 +228,20 @@ namespace TestSuite
          double spreadedForward = spreaded.forwardRate(testDate, testDate, sprdc, Compounding.Continuous,
                                                          Frequency.NoFrequency).rate();
          if (Math.Abs(forward - (spreadedForward - me.value())) > tolerance)
-            Console.WriteLine("unable to reproduce forward from spreaded curve\n"
+            QAssert.Fail("unable to reproduce forward from spreaded curve\n"
                 + "    calculated: "
                 + (spreadedForward - me.value()) + "\n"
                 + "    expected:   " + forward);
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testFSpreadedObs()
       {
-         // ("Testing observability of forward-spreaded term structure...");
-
+         // Testing observability of forward-spreaded term structure
          CommonVars vars = new CommonVars();
 
          SimpleQuote me = new SimpleQuote(0.01);
@@ -210,18 +252,21 @@ namespace TestSuite
          spreaded.registerWith(flag.update);
          h.linkTo(vars.termStructure);
          if (!flag.isUp())
-            Console.WriteLine("Observer was not notified of term structure change");
+            QAssert.Fail("Observer was not notified of term structure change");
          flag.lower();
          me.setValue(0.005);
          if (!flag.isUp())
-            Console.WriteLine("Observer was not notified of spread change");
+            QAssert.Fail("Observer was not notified of spread change");
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testZSpreaded()
       {
-         // ("Testing consistency of zero-spreaded term structure...");
-
+         // Testing consistency of zero-spreaded term structure
          CommonVars vars = new CommonVars();
 
          double tolerance = 1.0e-10;
@@ -233,16 +278,19 @@ namespace TestSuite
          double zero = vars.termStructure.zeroRate(testDate, rfdc, Compounding.Continuous, Frequency.NoFrequency).rate();
          double spreadedZero = spreaded.zeroRate(testDate, rfdc, Compounding.Continuous, Frequency.NoFrequency).rate();
          if (Math.Abs(zero - (spreadedZero - me.value())) > tolerance)
-            Console.WriteLine("unable to reproduce zero yield from spreaded curve\n"
-                + "    calculated: " + (spreadedZero - me.value()) + "\n"
-                + "    expected:   " + zero);
+            QAssert.Fail("unable to reproduce zero yield from spreaded curve\n"
+                        + "    calculated: " + (spreadedZero - me.value()) + "\n"
+                        + "    expected:   " + zero);
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testZSpreadedObs()
       {
-         // ("Testing observability of zero-spreaded term structure...");
-
+         // Testing observability of zero-spreaded term structure
          CommonVars vars = new CommonVars();
 
          SimpleQuote me = new SimpleQuote(0.01);
@@ -254,22 +302,97 @@ namespace TestSuite
          spreaded.registerWith(flag.update);
          h.linkTo(vars.termStructure);
          if (!flag.isUp())
-            Console.WriteLine("Observer was not notified of term structure change");
+            QAssert.Fail("Observer was not notified of term structure change");
          flag.lower();
          me.setValue(0.005);
          if (!flag.isUp())
-            Console.WriteLine("Observer was not notified of spread change");
+            QAssert.Fail("Observer was not notified of spread change");
       }
 
-      public void suite()
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
+      public void testInterpolatedZeroCurveWithRefDateAndTenorDates()
       {
-         testReferenceChange();
-         testImplied();
-         testImpliedObs();
-         testFSpreaded();
-         testFSpreadedObs();
-         testZSpreaded();
-         testZSpreadedObs();
-      }
+         CommonVars vars = new CommonVars();
+
+         // Create the interpolated curve
+         var refDate = new Date( 1, 10, 2015 );
+         var dates = new List<Date>()
+         {
+            new Date(30, 12, 2015),
+            new Date(30, 3, 2016),
+            new Date(30, 9, 2016),
+            new Date(29, 9, 2017),
+            new Date(28, 9, 2018),
+            new Date(30, 9, 2019),
+            new Date(30, 9, 2020),
+            new Date(30, 9, 2021),
+            new Date(30, 9, 2022),
+            new Date(29, 9, 2023),
+            new Date(30, 9, 2024),
+            new Date(30, 9, 2025),
+            new Date(30, 9, 2030),
+            new Date(28, 9, 2035),
+            new Date(29, 9, 2045),
+         };
+
+         var yields = new List<double>()
+         {
+            -0.002558362,
+            -0.002478462,
+            -0.00248845,
+            -0.002498437,
+            -0.00196903,
+            -0.001219628,
+            -0.000209989,
+            0.000940221,
+            0.00220121,
+            0.003493045,
+            0.004785712,
+            0.00602906,
+            0.010909594,
+            0.013132837,
+            0.01403893
+         };
+
+         var curve = new InterpolatedZeroCurve<Linear>( dates,
+            yields,
+            new ActualActual( ActualActual.Convention.ISMA ),
+            new Linear(),
+            Compounding.Continuous,
+            Frequency.Annual, refDate );
+
+         Dictionary<Date, double> tenors2 = new Dictionary<Date, double>
+         {
+            {new Date(30, 12, 2015), -0.002558362},
+            {new Date(30, 3, 2016), -0.002478462},
+            {new Date(30, 9, 2016), -0.00248845},
+            {new Date(29, 9, 2017), -0.002498437},
+            {new Date(28, 9, 2018), -0.00196903},
+            {new Date(30, 9, 2019), -0.001219628},
+            {new Date(30, 9, 2020), -0.000209989},
+            {new Date(30, 9, 2021), 0.000940221},
+            {new Date(30, 9, 2022), 0.00220121},
+            {new Date(29, 9, 2023), 0.003493045},
+            {new Date(30, 9, 2024), 0.004785712},
+            {new Date(30, 9, 2025), 0.00602906},
+            {new Date(30, 9, 2030), 0.010909594},
+            {new Date(28, 9, 2035), 0.013132837},
+            {new Date(29, 9, 2045), 0.01403893}
+         };
+
+         // Make sure the points come back as expected
+         var tenors = new[] { 0.25, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 30.0 };
+
+         for ( int i = 0; i < tenors.Length; i++ )
+         {
+            var test = curve.interpolation_.value( tenors[i],true );
+            QAssert.AreEqual( yields[i], test );
+         }
+         QAssert.AreNotEqual( yields[0], curve.interpolation_.value( 0.0,true ) );
+        }
    }
 }

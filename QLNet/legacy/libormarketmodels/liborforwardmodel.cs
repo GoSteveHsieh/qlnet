@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -35,7 +34,7 @@ namespace QLNet
         public LiborForwardModel(LiborForwardModelProcess process,
                           LmVolatilityModel volaModel,
                           LmCorrelationModel corrModel)
-            : base(volaModel.parameters().Count() + corrModel.parameters().Count()) {
+            : base(volaModel.parameters().Count + corrModel.parameters().Count) {
 
             f_ = new InitializedList<double>(process.size());
             accrualPeriod_ = new InitializedList<double>(process.size());
@@ -84,7 +83,7 @@ namespace QLNet
                 = process_.accrualEndTimes();
 
             if (!(accrualStartTimes.First() <= maturity && accrualStartTimes.Last() >= maturity))
-                throw new ApplicationException("capet maturity does not fit to the process"); 
+                throw new Exception("capet maturity does not fit to the process"); 
             
             int i = accrualStartTimes.BinarySearch(maturity);
             if (i < 0)
@@ -97,9 +96,9 @@ namespace QLNet
             i = Math.Max(Math.Min(i, accrualStartTimes.Count - 1), 0);
             
             if  (!(i<process_.size()
-                && Math.Abs(maturity - accrualStartTimes[i]) < 100 * Const.QL_Epsilon
-                && Math.Abs(bondMaturity - accrualEndTimes[i]) < 100 * Const.QL_Epsilon))
-                throw new ApplicationException("irregular fixings are not (yet) supported"); 
+                && Math.Abs(maturity - accrualStartTimes[i]) < 100 * Const.QL_EPSILON
+                && Math.Abs(bondMaturity - accrualEndTimes[i]) < 100 * Const.QL_EPSILON))
+                throw new Exception("irregular fixings are not (yet) supported"); 
 
             double tenor     = accrualEndTimes[i] - accrualStartTimes[i];
             double forward   = process_.initialValues()[i];
@@ -128,7 +127,7 @@ namespace QLNet
 {
             Vector omega = new Vector(beta + 1, 0.0);
             if(!(alpha<beta))
-                throw new ApplicationException("alpha needs to be smaller than beta");
+                throw new Exception("alpha needs to be smaller than beta");
 
             double s=0.0;
             for (int k=alpha+1; k<=beta; ++k) {

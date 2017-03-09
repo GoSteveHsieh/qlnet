@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! This class contains a sampled curve.
@@ -65,7 +62,7 @@ namespace QLNet {
         /*! \todo replace or complement with a more general function valueAt(spot) */
         public double valueAtCenter() {
             if(empty())
-                throw new ApplicationException("empty sampled curve");
+                throw new Exception("empty sampled curve");
             
             int jmid = size() / 2;
             if (size() % 2 == 1)
@@ -77,7 +74,7 @@ namespace QLNet {
         /*! \todo replace or complement with a more general function firstDerivativeAt(spot) */
         public double firstDerivativeAtCenter() {
             if (!(size() >= 3))
-                throw new ApplicationException("the size of the curve must be at least 3");
+                throw new Exception("the size of the curve must be at least 3");
             
             int jmid = size() / 2;
             if (size() % 2 == 1) {
@@ -90,7 +87,7 @@ namespace QLNet {
         /*! \todo replace or complement with a more general function secondDerivativeAt(spot) */
         public double secondDerivativeAtCenter() {
             if (!(size() >= 4))
-                throw new ApplicationException("the size of the curve must be at least 4");
+                throw new Exception("the size of the curve must be at least 4");
             int jmid = size() / 2;
             if (size() % 2 == 1) {
                 double deltaPlus = (values_[jmid + 1] - values_[jmid]) / (grid_[jmid + 1] - grid_[jmid]);

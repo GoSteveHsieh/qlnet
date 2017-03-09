@@ -1,7 +1,7 @@
 ﻿/*
- Copyright (C) 2008-2013 Andrea Maggiulli (a.maggiulli@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -105,7 +104,7 @@ namespace QLNet
          {
             floorRates_ = new List<double>(strikes);
 
-            while (floorRates_.Count < floorRates_.Count)
+            while ( floorRates_.Count < floatingLeg_.Count )
                floorRates_.Add(floorRates_.Last());
          } 
          else
@@ -282,10 +281,6 @@ namespace QLNet
 
       public class Arguments : IPricingEngineArguments
       {
-         public Arguments() 
-         {
-           //type = -1;
-         }
          public CapFloorType type;
          public List<Date> startDates;
          public List<Date> fixingDates;

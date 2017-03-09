@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010, 2011, 2012  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -16,20 +16,25 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
+#if QL_DOTNET_FRAMEWORK
    [TestClass()]
+#endif
    public class T_PSACurve
    {
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testCashedValues()
       {
 
@@ -52,9 +57,9 @@ namespace TestSuite
          for (int i = 0; i < schedule.Count; i++)
          {
             if ( i <= 29 )
-               Assert.AreEqual(listCPR[i], psa100.getCPR(schedule[i])*100,0.001);
+               QAssert.AreEqual(listCPR[i], psa100.getCPR(schedule[i])*100,0.001);
             else
-               Assert.AreEqual(6.0000, psa100.getCPR(schedule[i])*100);
+               QAssert.AreEqual(6.0000, psa100.getCPR(schedule[i])*100);
          }
 
 

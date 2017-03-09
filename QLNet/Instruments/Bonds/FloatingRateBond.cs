@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -52,9 +52,9 @@ namespace QLNet {
             addRedemptionsToCashflows(new List<double>() { redemption });
 
             if (cashflows().Count == 0)
-                throw new ApplicationException("bond with no cashflows!");
+                throw new Exception("bond with no cashflows!");
             if (redemptions_.Count != 1)
-                throw new ApplicationException("multiple redemptions created");
+                throw new Exception("multiple redemptions created");
 
             index.registerWith(update);
         }
@@ -98,9 +98,9 @@ namespace QLNet {
               case DateGeneration.Rule.ThirdWednesday:
               case DateGeneration.Rule.Twentieth:
               case DateGeneration.Rule.TwentiethIMM:
-                    throw new ApplicationException("stub date (" + stubDate + ") not allowed with " + rule + " DateGeneration::Rule");
+                    throw new Exception("stub date (" + stubDate + ") not allowed with " + rule + " DateGeneration::Rule");
                 default:
-                    throw new ApplicationException("unknown DateGeneration::Rule (" + rule + ")");
+                    throw new Exception("unknown DateGeneration::Rule (" + rule + ")");
             }
 
             Schedule schedule = new Schedule(startDate, maturityDate_, new Period(couponFrequency), calendar_,
@@ -120,9 +120,9 @@ namespace QLNet {
             addRedemptionsToCashflows(new List<double>() { redemption });
 
             if (cashflows().Count == 0)
-                throw new ApplicationException("bond with no cashflows!");
+                throw new Exception("bond with no cashflows!");
             if (redemptions_.Count != 1)
-                throw new ApplicationException("multiple redemptions created");
+                throw new Exception("multiple redemptions created");
 
             index.registerWith(update);
         }

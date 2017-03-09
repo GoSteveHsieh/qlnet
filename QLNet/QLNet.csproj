@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,25 +31,48 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;QL_NEGATIVE_RATES</DefineConstants>
+    <OutputPath>bin\Debug\net40\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;QL_NEGATIVE_RATES,QL_DOTNET_FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Release\net40\</OutputPath>
+    <DefineConstants>TRACE;QL_NEGATIVE_RATES,QL_DOTNET_FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-net45|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\net45\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;QL_NEGATIVE_RATES,QL_DOTNET_FRAMEWORK</DefineConstants>
+    <DebugType>full</DebugType>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-net45|AnyCPU'">
+    <OutputPath>bin\Release\net45\</OutputPath>
+    <DefineConstants>TRACE;QL_NEGATIVE_RATES,QL_DOTNET_FRAMEWORK</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
@@ -58,11 +81,12 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cashflow.cs" />
-    <Compile Include="Cashflows\averagebmacoupon.cs" />
+    <Compile Include="Cashflows\AverageBMACoupon.cs" />
     <Compile Include="Cashflows\CappedFlooredCoupon.cs" />
     <Compile Include="Cashflows\CappedFlooredYoYInflationCoupon.cs" />
     <Compile Include="Cashflows\CashFlows.cs" />
@@ -83,9 +107,11 @@
     <Compile Include="Cashflows\IndexedCashFlow.cs" />
     <Compile Include="Cashflows\InflationCoupon.cs" />
     <Compile Include="Cashflows\InflationCouponPricer.cs" />
+    <Compile Include="Cashflows\LinearTsrPricer.cs" />
     <Compile Include="Cashflows\OvernightIndexedCoupon.cs" />
     <Compile Include="Cashflows\Principal.cs" />
     <Compile Include="Cashflows\PrincipalLegBase.cs" />
+    <Compile Include="Cashflows\RangeAccrual.cs" />
     <Compile Include="Cashflows\RateLegBase.cs" />
     <Compile Include="Cashflows\Replication.cs" />
     <Compile Include="Cashflows\SimpleCashFlow.cs" />
@@ -102,12 +128,16 @@
     <Compile Include="Error.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Exercise.cs" />
+    <Compile Include="Extensions\ListExtension.cs" />
     <Compile Include="grid.cs" />
     <Compile Include="Handle.cs" />
     <Compile Include="Index.cs" />
-    <Compile Include="Indexes\bmaindex.cs" />
-    <Compile Include="Indexes\IBORIndex.cs" />
+    <Compile Include="Indexes\BMAIndex.cs" />
+    <Compile Include="Indexes\IborIndex.cs" />
+    <Compile Include="Indexes\Ibor\Aonia.cs" />
     <Compile Include="Indexes\Ibor\Audlibor.cs" />
+    <Compile Include="Indexes\Ibor\Bbsw.cs" />
+    <Compile Include="Indexes\Ibor\Bkbm.cs" />
     <Compile Include="Indexes\Ibor\Cadlibor.cs" />
     <Compile Include="Indexes\Ibor\Cdor.cs" />
     <Compile Include="Indexes\Ibor\Chflibor.cs" />
@@ -115,12 +145,16 @@
     <Compile Include="Indexes\Ibor\Eonia.cs" />
     <Compile Include="Indexes\Ibor\Euribor.cs" />
     <Compile Include="Indexes\Ibor\Eurlibor.cs" />
+    <Compile Include="Indexes\Ibor\FedFunds.cs" />
     <Compile Include="Indexes\Ibor\Gbplibor.cs" />
     <Compile Include="Indexes\Ibor\Jibar.cs" />
     <Compile Include="Indexes\Ibor\Jpylibor.cs" />
     <Compile Include="Indexes\Ibor\Libor.cs" />
     <Compile Include="Indexes\Ibor\Nzdlibor.cs" />
+    <Compile Include="Indexes\Ibor\Nzocr.cs" />
     <Compile Include="Indexes\Ibor\Seklibor.cs" />
+    <Compile Include="Indexes\Ibor\Shibor.cs" />
+    <Compile Include="Indexes\Ibor\Sonia.cs" />
     <Compile Include="Indexes\Ibor\Tibor.cs" />
     <Compile Include="Indexes\Ibor\Trylibor.cs" />
     <Compile Include="Indexes\Ibor\Usdlibor.cs" />
@@ -161,29 +195,42 @@
     <Compile Include="Instruments\Bonds\BTP.cs" />
     <Compile Include="Instruments\Bonds\CallableBond.cs" />
     <Compile Include="Instruments\Bonds\CmsRateBond.cs" />
+    <Compile Include="Instruments\Bonds\ConstantCPR.cs" />
     <Compile Include="Instruments\Bonds\ConvertibleBond.cs" />
     <Compile Include="Instruments\Bonds\CPIBond.cs" />
     <Compile Include="Instruments\Bonds\DiscretizedCallableFixedRateBond.cs" />
     <Compile Include="Instruments\Bonds\Fixedratebond.cs" />
     <Compile Include="Instruments\Bonds\FloatingRateBond.cs" />
+    <Compile Include="Instruments\Bonds\IPrepayModel.cs" />
     <Compile Include="Instruments\Bonds\MBSFixedRateBond.cs" />
     <Compile Include="Instruments\Bonds\PSACurve.cs" />
     <Compile Include="Instruments\Bonds\Zerocouponbond.cs" />
     <Compile Include="Instruments\Callability.cs" />
     <Compile Include="Instruments\CapFloor.cs" />
     <Compile Include="Instruments\Claim.cs" />
+    <Compile Include="Instruments\CliquetOption.cs" />
+    <Compile Include="Instruments\CompositeInstrument.cs" />
+    <Compile Include="Instruments\CPICapFloor.cs" />
+    <Compile Include="Instruments\CPISwap.cs" />
     <Compile Include="Instruments\CreditDefaultSwap.cs" />
+    <Compile Include="Instruments\DividendBarrierOption.cs" />
     <Compile Include="Instruments\DividendSchedule.cs" />
     <Compile Include="Instruments\DividendVanillaOption.cs" />
+    <Compile Include="Instruments\DoubleBarrierOption.cs" />
     <Compile Include="Instruments\EuropeanOption.cs" />
     <Compile Include="Instruments\fixedratebondforward.cs" />
     <Compile Include="Instruments\forward.cs" />
     <Compile Include="Instruments\forwardrateagreement.cs" />
+    <Compile Include="Instruments\ForwardVanillaOption.cs" />
+    <Compile Include="Instruments\Futures.cs" />
     <Compile Include="Instruments\ImpliedVolatility.cs" />
     <Compile Include="Instruments\InflationCapFloor.cs" />
     <Compile Include="Instruments\Instrument.cs" />
     <Compile Include="Instruments\Loan.cs" />
+    <Compile Include="Instruments\LookbackOption.cs" />
     <Compile Include="Instruments\MakeBasisSwap.cs" />
+    <Compile Include="Instruments\MakeCapFloor.cs" />
+    <Compile Include="Instruments\MakeCms.cs" />
     <Compile Include="Instruments\MakeLoans.cs" />
     <Compile Include="Instruments\MakeOIS.cs" />
     <Compile Include="Instruments\Makeswaption.cs" />
@@ -215,10 +262,21 @@
     <Compile Include="legacy\libormarketmodels\lmlinexpcorrmodel.cs" />
     <Compile Include="legacy\libormarketmodels\lmlinexpvolmodel.cs" />
     <Compile Include="legacy\libormarketmodels\lmvolmodel.cs" />
+    <Compile Include="Math\AbcdMathFunction.cs" />
+    <Compile Include="Math\BernsteinPolynomial.cs" />
     <Compile Include="Math\beta.cs" />
+    <Compile Include="Math\BSpline.cs" />
     <Compile Include="Math\Comparison.cs" />
-    <Compile Include="Math\CostFunction.cs" />
+    <Compile Include="Math\integrals\GaussLobattoIntegral.cs" />
+    <Compile Include="Math\Interpolations\Abcdinterpolation.cs" />
+    <Compile Include="Math\Interpolations\BackwardflatLinearInterpolation.cs" />
+    <Compile Include="Math\Interpolations\FlatExtrapolator2D.cs" />
+    <Compile Include="Math\Interpolations\MixedInterpolation.cs" />
+    <Compile Include="Math\Interpolations\VannaVolgaInterpolation.cs" />
+    <Compile Include="Math\Optimization\BFGS.cs" />
+    <Compile Include="Math\Optimization\CostFunction.cs" />
     <Compile Include="Math\Distributions\binomialdistribution.cs" />
+    <Compile Include="Math\Distributions\BivariateNormalDistribution.cs" />
     <Compile Include="Math\Distributions\chisquaredistribution.cs" />
     <Compile Include="Math\Distributions\GammaDistribution.cs" />
     <Compile Include="Math\Distributions\NormalDistribution.cs" />
@@ -232,6 +290,7 @@
     <Compile Include="Math\integrals\simpsonintegral.cs" />
     <Compile Include="Math\integrals\trapezoidintegral.cs" />
     <Compile Include="Math\Interpolations\backwardflatinterpolation.cs" />
+    <Compile Include="Math\Interpolations\BicubicSplineInterpolation.cs" />
     <Compile Include="Math\Interpolations\bilinearinterpolation.cs" />
     <Compile Include="Math\Interpolations\convexmonotoneinterpolation.cs" />
     <Compile Include="Math\Interpolations\CubicInterpolation.cs" />
@@ -239,11 +298,15 @@
     <Compile Include="Math\Interpolation.cs" />
     <Compile Include="Math\Interpolations\forwardflatinterpolation.cs" />
     <Compile Include="Math\Interpolations\interpolation2d.cs" />
+    <Compile Include="Math\Interpolations\KernelInterpolation.cs" />
+    <Compile Include="Math\Interpolations\KernelInterpolation2D.cs" />
     <Compile Include="Math\Interpolations\Linearinterpolation.cs" />
     <Compile Include="Math\Interpolations\Loginterpolation.cs" />
     <Compile Include="Math\Interpolations\multicubicspline.cs" />
     <Compile Include="Math\Interpolations\sabrinterpolation.cs" />
-    <Compile Include="Math\Interpolations\TqrEigenDecomposition.cs" />
+    <Compile Include="Math\Interpolations\XABRInterpolation.cs" />
+    <Compile Include="Math\KernelFunctions.cs" />
+    <Compile Include="Math\matrixutilities\TqrEigenDecomposition.cs" />
     <Compile Include="Math\linearleastsquaresregression.cs" />
     <Compile Include="Math\Matrix.cs" />
     <Compile Include="Math\matrixutilities\choleskydecomposition.cs" />
@@ -251,10 +314,12 @@
     <Compile Include="Math\matrixutilities\qrdecomposition.cs" />
     <Compile Include="Math\matrixutilities\svd.cs" />
     <Compile Include="Math\matrixutilities\symmetricschurdecomposition.cs" />
+    <Compile Include="Math\ModifiedBessel.cs" />
     <Compile Include="Math\Optimization\ArmijoLineSearch.cs" />
     <Compile Include="Math\Optimization\ConjugateGradient.cs" />
     <Compile Include="Math\Optimization\Constraint.cs" />
     <Compile Include="Math\Optimization\EndCriteria.cs" />
+    <Compile Include="Math\Optimization\GoldsteinLineSearch.cs" />
     <Compile Include="Math\Optimization\LeastSquareProblem.cs" />
     <Compile Include="Math\Optimization\levenbergmarquardt.cs" />
     <Compile Include="Math\Optimization\LineSearch.cs" />
@@ -262,9 +327,13 @@
     <Compile Include="Math\Optimization\lmdif.cs" />
     <Compile Include="Math\Optimization\method.cs" />
     <Compile Include="Math\Optimization\problem.cs" />
+    <Compile Include="Math\Optimization\ProjectedConstraint.cs" />
     <Compile Include="Math\Optimization\ProjectedCostFunction.cs" />
+    <Compile Include="Math\Optimization\Projection.cs" />
     <Compile Include="Math\Optimization\Simplex.cs" />
     <Compile Include="Math\Optimization\SteepestDescent.cs" />
+    <Compile Include="Math\PascalTriangle.cs" />
+    <Compile Include="Math\PolynomialFunction.cs" />
     <Compile Include="Math\PrimeNumbers.cs" />
     <Compile Include="Math\randomnumbers\Haltonrsg.cs" />
     <Compile Include="Math\randomnumbers\inversecumulativerng.cs" />
@@ -274,8 +343,10 @@
     <Compile Include="Math\randomnumbers\randomsequencegenerator.cs" />
     <Compile Include="Math\randomnumbers\rngtraits.cs" />
     <Compile Include="Math\randomnumbers\seedgenerator.cs" />
+    <Compile Include="Math\randomnumbers\SobolBrownianBridgeRsg.cs" />
     <Compile Include="Math\randomnumbers\sobolrsg.cs" />
     <Compile Include="Math\randomnumbers\sobolrsg2.cs" />
+    <Compile Include="Math\RichardsonExtrapolation.cs" />
     <Compile Include="Math\SampledCurve.cs" />
     <Compile Include="Math\Solver1d.cs" />
     <Compile Include="Math\Rounding.cs" />
@@ -340,6 +411,11 @@
     <Compile Include="Methods\montecarlo\pathpricer.cs" />
     <Compile Include="Methods\montecarlo\sample.cs" />
     <Compile Include="Models\CalibrationHelper.cs" />
+    <Compile Include="Models\Equity\HestonModel.cs" />
+    <Compile Include="Models\Equity\HestonModelHelper.cs" />
+    <Compile Include="Models\Equity\PiecewiseTimeDependentHestonModel.cs" />
+    <Compile Include="Models\MarketModels\BrownianGenerator.cs" />
+    <Compile Include="Models\MarketModels\BrownianGenerators\SobolBrownianGenerator.cs" />
     <Compile Include="Models\model.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -360,18 +436,31 @@
     <Compile Include="Patterns\observablevalue.cs" />
     <Compile Include="Patterns\Observer.cs" />
     <Compile Include="Patterns\Visitor.cs" />
+    <Compile Include="Patterns\WeakEventSource.cs" />
     <Compile Include="payoff.cs" />
     <Compile Include="PricingEngine.cs" />
     <Compile Include="Pricingengines\Americanpayoffatexpiry.cs" />
     <Compile Include="Pricingengines\Americanpayoffathit.cs" />
-    <Compile Include="Pricingengines\asian\analytic_cont_geom_av_price.cs" />
-    <Compile Include="Pricingengines\asian\analytic_discr_geom_av_price.cs" />
+    <Compile Include="Pricingengines\asian\AnalyticContinuousGeometricAveragePriceAsianEngine.cs" />
+    <Compile Include="Pricingengines\asian\AnalyticDiscreteGeometricAveragePriceAsianEngine.cs" />
+    <Compile Include="Pricingengines\asian\AnalyticDiscreteGeometricAverageStrikeAsianEngine.cs" />
     <Compile Include="Pricingengines\asian\mcdiscreteasianengine.cs" />
     <Compile Include="Pricingengines\asian\mc_discr_arith_av_price.cs" />
     <Compile Include="Pricingengines\asian\mc_discr_arith_av_strike.cs" />
     <Compile Include="Pricingengines\asian\mc_discr_geom_av_price.cs" />
     <Compile Include="Pricingengines\barrier\AnalyticBarrierEngine.cs" />
+    <Compile Include="Pricingengines\barrier\AnalyticBinaryBarrierEngine.cs" />
+    <Compile Include="Pricingengines\barrier\AnalyticDoubleBarrierEngine.cs" />
+    <Compile Include="Pricingengines\barrier\BinomialBarrierEngine.cs" />
+    <Compile Include="Pricingengines\barrier\DiscretizedBarrierOption.cs" />
+    <Compile Include="Pricingengines\barrier\VannaVolgaBarrierEngine.cs" />
+    <Compile Include="Pricingengines\barrier\VannaVolgaDoubleBarrierEngine.cs" />
+    <Compile Include="Pricingengines\barrier\WulinYongDoubleBarrierEngine.cs" />
+    <Compile Include="Pricingengines\Basket\KirkEngine.cs" />
+    <Compile Include="Pricingengines\Basket\MCEuropeanBasketEngine.cs" />
+    <Compile Include="Pricingengines\Basket\StulzEngine.cs" />
     <Compile Include="Pricingengines\BlackCalculator.cs" />
+    <Compile Include="Pricingengines\BlackDeltaCalculator.cs" />
     <Compile Include="Pricingengines\blackformula.cs" />
     <Compile Include="Pricingengines\Blackscholescalculator.cs" />
     <Compile Include="Pricingengines\Bond\BlackCallableBondEngine.cs" />
@@ -379,15 +468,25 @@
     <Compile Include="Pricingengines\Bond\Discountingbondengine.cs" />
     <Compile Include="Pricingengines\Bond\TreeCallableBondEngine.cs" />
     <Compile Include="Pricingengines\CapFloor\analyticcapfloorengine.cs" />
+    <Compile Include="Pricingengines\CapFloor\BachelierCapFloorEngine.cs" />
     <Compile Include="Pricingengines\CapFloor\BlackCapFloorEngine.cs" />
     <Compile Include="Pricingengines\CapFloor\discretizedcapfloor.cs" />
+    <Compile Include="Pricingengines\inflation\InterpolatingCPICapFloorEngine.cs" />
+    <Compile Include="Pricingengines\Cliquet\AnalyticCliquetEngine.cs" />
+    <Compile Include="Pricingengines\Cliquet\AnalyticPerformanceEngine.cs" />
     <Compile Include="Pricingengines\credit\IntegralCdsEngine.cs" />
     <Compile Include="Pricingengines\credit\MidPointCdsEngine.cs" />
+    <Compile Include="Pricingengines\Forward\ForwardPerformanceVanillaEngine.cs" />
+    <Compile Include="Pricingengines\Forward\ForwardVanillaEngine.cs" />
     <Compile Include="Pricingengines\genericmodelengine.cs" />
     <Compile Include="Pricingengines\Greeks.cs" />
     <Compile Include="Pricingengines\inflation\InflationCapFloorEngines.cs" />
     <Compile Include="Pricingengines\latticeshortratemodelengine.cs" />
     <Compile Include="Pricingengines\Loan\DiscountingLoanEngine.cs" />
+    <Compile Include="Pricingengines\Lookback\AnalyticContinuousFixedLookbackEngine.cs" />
+    <Compile Include="Pricingengines\Lookback\AnalyticContinuousFloatingLookbackEngine.cs" />
+    <Compile Include="Pricingengines\Lookback\AnalyticContinuousPartialFixedLookbackEngine.cs" />
+    <Compile Include="Pricingengines\Lookback\AnalyticContinuousPartialFloatingLookbackEngine.cs" />
     <Compile Include="Pricingengines\mclongstaffschwartzengine.cs" />
     <Compile Include="Pricingengines\mcsimulation.cs" />
     <Compile Include="Pricingengines\swaption\blackswaptionengine.cs" />
@@ -395,12 +494,19 @@
     <Compile Include="Pricingengines\swaption\g2swaptionengine.cs" />
     <Compile Include="Pricingengines\swaption\jamshidianswaptionengine.cs" />
     <Compile Include="Pricingengines\swaption\treeswaptionengine.cs" />
+    <Compile Include="Pricingengines\Swap\CounterpartyAdjSwapEngine.cs" />
     <Compile Include="Pricingengines\Swap\DiscountingBasisSwapEngine.cs" />
     <Compile Include="Pricingengines\Swap\Discountingswapengine.cs" />
     <Compile Include="Pricingengines\Swap\discretizedswap.cs" />
     <Compile Include="Pricingengines\Swap\treeswapengine.cs" />
+    <Compile Include="Pricingengines\vanilla\AnalyticBSMHullWhiteEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\AnalyticDigitalAmericanEngine.cs" />
     <Compile Include="Pricingengines\vanilla\AnalyticDividendEuropeanEngine.cs" />
     <Compile Include="Pricingengines\vanilla\AnalyticEuropeanEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\AnalyticH1HWEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\AnalyticHestonEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\AnalyticHestonHullWhiteEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\AnalyticPTDHestonEngine.cs" />
     <Compile Include="Pricingengines\vanilla\baroneadesiwhaleyengine.cs" />
     <Compile Include="Pricingengines\vanilla\binomialengine.cs" />
     <Compile Include="Pricingengines\vanilla\bjerksundstenslandengine.cs" />
@@ -412,24 +518,33 @@
     <Compile Include="Pricingengines\vanilla\FDDividendEngine.cs" />
     <Compile Include="Pricingengines\vanilla\FDDividendEuropeanEngine.cs" />
     <Compile Include="Pricingengines\vanilla\FDEuropeanEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\FdHestonVanillaEngine.cs" />
     <Compile Include="Pricingengines\vanilla\FDMultiPeriodEngine.cs" />
     <Compile Include="Pricingengines\vanilla\FDShoutEngine.cs" />
     <Compile Include="Pricingengines\vanilla\FDStepConditionEngine.cs" />
     <Compile Include="Pricingengines\vanilla\FDVanillaEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\HestonExpansionEngine.cs" />
     <Compile Include="Pricingengines\vanilla\Integralengine.cs" />
     <Compile Include="Pricingengines\vanilla\Juquadraticengine.cs" />
     <Compile Include="Pricingengines\vanilla\mcamericanengine.cs" />
     <Compile Include="Pricingengines\vanilla\mceuropeanengine.cs" />
+    <Compile Include="Pricingengines\vanilla\MCEuropeanHestonEngine.cs" />
+    <Compile Include="Pricingengines\vanilla\MCHestonHullWhiteEngine.cs" />
     <Compile Include="Pricingengines\vanilla\mcvanillaengine.cs" />
     <Compile Include="processes\BlackScholesProcess.cs" />
     <Compile Include="processes\Defaultable.cs" />
     <Compile Include="processes\EulerDiscretization.cs" />
+    <Compile Include="processes\ForwardMeasureProcess.cs" />
     <Compile Include="processes\GeometricBrownianMotionProcess.cs" />
+    <Compile Include="processes\HestonProcess.cs" />
+    <Compile Include="processes\HullWhiteProcess.cs" />
+    <Compile Include="processes\HybridHestonHullWhiteProcess.cs" />
     <Compile Include="processes\Ornsteinuhlenbeckprocess.cs" />
     <Compile Include="processes\Squarerootprocess.cs" />
     <Compile Include="processes\stochasticprocessarray.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quotes\CompositeQuote.cs" />
+    <Compile Include="Quotes\DeltaVolQuote.cs" />
     <Compile Include="Quotes\DerivedQuote.cs" />
     <Compile Include="Quotes\LastFixingQuote.cs" />
     <Compile Include="Quotes\Quote.cs" />
@@ -445,6 +560,7 @@
     <Compile Include="Termstructures\Curve.cs" />
     <Compile Include="Termstructures\DefaultProbabilityTermStructure.cs" />
     <Compile Include="Termstructures\InflationTermStructure.cs" />
+    <Compile Include="Termstructures\Inflation\CPICapFloorTermPriceSurface.cs" />
     <Compile Include="Termstructures\Inflation\InflationHelpers.cs" />
     <Compile Include="Termstructures\Inflation\InflationTraits.cs" />
     <Compile Include="Termstructures\Inflation\InterpolatedZeroInflationCurve.cs" />
@@ -455,12 +571,31 @@
     <Compile Include="Termstructures\Iterativebootstrap.cs" />
     <Compile Include="Termstructures\localbootstrap.cs" />
     <Compile Include="Termstructures\TermStructure.cs" />
+    <Compile Include="Termstructures\Volatility\AbcdCalibration.cs" />
+    <Compile Include="Termstructures\Volatility\AbcdFunction.cs" />
+    <Compile Include="Termstructures\Volatility\AtmSmileSection.cs" />
     <Compile Include="Termstructures\Volatility\Bond\CallableBondConstantVolatility.cs" />
     <Compile Include="Termstructures\Volatility\Bond\CallableBondVolatilityStructure.cs" />
+    <Compile Include="Termstructures\Volatility\CapFloor\CapFloorTermVolCurve.cs" />
+    <Compile Include="Termstructures\Volatility\CapFloor\CapFloorTermVolSurface.cs" />
+    <Compile Include="Termstructures\Volatility\equityfx\BlackVarianceSurface.cs" />
+    <Compile Include="Termstructures\Volatility\equityfx\ImpliedVolTermStructure.cs" />
     <Compile Include="Termstructures\Volatility\Inflation\CPIVolatilitySurface.cs" />
     <Compile Include="Termstructures\Volatility\Inflation\yoyinflationoptionletvolatilitystructure.cs" />
+    <Compile Include="Termstructures\Volatility\InterpolatedSmileSection.cs" />
     <Compile Include="Termstructures\Volatility\Optionlet\capletvariancecurve.cs" />
+    <Compile Include="Termstructures\Volatility\Optionlet\OptionletStripper.cs" />
+    <Compile Include="Termstructures\Volatility\Optionlet\OptionletStripper1.cs" />
+    <Compile Include="Termstructures\Volatility\Optionlet\OptionletStripper2.cs" />
+    <Compile Include="Termstructures\Volatility\Optionlet\SpreadedOptionletVolatility.cs" />
+    <Compile Include="Termstructures\Volatility\Optionlet\StrippedOptionletAdapter.cs" />
+    <Compile Include="Termstructures\Volatility\Optionlet\StrippedOptionletBase.cs" />
+    <Compile Include="Termstructures\Volatility\SpreadedSmileSection.cs" />
+    <Compile Include="Termstructures\Volatility\swaption\SpreadedSwaptionVolatility.cs" />
     <Compile Include="Termstructures\Volatility\swaption\swaptionconstantvol.cs" />
+    <Compile Include="Termstructures\Volatility\swaption\SwaptionVolatilityCube.cs" />
+    <Compile Include="Termstructures\Volatility\swaption\SwaptionVolCube1.cs" />
+    <Compile Include="Termstructures\Volatility\swaption\SwaptionVolCube2.cs" />
     <Compile Include="Termstructures\Volatility\swaption\swaptionvoldiscrete.cs" />
     <Compile Include="Termstructures\Volatility\swaption\swaptionvolmatrix.cs" />
     <Compile Include="Termstructures\voltermstructure.cs" />
@@ -483,12 +618,14 @@
     <Compile Include="Termstructures\Yield\Bondhelpers.cs" />
     <Compile Include="Termstructures\Yield\Bootstraptraits.cs" />
     <Compile Include="Termstructures\Yield\DiscountCurve.cs" />
+    <Compile Include="Termstructures\Yield\FittedBondDiscountCurve.cs" />
     <Compile Include="Termstructures\Yield\Flatforward.cs" />
     <Compile Include="Termstructures\Yield\ForwardCurve.cs" />
     <Compile Include="Termstructures\Yield\ForwardSpreadedTermStructure.cs" />
     <Compile Include="Termstructures\Yield\ForwardStructure.cs" />
     <Compile Include="Termstructures\Yield\ImpliedTermStructure.cs" />
     <Compile Include="Termstructures\Yield\InterpolatedPiecewiseZeroSpreadedTermStructure.cs" />
+    <Compile Include="Termstructures\Yield\NonLinearFittingMethods.cs" />
     <Compile Include="Termstructures\Yield\OISRateHelper.cs" />
     <Compile Include="Termstructures\Yield\PiecewiseYieldCurve.cs" />
     <Compile Include="Termstructures\Yield\Ratehelpers.cs" />
@@ -496,6 +633,7 @@
     <Compile Include="Termstructures\Yield\ZeroSpreadedTermStructure.cs" />
     <Compile Include="Termstructures\Yield\Zeroyieldstructure.cs" />
     <Compile Include="timegrid.cs" />
+    <Compile Include="Time\ASX.cs" />
     <Compile Include="Time\Calendar.cs" />
     <Compile Include="Time\Calendars\argentina.cs" />
     <Compile Include="Time\Calendars\australia.cs" />
@@ -512,6 +650,7 @@
     <Compile Include="Time\Calendars\iceland.cs" />
     <Compile Include="Time\Calendars\india.cs" />
     <Compile Include="Time\Calendars\indonesia.cs" />
+    <Compile Include="Time\Calendars\Israel.cs" />
     <Compile Include="Time\Calendars\italy.cs" />
     <Compile Include="Time\Calendars\japan.cs" />
     <Compile Include="Time\Calendars\JointCalendar.cs" />
@@ -520,6 +659,7 @@
     <Compile Include="Time\Calendars\norway.cs" />
     <Compile Include="Time\Calendars\nullcalendar.cs" />
     <Compile Include="Time\Calendars\poland.cs" />
+    <Compile Include="Time\Calendars\Romania.cs" />
     <Compile Include="Time\Calendars\russia.cs" />
     <Compile Include="Time\Calendars\saudiarabia.cs" />
     <Compile Include="Time\Calendars\singapore.cs" />
@@ -531,6 +671,7 @@
     <Compile Include="Time\Calendars\taiwan.cs" />
     <Compile Include="Time\Calendars\TARGET.cs" />
     <Compile Include="Time\Calendars\turkey.cs" />
+    <Compile Include="Time\Calendars\Ukraine.cs" />
     <Compile Include="Time\Calendars\UnitedKingdom.cs" />
     <Compile Include="Time\Calendars\UnitedStates.cs" />
     <Compile Include="Time\Calendars\WeekendsOnly.cs" />
@@ -544,6 +685,7 @@
     <Compile Include="Time\DayCounters\OneDayCounter.cs" />
     <Compile Include="Time\DayCounters\SimpleDayCounter.cs" />
     <Compile Include="Time\DayCounters\Thirty360.cs" />
+    <Compile Include="Time\ECB.cs" />
     <Compile Include="Time\Imm.cs" />
     <Compile Include="Time\Period.cs" />
     <Compile Include="Time\Schedule.cs" />
@@ -577,5 +719,5 @@
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
+-->
 </Project>

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,10 +16,8 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Local volatility surface derived from a Black vol surface
@@ -101,7 +99,7 @@ namespace QLNet {
                 wpt = blackTS_.link.blackVariance(t+dt, strike, true);
 
                 if (!(wpt>=w))
-                    throw new ApplicationException("decreasing variance at strike " + strike
+                    throw new Exception("decreasing variance at strike " + strike
                           + " between time " + t + " and time " + (t+dt));
                 dwdt = (wpt-w)/dt;
             } else {
@@ -109,10 +107,10 @@ namespace QLNet {
                 wpt = blackTS_.link.blackVariance(t+dt, strike, true);
                 wmt = blackTS_.link.blackVariance(t-dt, strike, true);
                 if (!(wpt>=w))
-                    throw new ApplicationException("decreasing variance at strike " + strike
+                    throw new Exception("decreasing variance at strike " + strike
                           + " between time " + t + " and time " + (t+dt));
                 if (!(w>=wmt))
-                    throw new ApplicationException("decreasing variance at strike " + strike
+                    throw new Exception("decreasing variance at strike " + strike
                           + " between time " + (t-dt) + " and time " + t);
                 dwdt = (wpt-wmt)/(2.0*dt);
             }
@@ -126,7 +124,7 @@ namespace QLNet {
                 double den = den1+den2+den3;
                 double result = dwdt / den;
                 if (!(result>=0.0))
-                    throw new ApplicationException("negative local vol^2 at strike " + strike
+                    throw new Exception("negative local vol^2 at strike " + strike
                           + " and time " + t + "; the black vol surface is not smooth enough");
                 return Math.Sqrt(result);
                 // return std::sqrt(dwdt / (1.0 - y/w*dwdy +

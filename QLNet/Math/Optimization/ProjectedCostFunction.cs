@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -45,14 +43,14 @@ namespace QLNet
 				costFunction_ = costFunction;
 
                 if (!(fixedParameters_.Count==parametersFreedoms_.Count))
-                    throw new ApplicationException("fixedParameters_.Count!=parametersFreedoms_.Count");
+                    throw new Exception("fixedParameters_.Count!=parametersFreedoms_.Count");
 
 				 for (int i =0; i<parametersFreedoms_.Count; i++)
 					if(!parametersFreedoms_[i])
     					numberOfFreeParameters_++;
 
                 if (!(numberOfFreeParameters_>0))
-                    throw new ApplicationException("numberOfFreeParameters==0");
+                    throw new Exception("numberOfFreeParameters==0");
 			}
 
 			//! \name CostFunction interface
@@ -74,7 +72,7 @@ namespace QLNet
 			public Vector project (Vector parameters)
 			{
                 if (!(parameters.Count==parametersFreedoms_.Count))
-                    throw new ApplicationException("parameters.Count!=parametersFreedoms_.Count");
+                    throw new Exception("parameters.Count!=parametersFreedoms_.Count");
 
 				Vector projectedParameters = new Vector(numberOfFreeParameters_);
 				int i = 0;
@@ -89,7 +87,7 @@ namespace QLNet
 			public Vector include(Vector projectedParameters)
 			{
                 if (!(projectedParameters.Count==numberOfFreeParameters_))
-                    throw new ApplicationException("projectedParameters.Count!=numberOfFreeParameters");
+                    throw new Exception("projectedParameters.Count!=numberOfFreeParameters");
 
 				Vector y = new Vector(fixedParameters_);
 				int i = 0;
@@ -102,7 +100,7 @@ namespace QLNet
 			private void mapFreeParameters (Vector parametersValues)
 			{
                 if (!(parametersValues.Count==numberOfFreeParameters_))
-                    throw new ApplicationException("parametersValues.Count!=numberOfFreeParameters");
+                    throw new Exception("parametersValues.Count!=numberOfFreeParameters");
 
 				int i = 0;
 				for (int j =0; j<actualParameters_.Count; j++)

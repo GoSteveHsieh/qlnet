@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public interface IConvergenceSteps {
@@ -28,7 +26,6 @@ namespace QLNet {
     }
 
     public class DoublingConvergenceSteps : IConvergenceSteps {
-        public DoublingConvergenceSteps() { }
 
         public int initialSamples() { return 1; }
         public int nextSamples(int current) { return 2 * current + 1; }

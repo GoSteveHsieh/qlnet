@@ -1,7 +1,8 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +19,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet 
 {
@@ -29,11 +28,11 @@ namespace QLNet
 
       \ingroup defaultprobabilitytermstructures
    */
-   public  class DefaultProbabilityTermStructure : TermStructure 
+   public abstract class DefaultProbabilityTermStructure : TermStructure 
    {
       #region Constructors
 
-		public DefaultProbabilityTermStructure() {}
+      //public DefaultProbabilityTermStructure() {}
 
       public DefaultProbabilityTermStructure(DayCounter dc = null,List<Handle<Quote> > jumps = null,List<Date> jumpDates = null)
          :base(dc)
@@ -235,12 +234,10 @@ namespace QLNet
       // must assume that extrapolation is required.
 
       //! survival probability calculation
-      protected virtual double survivalProbabilityImpl(double t) 
-      {throw new NotImplementedException("DefaultProbabilityTermStructure.survivalProbabilityImpl");}
+      protected abstract double survivalProbabilityImpl(double t);
       
       //! default density calculation
-      protected virtual double defaultDensityImpl(double t)  
-      {throw new NotImplementedException("DefaultProbabilityTermStructure.defaultDensityImpl");}
+      protected abstract double defaultDensityImpl(double t);
       
       #endregion
 

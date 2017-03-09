@@ -3,7 +3,7 @@
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -21,8 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
 namespace QLNet
 {
@@ -33,7 +31,7 @@ namespace QLNet
    public class ExchangeRateManager 
    {
       [ThreadStatic]
-      private static ExchangeRateManager instance_ = null;
+      private static ExchangeRateManager instance_;
       public static ExchangeRateManager Instance
       {
           get
@@ -239,7 +237,7 @@ namespace QLNet
                 {
                     // ...and which carries information for the requested date.
                     ExchangeRate head = fetch(source,other,date);
-                    if (((Nullable<double>)head.rate).HasValue)
+                    if (((double?)head.rate).HasValue)
                     {
                         // if we can get to the target from here...
                         try
@@ -251,7 +249,6 @@ namespace QLNet
                         catch (Exception)
                         {
                             // otherwise, we just discard this rate.
-                            ;
                         }
                     }
                 }

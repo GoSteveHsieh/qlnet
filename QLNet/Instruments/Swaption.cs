@@ -2,7 +2,7 @@
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,9 +18,7 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -84,7 +82,7 @@ namespace QLNet
       //@{ 
       public override bool isExpired()
       {
-         return exercise_.dates().Last() < Settings.evaluationDate();
+         return new simple_event(exercise_.dates().Last()).hasOccurred();
       }
 
       public override void setupArguments(IPricingEngineArguments args)
@@ -186,7 +184,7 @@ namespace QLNet
          Handle<Quote> h = new Handle<Quote>(vol_);
          engine_ = (IPricingEngine)new BlackSwaptionEngine(discountCurve_, h);
          swaption.setupArguments(engine_.getArguments());
-         results_ = engine_.getResults() as Instrument.Results; ;
+         results_ = engine_.getResults() as Instrument.Results; 
       }
 
       public override double value(double x)

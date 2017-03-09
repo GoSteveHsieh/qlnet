@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 	//! Abstract base forward class
@@ -89,11 +86,7 @@ namespace QLNet {
 		}
 
 		public override bool isExpired() {
-			#if QL_TODAYS_PAYMENTS
-			    return maturityDate_ < settlementDate();
-			#else
-				return maturityDate_ <= settlementDate();
-			#endif
+			 return new simple_event(maturityDate_).hasOccurred(settlementDate());
 		}
 
 
@@ -132,7 +125,7 @@ namespace QLNet {
 
 		protected override void performCalculations() {
 			if (discountCurve_.empty())
-				throw new ApplicationException("no discounting term structure set to Forward");
+				throw new Exception("no discounting term structure set to Forward");
 
 			ForwardTypePayoff ftpayoff = payoff_ as ForwardTypePayoff;
 			double fwdValue = forwardValue();
@@ -152,7 +145,7 @@ namespace QLNet {
 			type_ = type;
 			strike_ = strike;
 			if (strike < 0.0)
-				throw new ApplicationException("negative strike given");
+				throw new Exception("negative strike given");
         }
 
         //! \name Payoff interface
@@ -168,7 +161,7 @@ namespace QLNet {
 				case Position.Type.Short:
 					return (strike_-price);
 				default:
-					throw new ApplicationException("unknown/illegal position type");
+					throw new Exception("unknown/illegal position type");
 			}
 		}
     };

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008-2014 Andrea Maggiulli (a.maggiulli@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,11 +16,8 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -224,11 +221,7 @@ namespace QLNet
 		//! %Arguments for YoY Inflation cap/floor calculation
 		public class Arguments : IPricingEngineArguments 
 		{
-			public Arguments()  
-			{
-				//type = YoYInflationCapFloor::Type(-1))
-			}
-			public CapFloorType type;
+		   public CapFloorType type;
 			public YoYInflationIndex index;
 			public Period observationLag;
 			public List<Date> startDates;

@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 
 namespace QLNet 
 {
@@ -78,11 +78,11 @@ namespace QLNet
        public static void QL_REQUIRE( bool condition, Func<string> message )
        {
           if ( !condition )
-            throw new ApplicationException( message.Invoke() );
+            throw new Exception( message.Invoke() );
        }
        public static void QL_FAIL(string message)
        {
-          throw new ApplicationException(message);
+          throw new Exception(message);
        }
 
 		 public static bool is_QL_NEGATIVE_RATES()
@@ -93,6 +93,19 @@ namespace QLNet
 			    return false;
 		    #endif
 		 }
+
+       public static MethodInfo GetMethodInfo(Object t, String function ,  Type[] types = null )
+       {
+          MethodInfo methodInfo;
+          if (types == null) types = new Type[0];
+          #if QL_DOTNET_FRAMEWORK
+             methodInfo =  t.GetType().GetMethod(function, types);
+          #else
+             methodInfo = t.GetType().GetRuntimeMethod( function, types );
+          #endif
+             
+          return methodInfo;
+       }
     }
 
     // this is a redefined collection class to emulate array-type behaviour at initialisation
@@ -114,4 +127,11 @@ namespace QLNet
                 this[i] = default(T);       // do we need to use "new T()" instead of default(T) when T is class?
         }
     }
+
+    #if ! QL_DOTNET_FRAMEWORK
+    public interface ICloneable
+    {
+       object Clone();
+    }
+    #endif
 }

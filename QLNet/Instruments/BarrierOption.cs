@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 	//! %Barrier option on a single asset.
@@ -29,7 +26,7 @@ namespace QLNet {
     //    
 	public class BarrierOption : OneAssetOption
 	{
-		new public class Arguments : OneAssetOption.Arguments
+		public new class Arguments : OneAssetOption.Arguments
 		{
 			public Arguments()
 			{
@@ -53,18 +50,18 @@ namespace QLNet {
                     case Barrier.Type.UpOut:
 					break;
 				  default:
-                    throw new ApplicationException("unknown type");
+                    throw new Exception("unknown type");
 				}
 		
 				if (!(barrier != null))
-                    throw new ApplicationException("no barrier given");
+                    throw new Exception("no barrier given");
 
                 if (!(rebate != null))
-                    throw new ApplicationException("no rebate given");
+                    throw new Exception("no rebate given");
 			}
 		}
 
-		new public class Engine : GenericEngine<BarrierOption.Arguments, BarrierOption.Results>
+		public new class Engine : GenericEngine<BarrierOption.Arguments, BarrierOption.Results>
 		{
 			protected bool triggered(double underlying)
 			{
@@ -77,7 +74,7 @@ namespace QLNet {
                     case Barrier.Type.UpOut:
 					return underlying > arguments_.barrier;
 				  default:
-                    throw new ApplicationException("unknown type");
+                    throw new Exception("unknown type");
 				}
 			}
 		}
@@ -95,7 +92,7 @@ namespace QLNet {
 	
 			BarrierOption.Arguments moreArgs = args as BarrierOption.Arguments;
 			if (!(moreArgs != null))
-                throw new ApplicationException("wrong argument type");
+                throw new Exception("wrong argument type");
 
 			moreArgs.barrierType = barrierType_;
 			moreArgs.barrier = barrier_;
@@ -104,27 +101,10 @@ namespace QLNet {
         //        ! \warning see VanillaOption for notes on implied-volatility
         //                     calculation.
         //        
-		public double impliedVolatility(double targetValue, GeneralizedBlackScholesProcess process, double accuracy, int maxEvaluations, double minVol)
+      public double impliedVolatility( double targetValue, GeneralizedBlackScholesProcess process, double accuracy = 1.0e-4,
+         int maxEvaluations = 100, double minVol = 1.0e-7, double maxVol = 4.0)
 		{
-			return impliedVolatility(targetValue, process, accuracy, maxEvaluations, minVol, 4.0);
-		}
-		public double impliedVolatility(double targetValue, GeneralizedBlackScholesProcess process, double accuracy, int maxEvaluations)
-		{
-			return impliedVolatility(targetValue, process, accuracy, maxEvaluations, 1.0e-7, 4.0);
-		}
-		public double impliedVolatility(double targetValue, GeneralizedBlackScholesProcess process, double accuracy)
-		{
-			return impliedVolatility(targetValue, process, accuracy, 100, 1.0e-7, 4.0);
-		}
-		public double impliedVolatility(double targetValue, GeneralizedBlackScholesProcess process)
-		{
-			return impliedVolatility(targetValue, process, 1.0e-4, 100, 1.0e-7, 4.0);
-		}
-
-		public double impliedVolatility(double targetValue, GeneralizedBlackScholesProcess process, double accuracy, int maxEvaluations, double minVol, double maxVol)
-		{
-			if (!(!isExpired()))
-                throw new ApplicationException("option expired");
+         Utils.QL_REQUIRE( !isExpired(), ()=> "option expired" );
 	
 			SimpleQuote volQuote = new SimpleQuote();
 	
@@ -139,9 +119,9 @@ namespace QLNet {
 				break;
               case Exercise.Type.American:
               case Exercise.Type.Bermudan:
-                throw new ApplicationException("Engine not available for non-European barrier option");
+                throw new Exception("Engine not available for non-European barrier option");
 			  default:
-                throw new ApplicationException("unknown exercise type");
+                throw new Exception("unknown exercise type");
 			}
 	
 			return ImpliedVolatilityHelper.calculate( this, engine, volQuote, targetValue, accuracy, maxEvaluations, minVol, maxVol);

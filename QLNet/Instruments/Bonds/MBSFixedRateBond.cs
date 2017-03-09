@@ -1,7 +1,23 @@
-﻿using System;
+﻿/*
+ Copyright (C) 2008-2016  Andrea Maggiulli (a.maggiulli@gmail.com) 
+  
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
+
+ QLNet is free software: you can redistribute it and/or modify it
+ under the terms of the QLNet license.  You should have received a
+ copy of the license along with this program; if not, license is  
+ available online at <http://qlnet.sourceforge.net/License.html>.
+  
+ QLNet is a based on QuantLib, a free-software/open-source library
+ for financial quantitative analysts and developers - http://quantlib.org/
+ The QuantLib license is available online at http://quantlib.org/license.shtml.
+ 
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the license for more details.
+*/
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -28,18 +44,18 @@ namespace QLNet
                                double WACRate,
                                double PassThroughRate,
                                DayCounter accrualDayCounter,
-                               PSACurve psaCurve,
+                               IPrepayModel prepayModel,
                                BusinessDayConvention paymentConvention = BusinessDayConvention.Following,
                                Date issueDate = null)
          : base(settlementDays, calendar, faceAmount, startDate, bondTenor, sinkingFrequency, WACRate, accrualDayCounter, paymentConvention, issueDate)
       {
-         psaCurve_ = psaCurve;
+         prepayModel_ = prepayModel;
          originalLength_ = originalLength;
          remainingLength_ = bondTenor;
          WACRate_ = WACRate;
          PassThroughRate_ = PassThroughRate;
          dCounter_ = accrualDayCounter;
-
+         cashflows_ = expectedCashflows();
       }
 
       //public List<CashFlow> interestCashflows()
@@ -72,7 +88,7 @@ namespace QLNet
             // ADD
             CashFlow c1 = new VoluntaryPrepay(prepay, schedule_[i + 1]);
             CashFlow c2 = new AmortizingPayment(actualamort, schedule_[i + 1]);
-            CashFlow c3 = new FixedRateCoupon(currentNotional, schedule_[i + 1], new InterestRate(PassThroughRate_, dCounter_, Compounding.Simple,Frequency.Annual), schedule_[i], schedule_[i + 1]);
+            CashFlow c3 = new FixedRateCoupon( schedule_[i + 1], currentNotional, new InterestRate(PassThroughRate_, dCounter_, Compounding.Simple,Frequency.Annual), schedule_[i], schedule_[i + 1]);
             expectedcashflows.Add(c1);
             expectedcashflows.Add(c2);
             expectedcashflows.Add(c3);
@@ -85,9 +101,9 @@ namespace QLNet
 
       public double SMM(Date d )
       {
-         if ( psaCurve_ != null )
+         if ( prepayModel_ != null )
          {
-            return psaCurve_.getSMM(d + (originalLength_ - remainingLength_));
+            return prepayModel_.getSMM( d + ( originalLength_ - remainingLength_ ) );
          }
          else
             return 0;
@@ -123,7 +139,7 @@ namespace QLNet
       public List<double> BondFactors() { if (bondFactors_ == null) calcBondFactor(); return bondFactors_; }
      
       protected List<double> bondFactors_;
-      protected PSACurve psaCurve_;
+      protected IPrepayModel prepayModel_;
       protected Period originalLength_, remainingLength_;
       protected double WACRate_;
       protected double PassThroughRate_;

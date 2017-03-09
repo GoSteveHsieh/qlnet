@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -62,16 +59,16 @@ namespace QLNet {
             variance_ = variance;
 
             if (!(spot_ > 0.0))
-                throw new ApplicationException("positive spot value required");
+                throw new Exception("positive spot value required");
 
             if (!(discount_ > 0.0))
-                throw new ApplicationException("positive discount required");
+                throw new Exception("positive discount required");
 
             if (!(dividendDiscount_ > 0.0))
-                throw new ApplicationException("positive dividend discount required");
+                throw new Exception("positive dividend discount required");
 
             if (!(variance_ >= 0.0))
-                throw new ApplicationException("negative variance not allowed");
+                throw new Exception("negative variance not allowed");
 
             stdDev_ = Math.Sqrt(variance_);
 
@@ -85,12 +82,12 @@ namespace QLNet {
             double n_d2;
             double cum_d1_;
             double cum_d2_;
-            if (variance_ >= Const.QL_Epsilon) {
+            if (variance_ >= Const.QL_EPSILON) {
                 if (discount_ == 0.0 && dividendDiscount_ == 0.0) {
                     mu_ = -0.5;
                     lambda_ = 0.5;
                 } else if (discount_ == 0.0) {
-                    throw new ApplicationException("null discount not handled yet");
+                    throw new Exception("null discount not handled yet");
                 } else {
                     mu_ = Math.Log(dividendDiscount_ / discount_) / variance_ - 0.5;
                     lambda_ = Math.Sqrt(mu_ * mu_ - 2.0 * Math.Log(discount_) / variance_);
@@ -150,7 +147,7 @@ namespace QLNet {
                     }
                     break;
                 default:
-                    throw new ApplicationException("invalid option type");
+                    throw new Exception("invalid option type");
             }
 
 
@@ -242,7 +239,7 @@ namespace QLNet {
 
         public double rho(double maturity) {
             if (!(maturity >= 0.0))
-                throw new ApplicationException("negative maturity not allowed");
+                throw new Exception("negative maturity not allowed");
 
             // actually D.Dr / T
             double DalphaDr = -DalphaDd1_ / (lambda_ * stdDev_) * (1.0 + mu_);

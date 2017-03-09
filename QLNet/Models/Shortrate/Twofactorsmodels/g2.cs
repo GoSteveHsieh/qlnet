@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2010 Philippe double (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 /*! \file g2.hpp
     \brief Two-factor additive Gaussian Model G2++
@@ -137,7 +136,7 @@ namespace QLNet
                                   Vector factors)
         {
             if (!(factors.size() > 1))
-                throw new ApplicationException("g2 model needs two factors to compute discount bond");
+                throw new Exception("g2 model needs two factors to compute discount bond");
             return discountBond(now, maturity, factors[0], factors[1]);
         }
 
@@ -367,7 +366,7 @@ namespace QLNet
             T_ = start;
             t_ = payTimes;
             rate_ = fixedRate;
-            size_ = t_.Count();
+            size_ = t_.Count;
 
             A_  = new Vector(size_);
             Ba_ = new Vector(size_);

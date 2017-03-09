@@ -1,7 +1,8 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
+ Copyright (C) 2008-2015  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -97,7 +98,7 @@ namespace QLNet {
         public static Matrix operator /(Matrix m1, double value) { return operValue(ref m1, value, (x, y) => x / y); }
         private static Matrix operMatrix(ref Matrix m1, ref Matrix m2, Func<double, double, double> func) {
             if (!(m1.rows_ == m2.rows_ && m1.columns_ == m2.columns_))
-                throw new ApplicationException("operation on matrices with different sizes (" +
+                throw new Exception("operation on matrices with different sizes (" +
                        m2.rows_ + "x" + m2.columns_ + ", " + m1.rows_ + "x" + m1.columns_ + ")");
 
             Matrix result = new Matrix(m1.rows_, m1.columns_);
@@ -116,7 +117,7 @@ namespace QLNet {
 
         public static Vector operator *(Vector v, Matrix m) {
             if (!(v.Count == m.rows()))
-                throw new ApplicationException("vectors and matrices with different sizes ("
+                throw new Exception("vectors and matrices with different sizes ("
                        + v.Count + ", " + m.rows() + "x" + m.columns() + ") cannot be multiplied");
             Vector result = new Vector(m.columns());
             for (int i = 0; i < result.Count; i++)
@@ -126,7 +127,7 @@ namespace QLNet {
         /*! \relates Matrix */
         public static Vector operator *(Matrix m, Vector v) {
             if (!(v.Count == m.columns()))
-                throw new ApplicationException("vectors and matrices with different sizes ("
+                throw new Exception("vectors and matrices with different sizes ("
                        + v.Count + ", " + m.rows() + "x" + m.columns() + ") cannot be multiplied");
             Vector result = new Vector(m.rows());
             for (int i = 0; i < result.Count; i++)
@@ -136,7 +137,7 @@ namespace QLNet {
         /*! \relates Matrix */
         public static Matrix operator *(Matrix m1, Matrix m2) {
             if (!(m1.columns() == m2.rows()))
-                throw new ApplicationException("matrices with different sizes (" +
+                throw new Exception("matrices with different sizes (" +
                        m1.rows() + "x" + m1.columns() + ", " +
                        m2.rows() + "x" + m2.columns() + ") cannot be multiplied");
             Matrix result = new Matrix(m1.rows(), m2.columns());
@@ -155,13 +156,135 @@ namespace QLNet {
             return result;
         }
 
+        public static Matrix inverse( Matrix m )
+        {
+           Utils.QL_REQUIRE( m.rows() == m.columns(),()=> "matrix is not square" );
+           int n = m.rows();
+           Matrix result = new Matrix( n, n );
+           for ( int i = 0; i < n; ++i )
+              for ( int j = 0; j < n; ++j )
+                 result[i,j] = m[i,j];
+
+           Matrix lum; 
+           int[] perm;
+           decompose( m, out lum, out perm );
+
+           double[] b = new double[n];
+           for ( int i = 0; i < n; ++i )
+           {
+              for ( int j = 0; j < n; ++j )
+                 if ( i == perm[j] )
+                    b[j] = 1.0;
+                 else
+                    b[j] = 0.0;
+
+              double[] x = Helper( lum, b ); // 
+              for ( int j = 0; j < n; ++j )
+                 result[j,i] = x[j];
+           }
+           return result;
+        }
+
+        // Crout's LU decomposition for matrix determinant and inverse
+        // stores combined lower & upper in lum[][]
+        // stores row permuations into perm[]
+        // returns +1 or -1 according to even or odd number of row permutations
+        // lower gets dummy 1.0s on diagonal (0.0s above)
+        // upper gets lum values on diagonal (0.0s below)
+        public static int decompose( Matrix m, out Matrix lum, out int[] perm )
+        {
+           int toggle = +1; // even (+1) or odd (-1) row permutatuions
+           int n = m.rows_;
+
+           // Make a copy of Matrix m into result Matrix lu
+           lum = new Matrix( n, n );
+           for ( int i = 0; i < n; ++i )
+              for ( int j = 0; j < n; ++j )
+                 lum[i,j] = m[i,j];
+
+
+           // make perm[]
+           perm = new int[n];
+           for ( int i = 0; i < n; ++i )
+              perm[i] = i;
+
+           for ( int j = 0; j < n - 1; ++j ) // process by column. note n-1 
+           {
+              double max = Math.Abs( lum[j,j] );
+              int piv = j;
+
+              for ( int i = j + 1; i < n; ++i ) // find pivot index
+              {
+                 double xij = Math.Abs( lum[i,j] );
+                 if ( xij > max )
+                 {
+                    max = xij;
+                    piv = i;
+                 }
+              } // i
+
+              if ( piv != j )
+              {
+                 lum.swapRow( piv, j);
+
+                 int t = perm[piv]; // swap perm elements
+                 perm[piv] = perm[j];
+                 perm[j] = t;
+
+                 toggle = -toggle;
+              }
+
+              double xjj = lum[j,j];
+              if ( xjj != 0.0 )
+              {
+                 for ( int i = j + 1; i < n; ++i )
+                 {
+                    double xij = lum[i,j] / xjj;
+                    lum[i,j] = xij;
+                    for ( int k = j + 1; k < n; ++k )
+                       lum[i,k] -= xij * lum[j,k];
+                 }
+              }
+
+           } // j
+
+           return toggle;
+        } 
+
+        public static double[] Helper( Matrix luMatrix, double[] b ) // helper
+        {
+           int n = luMatrix.rows_;
+           double[] x = new double[n];
+           b.CopyTo( x, 0 );
+
+           for ( int i = 1; i < n; ++i )
+           {
+              double sum = x[i];
+              for ( int j = 0; j < i; ++j )
+                 sum -= luMatrix[i,j] * x[j];
+              x[i] = sum;
+           }
+
+           x[n - 1] /= luMatrix[n - 1,n - 1];
+           for ( int i = n - 2; i >= 0; --i )
+           {
+              double sum = x[i];
+              for ( int j = i + 1; j < n; ++j )
+                 sum -= luMatrix[i,j] * x[j];
+              x[i] = sum / luMatrix[i,i];
+           }
+
+           return x;
+        } // Helper
+
+
         public static Matrix outerProduct(List<double> v1begin, List<double> v2begin) {
 
             int size1 = v1begin.Count;
-            if (!(size1>0)) throw new ApplicationException("null first vector");
+            if (!(size1>0)) throw new Exception("null first vector");
 
             int size2 = v2begin.Count;
-            if(!(size2>0)) throw new ApplicationException("null second vector");
+            if(!(size2>0)) throw new Exception("null second vector");
 
             Matrix result = new Matrix(size1, size2);
 
@@ -180,6 +303,28 @@ namespace QLNet {
             double t = this[i2, j2];
             this[i2, j2] = this[i1, j1];
             this[i1, j1] = t;
+        }
+
+        public void swapRow( int r1, int r2 )
+        {
+           Vector t = this.row(r1);
+           for (int i = 0; i < this.columns_; i++)
+            this[r1, i] = this[r2, i];
+
+           for ( int i = 0; i < this.columns_; i++ )
+              this[r2, i] = t[i];
+        }
+        public override string ToString()
+        {
+           String to = string.Empty;
+           for (int i=0; i<this.rows(); i++) 
+           {
+              to += "| ";
+              for (int j=0; j<this.columns(); j++)
+                to += this[i,j] + " ";
+              to += "|" + Environment.NewLine;
+           }
+           return to;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿/*
- Copyright (C) 2008-2013  Andrea Maggiulli (a.maggiulli@gmail.com)
+ Copyright (C) 2008-2016  Andrea Maggiulli (a.maggiulli@gmail.com)
 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -36,7 +34,7 @@ namespace QLNet
 
       \ingroup defaultprobabilitytermstructures
    */
-   public class HazardRateStructure : DefaultProbabilityTermStructure 
+   public abstract class HazardRateStructure : DefaultProbabilityTermStructure 
    {
       #region Constructors
 
@@ -61,8 +59,7 @@ namespace QLNet
       // must assume that extrapolation is required.
 
       //! hazard rate calculation
-      protected virtual double hazardRateImpl(double t) 
-          {throw new NotImplementedException("HazardRateStructure.hazardRateImpl");}
+      protected abstract double hazardRateImpl(double t);
 
       #endregion
 

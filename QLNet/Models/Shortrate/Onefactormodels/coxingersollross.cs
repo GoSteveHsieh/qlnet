@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2010 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 /*! \file coxingersollross.hpp
     \brief Cox-Ingersoll-Ross model
@@ -67,11 +64,11 @@ namespace QLNet {
                                         double bondMaturity)
         {
             if (!(strike > 0.0))
-                throw new ApplicationException("strike must be positive");
+                throw new Exception("strike must be positive");
             double discountT = discountBond(0.0, maturity, x0());
             double discountS = discountBond(0.0, bondMaturity, x0());
 
-            if (maturity < Const.QL_Epsilon)
+            if (maturity < Const.QL_EPSILON)
             {
                 switch (type){
                     case Option.Type.Call:
@@ -79,7 +76,7 @@ namespace QLNet {
                     case Option.Type.Put:
                         return Math.Max(strike - discountS, 0.0);
                     default:
-                       throw new ApplicationException("unsupported option type");
+                       throw new Exception("unsupported option type");
                 }
             }
             double sigma2 = sigma()*sigma();

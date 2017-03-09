@@ -1,8 +1,9 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
+ Copyright (C) 2008-2016  Andrea Maggiulli (a.maggiulli@gmail.com)
  
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,7 +19,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using QLNet;
 
 namespace QLNet {
     public class Date : IComparable {
@@ -30,9 +30,11 @@ namespace QLNet {
         public Date(int serialNumber) {			
             date = (new DateTime(1899, 12, 31)).AddDays(serialNumber - 1);
         }
-        public Date(int d, Month m, int y) : this(d, (int)m, y) { }
+        public Date(int d, Month m, int y, int h = 0, int mi = 0, int s = 0 , int ms = 0) : this(d, (int)m, y, h, mi, s, ms) { }
         public Date(int d, int m, int y) :		//! More traditional constructor.
             this(new DateTime(y, m, d)) { }
+        public Date( int d, int m, int y, int h = 0 , int mi = 0, int s = 0 , int ms = 0 ) :		//! More traditional constructor.
+           this( new DateTime( y, m, d, h, mi, s , ms ) ) { }
         public Date(DateTime d) {				//! System DateTime constructor
             date = d;
         }
@@ -46,7 +48,14 @@ namespace QLNet {
         public int DayOfYear { get { return date.DayOfYear; } }
         public int weekday() { return (int)date.DayOfWeek + 1; }       // QL compatible definition
         public DayOfWeek DayOfWeek { get { return date.DayOfWeek; } }
-
+        public int hours { get { return date.Hour; } }
+        public int minutes { get { return date.Minute; } }
+        public int seconds { get { return date.Second; } }
+        public int milliseconds { get { return date.Millisecond; } }
+       
+        public double fractionOfSecond { get { return (double)date.Millisecond/1000; } }
+        public double fractionOfDay()  { return date.TimeOfDay.TotalSeconds/86400.0;}
+ 
         // static properties
         public static Date minDate() { return new Date(1, 1, 1901); }
         public static Date maxDate() { return new Date(31, 12, 2199); }
@@ -56,7 +65,10 @@ namespace QLNet {
 
         public static Date endOfMonth(Date d) { return (d - d.Day + DaysInMonth(d.Year, d.Month)); }
         public static bool isEndOfMonth(Date d) { return (d.Day == DaysInMonth(d.Year, d.Month)); }
-        
+        public static double daysBetween(Date d1, Date d2) 
+        {
+           return ( d2.date - d1.date ).TotalDays;
+        }
         //! next given weekday following or equal to the given date
         public static Date nextWeekday(Date d, DayOfWeek dayOfWeek) {
             int wd = dayOfWeek - d.DayOfWeek;
@@ -95,7 +107,7 @@ namespace QLNet {
 
 
         // operator overloads
-        public static int operator -(Date d1, Date d2) { return (d1.date - d2.date).Days; }
+        public static int operator -(Date d1, Date d2) { return (d1.date.Date - d2.date.Date).Days; }
         public static Date operator +(Date d, int days) { DateTime t = d.date; return new Date(t.AddDays(days)); }
         public static Date operator -(Date d, int days) { DateTime t = d.date; return new Date(t.AddDays(-days)); }
         public static Date operator +(Date d, TimeUnit u) { return advance(d, 1, u); }
@@ -122,8 +134,8 @@ namespace QLNet {
         public static bool operator >(Date d1, Date d2) { return (d1.date > d2.date); }
         public static bool operator >=(Date d1, Date d2) { return (d1.date >= d2.date); }
 
-        public string ToLongDateString() { return date.ToLongDateString(); }
-        public string ToShortDateString() { return date.ToShortDateString(); }
+        public string ToLongDateString() { return date.ToString("D"); }
+        public string ToShortDateString() { return date.ToString("d"); }
         public override string ToString() { return this.ToShortDateString(); }
 		  public string ToString(IFormatProvider provider) { return date.ToString(provider); }
         public string ToString(string format) { return date.ToString(format); }

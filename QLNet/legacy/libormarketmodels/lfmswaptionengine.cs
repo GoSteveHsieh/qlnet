@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,7 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -41,7 +39,7 @@ namespace QLNet
         public override void calculate()
         {
             if(!(arguments_.settlementType == Settlement.Type.Physical))
-                throw new ApplicationException( "cash-settled swaptions not priced with Lfm engine");      
+                throw new Exception( "cash-settled swaptions not priced with Lfm engine");      
 
             double basisPoint = 1.0e-4;
 
@@ -55,7 +53,7 @@ namespace QLNet
             double fairRate = swap.fairRate() - correction;
 
             SwaptionVolatilityMatrix volatility =
-                model_.getSwaptionVolatilityMatrix();
+                model_.link.getSwaptionVolatilityMatrix();
 
             Date referenceDate = volatility.referenceDate();
             DayCounter dayCounter = volatility.dayCounter();

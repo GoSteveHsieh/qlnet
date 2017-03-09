@@ -1,7 +1,8 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,130 +20,131 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace QLNet {
-    //! base class for Monte Carlo engines
-    /*! Eventually this class might offer greeks methods.  Deriving a
-        class from McSimulation gives an easy way to write a Monte
-        Carlo engine.
+namespace QLNet
+{
+   //! base class for Monte Carlo engines
+   /*! Eventually this class might offer greeks methods.  Deriving a
+       class from McSimulation gives an easy way to write a Monte
+       Carlo engine.
 
-        See McVanillaEngine as an example.
-    */
-    public abstract class McSimulation<MC, RNG, S> where S : IGeneralStatistics, new() {
-        //typedef typename MonteCarloModel<MC,RNG,S>::path_generator_type path_generator_type;
-        //typedef typename MonteCarloModel<MC,RNG,S>::path_pricer_type path_pricer_type;
-        //typedef typename MonteCarloModel<MC,RNG,S>::stats_type stats_type;
-        //typedef typename MonteCarloModel<MC,RNG,S>::result_type result_type;
+       See McVanillaEngine as an example.
+   */
+   public abstract class McSimulation<MC, RNG, S> where S : IGeneralStatistics, new()
+   {
+      protected McSimulation( bool antitheticVariate, bool controlVariate )
+      {
+         antitheticVariate_ = antitheticVariate;
+         controlVariate_ = controlVariate;
+      }
 
-        protected MonteCarloModel<MC,RNG,S> mcModel_;
-        protected bool antitheticVariate_, controlVariate_;
+      //! add samples until the required absolute tolerance is reached
+      public double value( double tolerance, int maxSamples = int.MaxValue, int minSamples = 1023)
+      {
+         int sampleNumber = mcModel_.sampleAccumulator().samples();
+         if ( sampleNumber < minSamples )
+         {
+            mcModel_.addSamples( minSamples - sampleNumber );
+            sampleNumber = mcModel_.sampleAccumulator().samples();
+         }
 
+         int nextBatch;
+         double order;
+         double error = mcModel_.sampleAccumulator().errorEstimate();
+         while ( maxError( error ) > tolerance )
+         {
+            Utils.QL_REQUIRE( sampleNumber < maxSamples,()=>
+                              "max number of samples (" + maxSamples
+                              + ") reached, while error (" + error
+                              + ") is still above tolerance (" + tolerance + ")" );
 
-        protected McSimulation(bool antitheticVariate, bool controlVariate) {
-            antitheticVariate_ = antitheticVariate;
-            controlVariate_ = controlVariate;
-        }
+            // conservative estimate of how many samples are needed
+            order = maxError( error * error ) / tolerance / tolerance;
+            nextBatch = (int)Math.Max( sampleNumber * order * 0.8 - sampleNumber, minSamples );
 
+            // do not exceed maxSamples
+            nextBatch = Math.Min( nextBatch, maxSamples - sampleNumber );
+            sampleNumber += nextBatch;
+            mcModel_.addSamples( nextBatch );
+            error = mcModel_.sampleAccumulator().errorEstimate();
+         }
 
-        //! add samples until the required absolute tolerance is reached
-        public double value(double tolerance) { return value(tolerance, int.MaxValue, 1023); }
-        public double value(double tolerance, int maxSamples) { return value(tolerance, maxSamples, 1023); }
-        public double value(double tolerance, int maxSamples, int minSamples) {
-            int sampleNumber = mcModel_.sampleAccumulator().samples();
-            if (sampleNumber<minSamples) {
-                mcModel_.addSamples(minSamples-sampleNumber);
-                sampleNumber = mcModel_.sampleAccumulator().samples();
-            }
+         return mcModel_.sampleAccumulator().mean();
+      }
 
-            int nextBatch;
-            double order;
-            double error = mcModel_.sampleAccumulator().errorEstimate();
-            while (maxError(error) > tolerance) {
-                if (!(sampleNumber<maxSamples))
-                    throw new ApplicationException("max number of samples (" + maxSamples
-                           + ") reached, while error (" + error
-                           + ") is still above tolerance (" + tolerance + ")");
+      //! simulate a fixed number of samples
+      public double valueWithSamples( int samples )
+      {
 
-                // conservative estimate of how many samples are needed
-                order = maxError(error*error)/tolerance/tolerance;
-                nextBatch = (int)Math.Max(sampleNumber * order * 0.8 - sampleNumber, minSamples);
+         int sampleNumber = mcModel_.sampleAccumulator().samples();
 
-                // do not exceed maxSamples
-                nextBatch = Math.Min(nextBatch, maxSamples-sampleNumber);
-                sampleNumber += nextBatch;
-                mcModel_.addSamples(nextBatch);
-                error = mcModel_.sampleAccumulator().errorEstimate();
-            }
+         Utils.QL_REQUIRE( samples >= sampleNumber,()=>
+                           "number of already simulated samples (" + sampleNumber
+                           + ") greater than requested samples (" + samples + ")" );
 
-            return mcModel_.sampleAccumulator().mean();
-        }
+         mcModel_.addSamples( samples - sampleNumber );
 
-        //! simulate a fixed number of samples
-        public double valueWithSamples(int samples) {
+         return mcModel_.sampleAccumulator().mean();
+      }
 
-            int sampleNumber = mcModel_.sampleAccumulator().samples();
+      //! error estimated using the samples simulated so far
+      public double errorEstimate() { return mcModel_.sampleAccumulator().errorEstimate(); }
 
-            if (!(samples>=sampleNumber))
-                throw new ApplicationException("number of already simulated samples (" + sampleNumber
-                       + ") greater than requested samples (" + samples + ")");
+      //! access to the sample accumulator for richer statistics
+      public S sampleAccumulator() { return mcModel_.sampleAccumulator(); }
 
-            mcModel_.addSamples(samples-sampleNumber);
+      //! basic calculate method provided to inherited pricing engines
+      public void calculate( double? requiredTolerance, int? requiredSamples, int? maxSamples )
+      {
+         Utils.QL_REQUIRE( requiredTolerance != null ||
+                           requiredSamples != null,()=> "neither tolerance nor number of samples set" );
 
-            return mcModel_.sampleAccumulator().mean();
-        }
+         //! Initialize the one-factor Monte Carlo
+         if ( this.controlVariate_ )
+         {
 
-        //! error estimated using the samples simulated so far
-        public double errorEstimate() { return mcModel_.sampleAccumulator().errorEstimate(); }
+            double? controlVariateValue = this.controlVariateValue();
+            Utils.QL_REQUIRE(controlVariateValue != null,()=> "engine does not provide control-variation price");
 
-        //! access to the sample accumulator for richer statistics
-        public S sampleAccumulator() { return mcModel_.sampleAccumulator(); }
-        
-        //! basic calculate method provided to inherited pricing engines
-        public void calculate(double requiredTolerance, int requiredSamples, int maxSamples) {
+            PathPricer<IPath> controlPP = this.controlPathPricer();
+            Utils.QL_REQUIRE(controlPP != null ,()=> "engine does not provide control-variation path pricer");
 
-            if (!(requiredTolerance != 0 || requiredSamples != 0))
-                throw new ApplicationException("neither tolerance nor number of samples set");
+            IPathGenerator<IRNG> controlPG = this.controlPathGenerator();
 
-            //! Initialize the one-factor Monte Carlo
-            if (this.controlVariate_) {
+            this.mcModel_ = new MonteCarloModel<MC, RNG, S>( pathGenerator(), pathPricer(), new S(), antitheticVariate_,
+                                                          controlPP, controlVariateValue.Value, controlPG );
+         }
+         else
+         {
+            this.mcModel_ = new MonteCarloModel<MC, RNG, S>( pathGenerator(), pathPricer(), new S(), antitheticVariate_ );
+         }
 
-                double controlVariateValue = this.controlVariateValue();
-                if (controlVariateValue == 0)
-                    throw new ApplicationException("engine does not provide control-variation price");
-
-                PathPricer<IPath> controlPP = this.controlPathPricer();
-                if (controlPP == null)
-                    throw new ApplicationException("engine does not provide control-variation path pricer");
-
-                PathGenerator<IRNG> controlPG = this.controlPathGenerator();
-
-                this.mcModel_ = new MonteCarloModel<MC,RNG,S>(pathGenerator(), pathPricer(), new S(), antitheticVariate_, 
-                                                              controlPP, controlVariateValue, controlPG);
-            } else {
-                this.mcModel_ = new MonteCarloModel<MC,RNG,S>(pathGenerator(), pathPricer(), new S(), antitheticVariate_);
-            }
-
-            if (requiredTolerance != 0) {
-                if (maxSamples != 0)
-                    value(requiredTolerance, maxSamples);
-                else
-                    value(requiredTolerance);
-            } else {
-                valueWithSamples(requiredSamples);
-            }
-        }
+         if ( requiredTolerance != null )
+         {
+            if ( maxSamples != null )
+               value( requiredTolerance.Value, maxSamples.Value );
+            else
+               value( requiredTolerance.Value );
+         }
+         else
+         {
+            valueWithSamples( requiredSamples.Value );
+         }
+      }
 
 
-        protected abstract PathPricer<IPath> pathPricer();
-        protected abstract PathGenerator<IRNG> pathGenerator();
-        protected abstract TimeGrid timeGrid();
-        protected virtual PathPricer<IPath> controlPathPricer() { return null; }
-        protected virtual PathGenerator<IRNG> controlPathGenerator() { return null; }
-        protected virtual IPricingEngine controlPricingEngine() { return null; }
-        protected virtual double controlVariateValue() { return 0; }
+      protected abstract PathPricer<IPath> pathPricer();
+      protected abstract IPathGenerator<IRNG> pathGenerator();
+      protected abstract TimeGrid timeGrid();
+      protected virtual PathPricer<IPath> controlPathPricer() { return null; }
+      protected virtual IPathGenerator<IRNG> controlPathGenerator() { return null; }
+      protected virtual IPricingEngine controlPricingEngine() { return null; }
+      protected virtual double controlVariateValue() { return 0; }
 
-        protected static double maxError(List<double> sequence) { return sequence.Max(); }
-        protected static double maxError(double error) { return error; }
-    }
+      protected static double maxError( List<double> sequence ) { return sequence.Max(); }
+      protected static double maxError( double error ) { return error; }
+
+      protected MonteCarloModel<MC, RNG, S> mcModel_;
+      protected bool antitheticVariate_, controlVariate_;
+   }
 }

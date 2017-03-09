@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public partial class Utils {
@@ -39,8 +36,8 @@ namespace QLNet {
             double qam = a-1.0;
             double c = 1.0;
             double d = 1.0-qab*x/qap;
-            if (Math.Abs(d) < Const.QL_Epsilon)
-                d = Const.QL_Epsilon;
+            if (Math.Abs(d) < Const.QL_EPSILON)
+                d = Const.QL_EPSILON;
             d = 1.0/d;
             double result = d;
 
@@ -49,23 +46,23 @@ namespace QLNet {
                 m2=2*m;
                 aa=m*(b-m)*x/((qam+m2)*(a+m2));
                 d=1.0+aa*d;
-                if (Math.Abs(d) < Const.QL_Epsilon) d=Const.QL_Epsilon;
+                if (Math.Abs(d) < Const.QL_EPSILON) d=Const.QL_EPSILON;
                 c=1.0+aa/c;
-                if (Math.Abs(c) < Const.QL_Epsilon) c=Const.QL_Epsilon;
+                if (Math.Abs(c) < Const.QL_EPSILON) c=Const.QL_EPSILON;
                 d=1.0/d;
                 result *= d*c;
                 aa = -(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
                 d=1.0+aa*d;
-                if (Math.Abs(d) < Const.QL_Epsilon) d=Const.QL_Epsilon;
+                if (Math.Abs(d) < Const.QL_EPSILON) d=Const.QL_EPSILON;
                 c=1.0+aa/c;
-                if (Math.Abs(c) < Const.QL_Epsilon) c=Const.QL_Epsilon;
+                if (Math.Abs(c) < Const.QL_EPSILON) c=Const.QL_EPSILON;
                 d=1.0/d;
                 del=d*c;
                 result *= del;
                 if (Math.Abs(del-1.0) < accuracy)
                     return result;
             }
-            throw new ApplicationException("a or b too big, or maxIteration too small in betacf");
+            throw new Exception("a or b too big, or maxIteration too small in betacf");
         }
 
         /*! Incomplete Beta function
@@ -79,8 +76,8 @@ namespace QLNet {
         }
         public static double incompleteBetaFunction(double a, double b, double x, double accuracy, int maxIteration) {
 
-            if (!(a > 0.0)) throw new ApplicationException("a must be greater than zero");
-            if (!(b > 0.0)) throw new ApplicationException("b must be greater than zero");
+            if (!(a > 0.0)) throw new Exception("a must be greater than zero");
+            if (!(b > 0.0)) throw new Exception("b must be greater than zero");
 
 
             if (x == 0.0)
@@ -88,7 +85,7 @@ namespace QLNet {
             else if (x == 1.0)
                 return 1.0;
             else
-                if (!(x>0.0 && x<1.0)) throw new ApplicationException("x must be in [0,1]");
+                if (!(x>0.0 && x<1.0)) throw new Exception("x must be in [0,1]");
 
             double result = Math.Exp(GammaFunction.logValue(a+b) -
                 GammaFunction.logValue(a) - GammaFunction.logValue(b) +

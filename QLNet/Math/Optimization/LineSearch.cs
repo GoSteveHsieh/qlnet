@@ -2,7 +2,7 @@
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,9 +18,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -66,7 +63,7 @@ namespace QLNet {
             int icount = 0;
             while (!valid) {
                 if (icount > 200)
-                    throw new ApplicationException("can't update linesearch");
+                    throw new Exception("can't update linesearch");
                 diff *= 0.5;
                 icount++;
                 newParams = data + diff * direction;

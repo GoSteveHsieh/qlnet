@@ -2,12 +2,12 @@
  Copyright (C) 2010 Philippe Real (ph_real@hotmail.com)
  Copyright (C) 2008-2014 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -21,13 +21,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
-    [TestClass()]
+#if QL_DOTNET_FRAMEWORK
+   [TestClass()]
+#endif
     public class T_ShortRateModels
     {
 
@@ -44,7 +49,11 @@ namespace TestSuite
             }
         }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testCachedHullWhite() {
          //("Testing Hull-White calibration against cached values...");
 
@@ -107,7 +116,7 @@ namespace TestSuite
          double yMinExpected = model.value(xMinExpected, swaptions);
          if (Math.Abs(xMinCalculated[0]-cachedA) > tolerance
                || Math.Abs(xMinCalculated[1]-cachedSigma) > tolerance) {
-               Assert.Fail ("Failed to reproduce cached calibration results:\n"
+               QAssert.Fail ("Failed to reproduce cached calibration results:\n"
                            + "calculated: a = " + xMinCalculated[0] + ", "
                            + "sigma = " + xMinCalculated[1] + ", "
                            + "f(a) = " + yMinCalculated + ",\n"
@@ -121,7 +130,11 @@ namespace TestSuite
          }
       }
 
-		  [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
         public void testSwaps() {
             //BOOST_MESSAGE("Testing Hull-White swap pricing against known values...");
 
@@ -223,7 +236,7 @@ namespace TestSuite
 
                         double error = Math.Abs((expected-calculated)/expected);
                         if (error > tolerance) {
-                            Assert.Fail("Failed to reproduce swap NPV:"
+                            QAssert.Fail("Failed to reproduce swap NPV:"
                                         //+ QL_FIXED << std::setprecision(9)
                                         + "\n    calculated: " + calculated
                                         + "\n    expected:   " + expected
@@ -235,7 +248,11 @@ namespace TestSuite
             }
         }
 
+#if QL_DOTNET_FRAMEWORK
         [TestMethod()]
+#else
+       [Fact]
+#endif
         public void testFuturesConvexityBias()
         {
             //BOOST_MESSAGE("Testing Hull-White futures convexity bias...");
@@ -258,7 +275,7 @@ namespace TestSuite
 
             if (error > tolerance)
             {
-                Assert.Fail("Failed to reproduce convexity bias:"
+                QAssert.Fail("Failed to reproduce convexity bias:"
                             + "\ncalculated: " + calculatedForward
                             + "\n  expected: " + expectedForward
                     //+ QL_SCIENTIFIC

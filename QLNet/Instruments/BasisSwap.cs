@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
 
- * This file is part of QLNet Project http://qlnet.sourceforge.net/
+ * This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -232,7 +230,7 @@ namespace QLNet
 
 
       //! %Arguments for simple swap calculation
-      new public class Arguments : Swap.Arguments
+      public new class Arguments : Swap.Arguments
       {
          public Type type;
          public double nominal;

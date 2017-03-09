@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2010 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 /*! \file hullwhite.hpp
     \brief Hull & White (HW) model
@@ -102,7 +99,7 @@ namespace QLNet {
                                                 double bondMaturity){
             double _a = a();
             double v;
-            if (_a < Math.Sqrt(Const.QL_Epsilon))
+            if (_a < Math.Sqrt(Const.QL_EPSILON))
             {
                 v = sigma() * B(maturity, bondMaturity) * Math.Sqrt(maturity);
             } else {
@@ -129,15 +126,15 @@ namespace QLNet {
                                     double sigma,
                                     double a){
         if(!(futuresPrice>=0.0))
-            throw new ApplicationException("negative futures price (" + futuresPrice + ") not allowed");
+            throw new Exception("negative futures price (" + futuresPrice + ") not allowed");
         if(!(t>=0.0))
-            throw new ApplicationException("negative t (" + t + ") not allowed");
+            throw new Exception("negative t (" + t + ") not allowed");
         if(!(T>=t))
-            throw new ApplicationException("T (" + T + ") must not be less than t (" + t + ")");
+            throw new Exception("T (" + T + ") must not be less than t (" + t + ")");
         if(!(sigma>=0.0))
-            throw new ApplicationException("negative sigma (" + sigma + ") not allowed");
+            throw new Exception("negative sigma (" + sigma + ") not allowed");
         if(!(a>=0.0))
-            throw new ApplicationException("negative a (" + a + ") not allowed");
+            throw new Exception("negative a (" + a + ") not allowed");
 
         double deltaT = (T-t);
         double tempDeltaT = (1.0-Math.Exp(-a*deltaT)) / a;
@@ -229,7 +226,7 @@ namespace QLNet {
                 public override double value(Vector v, double t) {
                     double forwardRate =
                         termStructure_.link.forwardRate(t, t, Compounding.Continuous, Frequency.NoFrequency).rate();
-                    double temp = a_ < Math.Sqrt(Const.QL_Epsilon) ?
+                    double temp = a_ < Math.Sqrt(Const.QL_EPSILON) ?
                                 sigma_*t :
                                 sigma_*(1.0 - Math.Exp(-a_*t))/a_;
                     return (forwardRate + 0.5*temp*temp);

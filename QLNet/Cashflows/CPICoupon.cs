@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010, 2011, 2012  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -167,12 +165,12 @@ namespace QLNet
          frequency_=frequency;
 
          if(Math.Abs(baseFixing_) <= 1e-16)
-               throw new ApplicationException("|baseFixing|<1e-16, future divide-by-zero error");
+               throw new Exception("|baseFixing|<1e-16, future divide-by-zero error");
 
          if (interpolation_ != InterpolationType.AsIndex)
          {
                if ( frequency_ == Frequency.NoFrequency)
-                  throw new ApplicationException ("non-index interpolation w/o frequency");
+                  throw new Exception ("non-index interpolation w/o frequency");
          }
         }
         
@@ -181,7 +179,7 @@ namespace QLNet
       public virtual double baseFixing() {return baseFixing_;}
 
       //! you may not have a valid date
-      public override Date baseDate() {throw new ApplicationException();}
+      public override Date baseDate() {throw new Exception();}
 
       //! do you want linear/constant/as-index interpolation of future data?
       public virtual InterpolationType interpolation() { return interpolation_; }
@@ -266,7 +264,7 @@ namespace QLNet
       public override List<CashFlow> value()
       {
          if (notionals_.empty())
-            throw new ApplicationException("no notional given");
+            throw new Exception("no notional given");
 
          int n = schedule_.Count - 1;
          List<CashFlow> leg = new List<CashFlow>(n + 1);
@@ -274,7 +272,7 @@ namespace QLNet
          if (n > 0)
          {
             if (fixedRates_.empty() && spreads_.empty())
-               throw new ApplicationException("no fixedRates or spreads given");
+               throw new Exception("no fixedRates or spreads given");
 
             Date refStart, start, refEnd, end;
 
@@ -306,8 +304,7 @@ namespace QLNet
                if (Utils.Get(fixedRates_, i, 1.0) == 0.0)
                {
                   // fixed coupon
-                  leg.Add(new FixedRateCoupon(Utils.Get(notionals_, i, 0.0),
-                                              paymentDate,
+                  leg.Add( new FixedRateCoupon( paymentDate,Utils.Get( notionals_, i, 0.0 ),
                                               Utils.effectiveFixedRate(spreads_, caps_, floors_, i),
                                               paymentDayCounter_, start, end, refStart, refEnd, exCouponDate));
                }
@@ -341,7 +338,7 @@ namespace QLNet
                   else
                   {
                      // cap/floorlet
-                     throw new ApplicationException("caps/floors on CPI coupons not implemented.");
+                     throw new Exception("caps/floors on CPI coupons not implemented.");
                   }
                }
             }

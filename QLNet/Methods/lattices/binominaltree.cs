@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,7 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 
 namespace QLNet {
     // factory to create exact versions of trees
@@ -120,11 +118,11 @@ namespace QLNet {
             : base(process, end, steps) {
 
             dx_ = process.stdDeviation(0.0, x0_, dt_);
-            pu_ = 0.5 + 0.5*driftPerStep_/dx_;;
+            pu_ = 0.5 + 0.5*driftPerStep_/dx_;
             pd_ = 1.0 - pu_;
 
-            if (!(pu_<=1.0)) throw new ApplicationException("negative probability");
-            if (!(pu_ >= 0.0)) throw new ApplicationException("negative probability");
+            if (!(pu_<=1.0)) throw new Exception("negative probability");
+            if (!(pu_ >= 0.0)) throw new Exception("negative probability");
         }
 
         public CoxRossRubinstein factory(StochasticProcess1D process, double end, int steps, double strike) {
@@ -156,11 +154,11 @@ namespace QLNet {
             : base(process, end, steps) {
 
             dx_ = Math.Sqrt(process.variance(0.0, x0_, dt_)+ driftPerStep_*driftPerStep_);
-            pu_ = 0.5 + 0.5*driftPerStep_/dx_;;
+            pu_ = 0.5 + 0.5*driftPerStep_/dx_;
             pd_ = 1.0 - pu_;
 
-            if (!(pu_<=1.0)) throw new ApplicationException("negative probability");
-            if (!(pu_ >= 0.0)) throw new ApplicationException("negative probability");
+            if (!(pu_<=1.0)) throw new Exception("negative probability");
+            if (!(pu_ >= 0.0)) throw new Exception("negative probability");
         }
 
         public Trigeorgis factory(StochasticProcess1D process, double end, int steps, double strike) {
@@ -191,8 +189,8 @@ namespace QLNet {
             //     treeCentering_ = (up_+down_)/2.0;
             //     up_ = up_-treeCentering_;
 
-            if (!(pu_<=1.0)) throw new ApplicationException("negative probability");
-            if (!(pu_ >= 0.0)) throw new ApplicationException("negative probability");
+            if (!(pu_<=1.0)) throw new Exception("negative probability");
+            if (!(pu_ >= 0.0)) throw new Exception("negative probability");
         }
 
         public override double underlying(int i, int index) {
@@ -215,7 +213,7 @@ namespace QLNet {
         public LeisenReimer(StochasticProcess1D process, double end, int steps, double strike)    
             : base(process, end, (steps%2 != 0 ? steps : steps+1)) {
 
-            if (!(strike>0.0)) throw new ApplicationException("strike must be positive");
+            if (!(strike>0.0)) throw new Exception("strike must be positive");
             int oddSteps = (steps%2 != 0 ? steps : steps+1);
             double variance = process.variance(0.0, x0_, end);
             double ermqdt = Math.Exp(driftPerStep_ + 0.5*variance/oddSteps);
@@ -248,7 +246,7 @@ namespace QLNet {
         public Joshi4(StochasticProcess1D process, double end, int steps, double strike)    
             : base(process, end, (steps%2 != 0 ? steps : steps+1)) {
 
-            if (!(strike>0.0)) throw new ApplicationException("strike must be positive");
+            if (!(strike>0.0)) throw new Exception("strike must be positive");
 
             int oddSteps = (steps%2 != 0 ? steps : steps+1);
             double variance = process.variance(0.0, x0_, end);

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Barone-Adesi and Whaley pricing engine for American options (1987)
@@ -76,8 +73,11 @@ namespace QLNet {
             double d1 = (Math.Log(forwardSi/payoff.strike()) + 0.5*variance) /
                 Math.Sqrt(variance);
             CumulativeNormalDistribution cumNormalDist = new CumulativeNormalDistribution();
-            double K = (riskFreeDiscount!=1.0 ? -2.0*Math.Log(riskFreeDiscount)/
-                (variance*(1.0-riskFreeDiscount)) : 0.0);
+            double K = ( !Utils.close( riskFreeDiscount, 1.0, 1000 ) )
+                 ? -2.0 * Math.Log( riskFreeDiscount )
+                    / ( variance * ( 1.0 - riskFreeDiscount ) )
+                  : 2.0 / variance;
+
             double temp = Utils.blackFormula(payoff.optionType(), payoff.strike(),
                     forwardSi, Math.Sqrt(variance))*riskFreeDiscount;
             switch (payoff.optionType()) {
@@ -134,21 +134,21 @@ namespace QLNet {
         public override void calculate() {
 
             if (!(arguments_.exercise.type() == Exercise.Type.American))
-                throw new ApplicationException("not an American Option");
+                throw new Exception("not an American Option");
 
             AmericanExercise ex = arguments_.exercise as AmericanExercise;
-            if (ex == null) throw new ApplicationException("non-American exercise given");
+            if (ex == null) throw new Exception("non-American exercise given");
 
-            if(ex.payoffAtExpiry()) throw new ApplicationException("payoff at expiry not handled");
+            if(ex.payoffAtExpiry()) throw new Exception("payoff at expiry not handled");
 
             StrikedTypePayoff payoff = arguments_.payoff as StrikedTypePayoff;
-            if (payoff == null) throw new ApplicationException("non-striked payoff given");
+            if (payoff == null) throw new Exception("non-striked payoff given");
 
             double variance = process_.blackVolatility().link.blackVariance(ex.lastDate(), payoff.strike());
             double dividendDiscount = process_.dividendYield().link.discount(ex.lastDate());
             double riskFreeDiscount = process_.riskFreeRate().link.discount(ex.lastDate());
             double spot = process_.stateVariable().link.value();
-            if (!(spot > 0.0)) throw new ApplicationException("negative or null underlying given");
+            if (!(spot > 0.0)) throw new Exception("negative or null underlying given");
             double forwardPrice = spot * dividendDiscount / riskFreeDiscount;
             BlackCalculator black = new BlackCalculator(payoff, forwardPrice, Math.Sqrt(variance), riskFreeDiscount);
 
@@ -186,8 +186,10 @@ namespace QLNet {
                 double d1 = (Math.Log(forwardSk/payoff.strike()) + 0.5*variance)
                     /Math.Sqrt(variance);
                 double n = 2.0*Math.Log(dividendDiscount/riskFreeDiscount)/variance;
-                double K = -2.0*Math.Log(riskFreeDiscount)/
-                    (variance*(1.0-riskFreeDiscount));
+                double K = ( !Utils.close( riskFreeDiscount, 1.0, 1000 ) )
+                     ? -2.0 * Math.Log( riskFreeDiscount )
+                        / ( variance * ( 1.0 - riskFreeDiscount ) )
+                      : 2.0 / variance;
                 double Q, a;
                 switch (payoff.optionType()) {
                     case Option.Type.Call:
@@ -212,7 +214,7 @@ namespace QLNet {
                         }
                         break;
                     default:
-                      throw new ApplicationException("unknown option type");
+                      throw new Exception("unknown option type");
                 }
             } // end of "early exercise can be optimal"
         }

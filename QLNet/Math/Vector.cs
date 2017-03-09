@@ -3,7 +3,7 @@
  Copyright (C) 2008 Andrea Maggiulli
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -20,8 +20,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! 1-D array used in linear algebra.
@@ -105,7 +103,7 @@ namespace QLNet {
 
         internal static Vector operVector(Vector v1, Vector v2, Func<double, double, double> func) {
             if (v1.Count != v2.Count)
-                throw new ApplicationException("operation on vectors with different sizes (" + v1.Count + ", " + v2.Count);
+                throw new Exception("operation on vectors with different sizes (" + v1.Count + ", " + v2.Count);
 
             Vector temp = new Vector(v1.Count);
             for (int i = 0; i < v1.Count; i++)
@@ -121,7 +119,7 @@ namespace QLNet {
 
         public static double operator *(Vector v1, Vector v2) {
             if (v1.Count != v2.Count)
-                throw new ApplicationException("operation on vectors with different sizes (" + v1.Count + ", " + v2.Count);
+                throw new Exception("operation on vectors with different sizes (" + v1.Count + ", " + v2.Count);
 
             double result = 0;
             for (int i = 0; i < v1.Count; i++)
@@ -146,6 +144,13 @@ namespace QLNet {
             Vector result = new Vector(v.size());
             result.ForEach((i, x) => result[i] = Math.Sqrt(v[i]));
             return result;
+        }
+
+        public static Vector Abs( Vector v )
+        {
+           Vector result = new Vector( v.size() );
+           result.ForEach( ( i, x ) => result[i] = Math.Abs( v[i] ) );
+           return result;
         }
 
         public void swap(int i1, int i2) {

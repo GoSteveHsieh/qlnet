@@ -3,7 +3,7 @@
  Copyright (C) 2009 Siarhei Novik (snovik@gmail.com)
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,9 +19,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -86,7 +83,7 @@ namespace QLNet
                            bool isPutATMIncluded = false, 
                            double? putDigitalPayoff = null, 
                            DigitalReplication replication = null)
-         : base(underlying.nominal(), underlying.date(), underlying.accrualStartDate(), underlying.accrualEndDate(), underlying.fixingDays, underlying.index(), underlying.gearing(), underlying.spread(), underlying.refPeriodStart, underlying.refPeriodEnd, underlying.dayCounter(), underlying.isInArrears())
+         : base(underlying.date(), underlying.nominal(), underlying.accrualStartDate(), underlying.accrualEndDate(), underlying.fixingDays, underlying.index(), underlying.gearing(), underlying.spread(), underlying.referencePeriodStart, underlying.referencePeriodEnd, underlying.dayCounter(), underlying.isInArrears())
       {
          if (replication == null) replication = new DigitalReplication();
 
@@ -107,24 +104,24 @@ namespace QLNet
 
 
          if (!(replication.gap() > 0.0))
-            throw new ApplicationException("Non positive epsilon not allowed");
+            throw new Exception("Non positive epsilon not allowed");
 
          if (putStrike == null)
             if (!(putDigitalPayoff == null))
-               throw new ApplicationException("Put Cash rate non allowed if put strike is null");
+               throw new Exception("Put Cash rate non allowed if put strike is null");
 
          if (callStrike == null)
             if (!(callDigitalPayoff == null))
-               throw new ApplicationException("Call Cash rate non allowed if call strike is null");
+               throw new Exception("Call Cash rate non allowed if call strike is null");
          if (callStrike != null)
          {
             if (!(callStrike >= 0.0))
-               throw new ApplicationException("negative call strike not allowed");
+               throw new Exception("negative call strike not allowed");
 
             hasCallStrike_ = true;
             callStrike_ = callStrike.GetValueOrDefault();
             if (!(callStrike_ >= replication.gap() / 2.0))
-               throw new ApplicationException("call strike < eps/2");
+               throw new Exception("call strike < eps/2");
 
             switch (callPosition)
             {
@@ -135,7 +132,7 @@ namespace QLNet
                   callCsi_ = -1.0;
                   break;
                default:
-                  throw new ApplicationException("unsupported position type");
+                  throw new Exception("unsupported position type");
             }
             if (callDigitalPayoff != null)
             {
@@ -146,7 +143,7 @@ namespace QLNet
          if (putStrike != null)
          {
             if (!(putStrike >= 0.0))
-               throw new ApplicationException("negative put strike not allowed");
+               throw new Exception("negative put strike not allowed");
 
             hasPutStrike_ = true;
             putStrike_ = putStrike.GetValueOrDefault();
@@ -159,7 +156,7 @@ namespace QLNet
                   putCsi_ = -1.0;
                   break;
                default:
-                  throw new ApplicationException("unsupported position type");
+                  throw new Exception("unsupported position type");
             }
             if (putDigitalPayoff != null)
             {
@@ -187,7 +184,7 @@ namespace QLNet
                         callRightEps_ = 0.0;
                         break;
                      default:
-                        throw new ApplicationException("unsupported position type");
+                        throw new Exception("unsupported position type");
                   }
                }
                if (hasPutStrike_)
@@ -203,7 +200,7 @@ namespace QLNet
                         putRightEps_ = replication.gap();
                         break;
                      default:
-                        throw new ApplicationException("unsupported position type");
+                        throw new Exception("unsupported position type");
                   }
                }
                break;
@@ -221,7 +218,7 @@ namespace QLNet
                         callRightEps_ = replication.gap();
                         break;
                      default:
-                        throw new ApplicationException("unsupported position type");
+                        throw new Exception("unsupported position type");
                   }
                }
                if (hasPutStrike_)
@@ -237,12 +234,12 @@ namespace QLNet
                         putRightEps_ = 0.0;
                         break;
                      default:
-                        throw new ApplicationException("unsupported position type");
+                        throw new Exception("unsupported position type");
                   }
                }
                break;
             default:
-               throw new ApplicationException("unsupported position type");
+               throw new Exception("unsupported position type");
          }
 
          underlying.registerWith(update);
@@ -255,7 +252,7 @@ namespace QLNet
       {
 
          if (underlying_.pricer() == null)
-            throw new ApplicationException("pricer not set");
+            throw new Exception("pricer not set");
 
          Date fixingDate = underlying_.fixingDate();
          Date today = Settings.evaluationDate();
@@ -292,7 +289,7 @@ namespace QLNet
          if (hasCall())
             return callStrike_;
          else
-            throw new ApplicationException("callStrike has not been set");
+            throw new Exception("callStrike has not been set");
          // return null;
       }
       public double putStrike()
@@ -300,7 +297,7 @@ namespace QLNet
          if (hasPut())
             return putStrike_;
          else
-            throw new ApplicationException("putStrike has not been set");
+            throw new Exception("putStrike has not been set");
          // return null;
       }
       public double callDigitalPayoff()
@@ -308,7 +305,7 @@ namespace QLNet
          if (isCallCashOrNothing_)
             return callDigitalPayoff_;
          else
-            throw new ApplicationException("callDigitalPayoff has not been set");
+            throw new Exception("callDigitalPayoff has not been set");
          // return null;
       }
       public double putDigitalPayoff()
@@ -316,7 +313,7 @@ namespace QLNet
          if (isPutCashOrNothing_)
             return putDigitalPayoff_;
          else
-            throw new ApplicationException("putDigitalPayoff has not been set");
+            throw new Exception("putDigitalPayoff has not been set");
          // return null;
       }
       public bool hasPut()

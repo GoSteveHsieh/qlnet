@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -18,15 +18,18 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
+#if QL_DOTNET_FRAMEWORK
    [TestClass()]
+#endif
    public class T_Solvers
    {
       class Foo : ISolver1d
@@ -44,7 +47,7 @@ namespace TestSuite
             double root = solver.solve(new Foo(), accuracy[i], 1.5, 0.1);
             if (Math.Abs(root - expected) > accuracy[i])
             {
-               Assert.Fail(name + " solver:\n"
+               QAssert.Fail(name + " solver:\n"
                           + "    expected:   " + expected + "\n"
                           + "    calculated: " + root + "\n"
                           + "    accuracy:   " + accuracy[i]);
@@ -52,7 +55,7 @@ namespace TestSuite
             root = solver.solve(new Foo(), accuracy[i], 1.5, 0.0, 1.0);
             if (Math.Abs(root - expected) > accuracy[i])
             {
-               Assert.Fail(name + " solver (bracketed):\n"
+               QAssert.Fail(name + " solver (bracketed):\n"
                           + "    expected:   " + expected + "\n"
                           + "    calculated: " + root + "\n"
                           + "    accuracy:   " + accuracy[i]);
@@ -60,32 +63,56 @@ namespace TestSuite
          }
       }
 
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testBrent()
       {
          test(new Brent(), "Brent");
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testNewton()
       {
          test(new Newton(), "Newton");
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testFalsePosition()
       {
          test(new FalsePosition(), "FalsePosition");
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testBisection()
       {
          test(new Bisection(), "Bisection");
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testRidder()
       {
          test(new Ridder(), "Ridder");
       }
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testSecant()
       {
          test(new Secant(), "Secant");

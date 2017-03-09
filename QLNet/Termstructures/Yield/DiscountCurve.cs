@@ -1,7 +1,8 @@
 ﻿/*
  Copyright (C) 2008, 2009 Siarhei Novik (snovik@gmail.com)
+ Copyright (C) 2008-2016  Andrea Maggiulli (a.maggiulli@gmail.com)
 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -35,7 +35,15 @@ namespace QLNet
 
       public List<Date> dates_ { get; set; }
       public List<Date> dates() { return dates_; }
-      public override Date maxDate() { return dates_.Last(); }
+      public Date maxDate_ { get; set; }
+      public override Date maxDate()
+      {
+         if ( maxDate_ != null )
+            return maxDate_;
+
+         return dates_.Last();
+      }
+
 
       public List<double> data_ { get; set; }
       public List<double> discounts() { return this.data_; }

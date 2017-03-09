@@ -3,7 +3,7 @@
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
  Copyright (C) 2008, 2009 , 2010 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -20,8 +20,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -83,8 +81,7 @@ namespace QLNet {
                     refEnd = calendar.adjust(start + schedule.tenor(), schedule.businessDayConvention());
 
                 if (Utils.Get(gearings, i, 1) == 0) {                               // fixed coupon
-                    leg.Add(new FixedRateCoupon(Utils.Get(nominals, i),
-                                                paymentDate,
+                   leg.Add( new FixedRateCoupon( paymentDate,Utils.Get( nominals, i ),
                                                 Utils.effectiveFixedRate(spreads, caps, floors, i),
                                                 paymentDayCounter,
                                                 start, end, refStart, refEnd));
@@ -92,7 +89,7 @@ namespace QLNet {
                     if (Utils.noOption(caps, floors, i)) {
                         leg.Add(new FloatingCouponType().factory(Utils.Get(nominals, i),
                             paymentDate, start, end,
-                            Utils.Get(fixingDays, i, 2),
+                            Utils.Get( fixingDays, i, index.fixingDays() ),
                             index,
                             Utils.Get(gearings, i, 1),
                             Utils.Get(spreads, i),
@@ -101,7 +98,7 @@ namespace QLNet {
                     } else {
                         leg.Add(new CappedFlooredCouponType().factory(Utils.Get(nominals, i),
                             paymentDate, start, end,
-                            Utils.Get(fixingDays, i, 2),
+                            Utils.Get( fixingDays, i, index.fixingDays() ),
                             index,
                             Utils.Get(gearings, i, 1),
                             Utils.Get(spreads, i),
@@ -173,8 +170,7 @@ namespace QLNet {
                 }
                 if (Utils.Get(gearings, i, 1.0) == 0.0) { // fixed coupon
                     leg.Add(new
-                        FixedRateCoupon(Utils.Get(nominals, i, 1.0),
-                                        paymentDate,
+                        FixedRateCoupon( paymentDate,Utils.Get( nominals, i, 1.0 ),
                                         Utils.Get(spreads, i, 1.0),
                                         paymentDayCounter,
                                         start, end, refStart, refEnd));
@@ -271,25 +267,25 @@ namespace QLNet {
             int n = schedule_.Count -1 ;
 
             if (notionals_.empty())
-               throw new ApplicationException("no notional given");
+               throw new Exception("no notional given");
 
             if (notionals_.Count > n)
-               throw new ApplicationException("too many nominals (" + notionals_.Count +
+               throw new Exception("too many nominals (" + notionals_.Count +
                                               "), only " + n + " required");
 				if ( gearings_ != null && gearings_.Count > n )
-               throw new ApplicationException("too many gearings (" + gearings_.Count +
+               throw new Exception("too many gearings (" + gearings_.Count +
                                               "), only " + n + " required");
 
 				if ( spreads_ != null && spreads_.Count > n )
-               throw new ApplicationException("too many spreads (" + spreads_.Count +
+               throw new Exception("too many spreads (" + spreads_.Count +
                                               "), only " + n + " required");
 
 				if ( caps_ != null && caps_.Count > n )
-               throw new ApplicationException("too many caps (" + caps_.Count +
+               throw new Exception("too many caps (" + caps_.Count +
                                               "), only " + n + " required");
 
 				if ( floors_ != null && floors_.Count > n )
-               throw new ApplicationException("too many floors (" + floors_.Count +
+               throw new Exception("too many floors (" + floors_.Count +
                                               "), only " + n + " required");
 
 
@@ -318,8 +314,7 @@ namespace QLNet {
                if (Utils.Get(gearings_, i, 1.0) == 0.0)
                {
                   // fixed coupon
-                  leg.Add(new FixedRateCoupon(Utils.Get(notionals_, i, 1.0),
-                                              paymentDate,
+                  leg.Add( new FixedRateCoupon( paymentDate,Utils.Get( notionals_, i, 1.0 ),
                                               Utils.effectiveFixedRate(spreads_, caps_,
                                                                          floors_, i),
                                               paymentDayCounter_,

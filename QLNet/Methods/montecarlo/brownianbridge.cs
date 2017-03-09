@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,8 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 // ===========================================================================
 // NOTE: The following copyright notice applies to the original code,
@@ -153,8 +151,8 @@ namespace QLNet {
 
         //! \name Brownian-bridge constructor
         public void transform(List<double> begin, List<double> output) {
-            if (begin.Count == 0) throw new ApplicationException("invalid sequence");
-            if (begin.Count != size_) throw new ApplicationException("incompatible sequence size");
+            if (begin.Count == 0) throw new Exception("invalid sequence");
+            if (begin.Count != size_) throw new Exception("incompatible sequence size");
             // We use output to store the path...
             output[size_-1] = stdDev_[0] * begin[0];
             for (int i=1; i<size_; ++i) {

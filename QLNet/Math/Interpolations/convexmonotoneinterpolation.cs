@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //the first value in the y-vector is ignored.
@@ -41,7 +40,7 @@ namespace QLNet {
             quadraticHelper_ = quadraticHelper;
             convMonoHelper_ = convMonoHelper;
             if (!(quadraticity < 1.0 && quadraticity > 0.0))
-                throw new ApplicationException("Quadratic value must lie between 0 and 1");
+                throw new Exception("Quadratic value must lie between 0 and 1");
         }
 
         public double value(double x) {
@@ -403,14 +402,14 @@ namespace QLNet {
             monotonicity_ = monotonicity;
 
             if (!(monotonicity_ >= 0 && monotonicity_ <= 1))
-                throw new ApplicationException("Monotonicity must lie between 0 and 1");
+                throw new Exception("Monotonicity must lie between 0 and 1");
             if(!(quadraticity_ >= 0 && quadraticity_ <= 1))
-                       throw new ApplicationException("Quadraticity must lie between 0 and 1");
+                       throw new Exception("Quadraticity must lie between 0 and 1");
             if(!(size_ >= 2))
-                       throw new ApplicationException("Single point provided, not supported by convex " +
+                       throw new Exception("Single point provided, not supported by convex " +
                        "monotone method as first point is ignored");
             if(!((size_ - preExistingHelpers.Count) > 1))
-                        throw new ApplicationException("Too many existing helpers have been supplied");
+                        throw new Exception("Too many existing helpers have been supplied");
         }
 
         public override void update() {

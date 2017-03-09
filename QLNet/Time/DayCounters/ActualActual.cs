@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,7 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
 
 namespace QLNet
 {
@@ -69,8 +68,8 @@ namespace QLNet
                 if (d1 > d2) return -yearFraction(d2, d1, d3, d4);
 
                 // when the reference period is not specified, try taking it equal to (d1,d2)
-                Date refPeriodStart = (d3 != null ? d3 : d1);
-                Date refPeriodEnd = (d4 != null ? d4 : d2);
+                Date refPeriodStart = (d3 ?? d1);
+                Date refPeriodEnd = (d4 ?? d2);
 
                 if (!(refPeriodEnd > refPeriodStart && refPeriodEnd > d1))
                     throw new ArgumentException("Invalid reference period: date 1: " + d1 + ", date 2: " + d2 +
@@ -98,7 +97,7 @@ namespace QLNet
                         // here refPeriodStart is the last (maybe notional) payment date.
                         // refPeriodStart <= d1 <= d2 <= refPeriodEnd
                         // [maybe the equality should be enforced, since	refPeriodStart < d1 <= d2 < refPeriodEnd	could give wrong results] ???
-                        return period * dayCount(d1, d2) / dayCount(refPeriodStart, refPeriodEnd);
+                       return period * Date.daysBetween( d1, d2 ) / Date.daysBetween( refPeriodStart, refPeriodEnd );
                     }
                     else
                     {
@@ -170,8 +169,8 @@ namespace QLNet
                        dib2 = (Date.IsLeapYear(y2) ? 366 : 365);
 
                 double sum = y2 - y1 - 1;
-                sum += dayCount(d1, new Date(1, Month.January, y1 + 1)) / dib1;
-                sum += dayCount(new Date(1, Month.January, y2), d2) / dib2;
+                sum += Date.daysBetween( d1, new Date( 1, Month.January, y1 + 1 ) ) / dib1;
+                sum += Date.daysBetween( new Date( 1, Month.January, y2 ), d2 ) / dib2;
                 return sum;
             }
         };
@@ -219,7 +218,7 @@ namespace QLNet
                         den += 1;
                 }
 
-                return sum + dayCount(d1, newD2) / den;
+                return sum + Date.daysBetween( d1, newD2 ) / den;
             }
         };
 

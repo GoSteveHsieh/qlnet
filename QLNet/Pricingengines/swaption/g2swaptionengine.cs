@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2010 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -51,18 +51,18 @@ namespace QLNet
 
         public override void calculate() {
             if(!(arguments_.settlementType == Settlement.Type.Physical))
-                       throw new ApplicationException("cash-settled swaptions not priced with G2 engine");
+                       throw new Exception("cash-settled swaptions not priced with G2 engine");
 
             // adjust the fixed rate of the swap for the spread on the
             // floating leg (which is not taken into account by the
             // model)
             VanillaSwap swap = arguments_.swap;
-            swap.setPricingEngine(new DiscountingSwapEngine(model_.termStructure()));
+            swap.setPricingEngine(new DiscountingSwapEngine(model_.link.termStructure()));
             double correction = swap.spread *
                 Math.Abs(swap.floatingLegBPS() / swap.fixedLegBPS());
             double fixedRate = swap.fixedRate - correction;
 
-            results_.value =  model_.swaption(arguments_, fixedRate,
+            results_.value =  model_.link.swaption(arguments_, fixedRate,
                                                range_, intervals_);
         }
  

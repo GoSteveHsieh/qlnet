@@ -1,7 +1,8 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -16,28 +17,24 @@
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public class FlatSmileSection : SmileSection {
         private double vol_;
-        private double atmLevel_;
-        public override double atmLevel() { return atmLevel_; }
+        private double? atmLevel_;
+        public override double? atmLevel() 
+        {
+           //Utils.QL_REQUIRE( atmLevel_.HasValue, () => "FlatSmileSection.atmLevel is null" );
+           return atmLevel_;
+        }
 
-
-        // public FlatSmileSection(Date d, double vol, DayCounter dc, Date referenceDate = Date(), double atmLevel = Null<Rate>());
-        public FlatSmileSection(Date d, double vol, DayCounter dc, Date referenceDate) : this(d, vol, dc, referenceDate, 0) { }
-        public FlatSmileSection(Date d, double vol, DayCounter dc, Date referenceDate, double atmLevel)
+        public FlatSmileSection(Date d, double vol, DayCounter dc, Date referenceDate = null, double? atmLevel = null)
             : base(d, dc, referenceDate) {
             vol_ = vol;
             atmLevel_ = atmLevel;
         }
 
-        public FlatSmileSection(double exerciseTime, double vol, DayCounter dc) : this(exerciseTime, vol, dc, 0) { }
-        public FlatSmileSection(double exerciseTime, double vol, DayCounter dc, double atmLevel)
+        public FlatSmileSection(double exerciseTime, double vol, DayCounter dc, double? atmLevel = null)
             : base(exerciseTime, dc) {
             vol_ = vol;
             atmLevel_ = atmLevel;

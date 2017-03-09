@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2009 Philippe Real (ph_real@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -20,15 +20,45 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
-    [TestClass()]
-    public class T_LiborMarketModelProcess
+#if QL_DOTNET_FRAMEWORK
+   [TestClass()]
+#endif
+   public class T_LiborMarketModelProcess : IDisposable
     {
+       #region Initialize&Cleanup
+       private SavedSettings backup;
+       #if QL_DOTNET_FRAMEWORK
+       [TestInitialize]
+       public void testInitialize()
+       {
+       #else
+       public T_LiborMarketModelProcess()
+       {
+       #endif
+
+          backup = new SavedSettings();
+       }
+       #if QL_DOTNET_FRAMEWORK
+       [TestCleanup]
+       #endif
+       public void testCleanup()
+       {
+          Dispose();
+       }
+       public void Dispose()
+       {
+          backup.Dispose();
+       }
+       #endregion
 
         int len = 10;
 
@@ -42,7 +72,7 @@ namespace TestSuite
             rates.Add(0.01);
             rates.Add(0.08);
             Linear Interpolator=new Linear();
-            RelinkableHandle<YieldTermStructure> termStructure= new RelinkableHandle<YieldTermStructure>();;
+            RelinkableHandle<YieldTermStructure> termStructure= new RelinkableHandle<YieldTermStructure>();
             //termStructure.linkTo(new InterpolatedZeroCurve<Linear>(dates, rates, dayCounter, Interpolator));
 
             IborIndex index = new Euribor1Y(termStructure);
@@ -81,7 +111,7 @@ namespace TestSuite
 
         LiborForwardModelProcess makeProcess()
         {
-            Matrix volaComp=new Matrix();;
+            Matrix volaComp=new Matrix();
             return makeProcess(volaComp);
         }
         
@@ -101,16 +131,17 @@ namespace TestSuite
 
             return process;
         }
-        
-        [TestMethod()]
+
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testInitialisation() 
         {
-            //"Testing caplet LMM process initialisation..."
-
-            //SavedSettings backup;
-
+            // Testing caplet LMM process initialisation
             DayCounter dayCounter = new Actual360();
-            RelinkableHandle<YieldTermStructure> termStructure= new RelinkableHandle<YieldTermStructure>();;
+            RelinkableHandle<YieldTermStructure> termStructure= new RelinkableHandle<YieldTermStructure>();
             termStructure.linkTo(Utilities.flatRate(Date.Today, 0.04, dayCounter));
 
             IborIndex index=new Euribor6M(termStructure);
@@ -140,20 +171,21 @@ namespace TestSuite
                     int ii     = process.nextIndexReset(fixings[i]);
 
                     if ((ileft != i) || (iright != i+1) || (ii != i+1)) {
-                        Assert.Fail("Failed to next index resets");
+                        QAssert.Fail("Failed to next index resets");
                     }
                 }
 
             }
         }
-        
-        [TestMethod()]
+
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testLambdaBootstrapping() 
         {
-            //"Testing caplet LMM lambda bootstrapping..."
-
-            //SavedSettings backup;
-
+            // Testing caplet LMM lambda bootstrapping
             double tolerance = 1e-10;
             double[] lambdaExpected = {14.3010297550, 19.3821411939, 15.9816590141,
                                           15.9953118303, 14.0570815635, 13.5687599894,
@@ -167,7 +199,7 @@ namespace TestSuite
                 double expected   = lambdaExpected[i]/100;
 
                 if (Math.Abs(calculated - expected) > tolerance)
-                    Assert.Fail("Failed to reproduce expected lambda values"
+                    QAssert.Fail("Failed to reproduce expected lambda values"
                                 + "\n    calculated: " + calculated
                                 + "\n    expected:   " + expected);
             }
@@ -179,8 +211,8 @@ namespace TestSuite
 
             for (int t=0; t<grid.size(); ++t) {
                 //verifier la presence du null
-                Matrix diff = param.integratedCovariance(grid[t],null)
-                            - param.integratedCovariance(grid[t], null);
+                Matrix diff = param.integratedCovariance(grid[t])
+                            - param.integratedCovariance(grid[t]);
 
                 for (int i=0; i<diff.rows(); ++i) 
                 {
@@ -188,7 +220,7 @@ namespace TestSuite
                     {
                         if (Math.Abs(diff[i,j]) > tolerance) 
                         {
-                             Assert.Fail("Failed to reproduce integrated covariance"
+                             QAssert.Fail("Failed to reproduce integrated covariance"
                                           + "\n    calculated: " + diff[i,j]
                                           + "\n    expected:   " + 0);
                         }
@@ -197,12 +229,14 @@ namespace TestSuite
             }
         }
 
-        [TestMethod()]
+        #if QL_DOTNET_FRAMEWORK
+        [TestCategory( "LongRun" ), TestMethod()]
+        #else
+        [Fact(Skip = "LongRun")]
+        #endif
         public void testMonteCarloCapletPricing() 
         {
-            //"Testing caplet LMM Monte-Carlo caplet pricing..."
-
-            //SavedSettings backup;
+            // Testing caplet LMM Monte-Carlo caplet pricing
 
             /* factor loadings are taken from Hull & White article
                plus extra normalisation to get orthogonal eigenvectors
@@ -232,7 +266,7 @@ namespace TestSuite
             LiborForwardModelProcess process2 = makeProcess(volaComp);
 
             List<double> tmp = process1.fixingTimes();
-            TimeGrid grid=new TimeGrid(tmp ,12);
+            TimeGrid grid=new TimeGrid(tmp ,tmp.Count, 12);
 
             List<int> location=new List<int>();
             for (int i=0; i < tmp.Count; ++i) {
@@ -257,14 +291,18 @@ namespace TestSuite
             List<GeneralStatistics> stat2 = new InitializedList<GeneralStatistics>(process2.size());
             List<GeneralStatistics> stat3 = new InitializedList<GeneralStatistics>(process2.size() - 1);
             for (int i=0; i<nrTrails; ++i) {
-                Sample<MultiPath> path1 = generator1.next();
-                Sample<MultiPath> path2 = generator2.next();
+                Sample<IPath> path1 = generator1.next();
+                Sample<IPath> path2 = generator2.next();
+                MultiPath value1 = path1.value as MultiPath;
+                Utils.QL_REQUIRE( value1 != null, () => "Invalid Path" );
+                MultiPath value2 = path2.value as MultiPath;
+                Utils.QL_REQUIRE( value2 != null, () => "Invalid Path" );
 
                 List<double> rates1=new InitializedList<double>(len);
                 List<double> rates2 = new InitializedList<double>(len);
                 for (int j=0; j<process1.size(); ++j) {
-                    rates1[j] = path1.value[j][location[j]];
-                    rates2[j] = path2.value[j][location[j]];
+                    rates1[j] = value1[j][location[j]];
+                    rates2[j] = value2[j][location[j]];
                 }
 
                 List<double> dis1 = process1.discountBond(rates1);
@@ -306,7 +344,7 @@ namespace TestSuite
                 double expected    = capletNpv[k];
 
                 if (Math.Abs(calculated1 - expected) > tolerance1) {
-                    Assert.Fail("Failed to reproduce expected caplet NPV"
+                    QAssert.Fail("Failed to reproduce expected caplet NPV"
                                 + "\n    calculated: " + calculated1
                                 + "\n    error int:  " + tolerance1
                                 + "\n    expected:   " + expected);
@@ -316,7 +354,7 @@ namespace TestSuite
                 double tolerance2  = stat2[k].errorEstimate();
 
                 if (Math.Abs(calculated2 - expected) > tolerance2) {
-                    Assert.Fail("Failed to reproduce expected caplet NPV"
+                    QAssert.Fail("Failed to reproduce expected caplet NPV"
                                 + "\n    calculated: " + calculated2
                                 + "\n    error int:  " + tolerance2
                                 + "\n    expected:   " + expected);
@@ -330,20 +368,13 @@ namespace TestSuite
                     double refError = 1e-5; // 1e-5. error bars of the reference values
 
                     if (Math.Abs(calculated3 - expected) > tolerance3 + refError) {
-                        Assert.Fail("Failed to reproduce expected caplet NPV"
+                        QAssert.Fail("Failed to reproduce expected caplet NPV"
                                     + "\n    calculated: " + calculated3
                                     + "\n    error int:  " + tolerance3 + refError
                                     + "\n    expected:   " + expected);
                     }
                 }
             }
-        }
-     
-        public void T_LiborMarketModelProcess_suite()
-        {
-            testInitialisation();
-            testLambdaBootstrapping();
-            testMonteCarloCapletPricing();
         }
     }
 

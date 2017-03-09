@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Binomial probability distribution function
@@ -39,8 +36,8 @@ namespace QLNet {
             } else if (p==1.0) {
                 logP_ = 0.0;
             } else {
-                if (!(p>0)) throw new ApplicationException("negative p not allowed");
-                if (!(p < 1.0)) throw new ApplicationException("p>1.0 not allowed");
+                if (!(p>0)) throw new Exception("negative p not allowed");
+                if (!(p < 1.0)) throw new Exception("p>1.0 not allowed");
 
                 logP_ = Math.Log(p);
                 logOneMinusP_ = Math.Log(1.0 - p);
@@ -75,8 +72,8 @@ namespace QLNet {
             n_ = n;
             p_ = p;
 
-            if (!(p >= 0)) throw new ApplicationException("negative p not allowed");
-            if (!(p <= 1.0)) throw new ApplicationException("p>1.0 not allowed");
+            if (!(p >= 0)) throw new Exception("negative p not allowed");
+            if (!(p <= 1.0)) throw new Exception("p>1.0 not allowed");
         }
         
         // function
@@ -97,7 +94,7 @@ namespace QLNet {
         */
         public static double PeizerPrattMethod2Inversion(double z, int n) {
 
-            if (!(n%2==1)) throw new ApplicationException("n must be an odd number: " + n + " not allowed");
+            if (!(n%2==1)) throw new Exception("n must be an odd number: " + n + " not allowed");
 
             double result = (z/(n+1.0/3.0+0.1/(n+1.0)));
             result *= result;
@@ -107,7 +104,7 @@ namespace QLNet {
         }
 
         public static double binomialCoefficientLn(int n, int k) {
-            if (!(n>=k)) throw new ApplicationException("n<k not allowed");
+            if (!(n>=k)) throw new Exception("n<k not allowed");
 
             return Factorial.ln(n)-Factorial.ln(k)-Factorial.ln(n-k);
         }

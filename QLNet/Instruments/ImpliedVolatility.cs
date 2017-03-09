@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! helper class for one-asset implied-volatility calculation
@@ -67,7 +64,7 @@ namespace QLNet {
             
             results_ = engine_.getResults() as Instrument.Results;
             if (results_ == null)
-                throw new ApplicationException("pricing engine does not supply needed results");
+                throw new Exception("pricing engine does not supply needed results");
         }
 
         public override double value(double x) {

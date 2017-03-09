@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -48,9 +48,9 @@ namespace QLNet {
             eigenVectors_ = new Matrix(s.rows(), s.columns(), 0.0);
 
             if (!(s.rows() > 0 && s.columns() > 0)) 
-                throw new ApplicationException( "null matrix given");
+                throw new Exception( "null matrix given");
             if (s.rows()!=s.columns()) 
-                throw new ApplicationException( "input matrix must be square");
+                throw new Exception( "input matrix must be square");
 
             int size = s.rows();
             for (int q=0; q<size; q++) {
@@ -132,7 +132,7 @@ namespace QLNet {
             } while (++ite<=maxIterations && keeplooping);
 
             if(!(ite<=maxIterations))
-                throw new ApplicationException("Too many iterations (" + maxIterations + ") reached");
+                throw new Exception("Too many iterations (" + maxIterations + ") reached");
 
 
             // sort (eigenvalues, eigenvectors)

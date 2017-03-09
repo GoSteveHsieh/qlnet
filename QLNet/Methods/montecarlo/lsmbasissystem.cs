@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,7 +19,7 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -37,7 +37,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public static class LsmBasisSystem {
@@ -72,7 +71,7 @@ namespace QLNet {
                         ret.Add((x) => new GaussChebyshev2ndPolynomial().weightedValue(i, x));
                         break;
                     default:
-                        throw new ApplicationException("unknown regression type");
+                        throw new Exception("unknown regression type");
                 }
             }
             return ret;
@@ -117,7 +116,7 @@ namespace QLNet {
 
                 // find duplicates
                 for (k = 0; k < ret.Count; ++k) {
-                    if (v.First(xx => (Math.Abs(v[k] - xx) <= 10*v[k]*Const.QL_Epsilon)) == v.First() + k) {
+                    if (v.First(xx => (Math.Abs(v[k] - xx) <= 10*v[k]*Const.QL_EPSILON)) == v.First() + k) {
                         // don't remove this item, it's unique!
                         rm[k] = false;
                     }

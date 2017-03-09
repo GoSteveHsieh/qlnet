@@ -2,7 +2,7 @@
  Copyright (C) 2008-2014  Andrea Maggiulli (a.maggiulli@gmail.com)
  Copyright (C) 2014  Edem Dawui (edawui@gmail.com)
 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -83,7 +81,7 @@ namespace QLNet
 			.withNotionals( nominal_ )
 			.withPaymentAdjustment( paymentConvention_ );
 
-			yoyLeg.ForEach( x => x.registerWith( update ) );
+         yoyLeg.ForEach((i, x) =>  x.registerWith( update ) );
 			
 
 			legs_[0] = fixedLeg;

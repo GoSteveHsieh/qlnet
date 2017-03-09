@@ -1,7 +1,8 @@
 /*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
+ Copyright (C) 2008-2016 Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +18,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     public partial class Utils {
@@ -51,36 +49,33 @@ namespace QLNet {
             // computations become precise enough if the square of z worth slightly more than the precision machine (hence the m)
             const double m = 10;
 
-            if (Math.Abs(z * z) > Const.QL_Epsilon * m)
+            if (Math.Abs(z * z) > Const.QL_EPSILON * m)
                 multiplier = z/xx;
             else {
-                alpha = (0.5-rho*rho)/(1.0-rho);
-                beta = alpha - .5;
-                double gamma = rho/(1-rho);
-                multiplier = 1.0 - beta*z + (gamma - alpha + beta*beta*.5)*z*z;
+                multiplier = 1.0 - 0.5 * rho * z - ( 3.0 * rho * rho - 2.0 ) * z * z / 12.0;
             }
             return (alpha/D)*multiplier*d;
         }
 
         public static void validateSabrParameters(double alpha, double beta, double nu, double rho) {
             if (!(alpha > 0.0))
-                throw new ApplicationException("alpha must be positive: " + alpha + " not allowed");
+                throw new Exception("alpha must be positive: " + alpha + " not allowed");
             if (!(beta >= 0.0 && beta <= 1.0))
-                throw new ApplicationException("beta must be in (0.0, 1.0): " + beta + " not allowed");
+                throw new Exception("beta must be in (0.0, 1.0): " + beta + " not allowed");
             if (!(nu >= 0.0))
-                throw new ApplicationException("nu must be non negative: " + nu + " not allowed");
+                throw new Exception("nu must be non negative: " + nu + " not allowed");
             if (!(rho * rho < 1.0))
-                throw new ApplicationException("rho square must be less than one: " + rho + " not allowed");
+                throw new Exception("rho square must be less than one: " + rho + " not allowed");
             }
 
         public static double sabrVolatility(double strike, double forward, double expiryTime, double alpha, double beta,
                                      double nu, double rho) {
             if (!(strike>0.0))
-                throw new ApplicationException("strike must be positive: " + strike + " not allowed");
+                throw new Exception("strike must be positive: " + strike + " not allowed");
             if (!(forward>0.0))
-                throw new ApplicationException("at the money forward rate must be: " + forward + " not allowed");
+                throw new Exception("at the money forward rate must be: " + forward + " not allowed");
             if (!(expiryTime>=0.0))
-                throw new ApplicationException("expiry time must be non-negative: " + expiryTime + " not allowed");
+                throw new Exception("expiry time must be non-negative: " + expiryTime + " not allowed");
             validateSabrParameters(alpha, beta, nu, rho);
             return unsafeSabrVolatility(strike, forward, expiryTime, alpha, beta, nu, rho);
         }

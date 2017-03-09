@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2008 Toyin Akin (toyin_akin@hotmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
 
@@ -276,7 +273,7 @@ public static class KronrodintegralArrays
 		  }
           protected override double integrate(Func<double, double> f, double a, double b)
 		  {
-			  return integrateRecursively(f, a, b, absoluteAccuracy());
+			  return integrateRecursively(f, a, b, absoluteAccuracy().GetValueOrDefault());
 		  }
 		  private double integrateRecursively(Func<double, double> f, double a, double b, double tolerance)
 		  {

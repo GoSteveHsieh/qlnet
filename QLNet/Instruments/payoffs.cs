@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -17,9 +17,6 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! Intermediate class for put/call payoffs
@@ -197,9 +194,9 @@ namespace QLNet {
             secondStrike_ = secondStrike;
 
             if (!(strike>0.0))
-                throw new ApplicationException("strike (" +  strike + ") must be positive");
+                throw new Exception("strike (" +  strike + ") must be positive");
             if (!(secondStrike>strike))
-                throw new ApplicationException("second strike (" +  secondStrike + 
+                throw new Exception("second strike (" +  secondStrike + 
                     ") must be higher than first strike (" + strike + ")");
         }
 
@@ -224,14 +221,14 @@ namespace QLNet {
             cashPayoff_ = cashPayoff;
 
             if (!(secondStrike>strike))
-                throw new ApplicationException("second strike (" +  secondStrike +
+                throw new Exception("second strike (" +  secondStrike +
                     ") must be higher than first strike (" + strike + ")");
         }
 
         //! \name Payoff interface
         public override string name() { return "SuperShare";}
         public override string description() {
-            return base.description() + ", " + secondStrike() + " second strike" + ", " + cashPayoff() + " amount";;
+            return base.description() + ", " + secondStrike() + " second strike" + ", " + cashPayoff() + " amount";
         }
         public override double value(double price) {
             return (price>=strike_ && price<secondStrike_) ? cashPayoff_ : 0.0;

@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -18,8 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet {
     //! %Array of correlated 1-D stochastic processes
@@ -33,9 +31,9 @@ namespace QLNet {
             sqrtCorrelation_ = MatrixUtilitites.pseudoSqrt(correlation, MatrixUtilitites.SalvagingAlgorithm.Spectral);
 
             if (processes.Count == 0)
-                throw new ApplicationException("no processes given");
+                throw new Exception("no processes given");
             if(correlation.rows() != processes.Count)
-                throw new ApplicationException("mismatch between number of processes and size of correlation matrix");
+                throw new Exception("mismatch between number of processes and size of correlation matrix");
             for (int i=0; i<processes_.Count; i++)
                 processes_[i].registerWith(update);
         }

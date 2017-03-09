@@ -1,12 +1,12 @@
 ﻿/*
  Copyright (C) 2008 Siarhei Novik (snovik@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
  copy of the license along with this program; if not, license is  
- available online at <http://qlnet.sourceforge.net/License.html>.
+ available online at <https://github.com/amaggiulli/qlnetLicense.html>.
   
  QLNet is a based on QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -17,19 +17,25 @@
  FOR A PARTICULAR PURPOSE.  See the license for more details.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#if QL_DOTNET_FRAMEWORK
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+   using Xunit;
+#endif
 using QLNet;
 
 namespace TestSuite
 {
+#if QL_DOTNET_FRAMEWORK
    [TestClass()]
+#endif
    public class T_Instruments
    {
-      [TestMethod()]
+#if QL_DOTNET_FRAMEWORK
+        [TestMethod()]
+#else
+       [Fact]
+#endif
       public void testObservable()
       {
          //.("Testing observability of instruments...");
@@ -45,25 +51,25 @@ namespace TestSuite
          s.NPV();
          me1.setValue(3.14);
          if (!f.isUp())
-            Assert.Fail("Observer was not notified of instrument change");
+            QAssert.Fail("Observer was not notified of instrument change");
 
          s.NPV();
          f.lower();
          SimpleQuote me2 = new SimpleQuote(0.0);
          h.linkTo(me2);
          if (!f.isUp())
-            Assert.Fail("Observer was not notified of instrument change");
+            QAssert.Fail("Observer was not notified of instrument change");
 
          f.lower();
          s.freeze();
          s.NPV();
          me2.setValue(2.71);
          if (f.isUp())
-            Assert.Fail("Observer was notified of frozen instrument change");
+            QAssert.Fail("Observer was notified of frozen instrument change");
          s.NPV();
          s.unfreeze();
          if (!f.isUp())
-            Assert.Fail("Observer was not notified of instrument change");
+            QAssert.Fail("Observer was not notified of instrument change");
       }
 
       public void suite()

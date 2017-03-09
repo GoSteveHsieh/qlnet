@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
  * 
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -83,7 +81,7 @@ namespace QLNet
                payer_[1] = -1.0;
                break;
             default:
-               throw new ApplicationException("Unknown overnight-swap type"); 
+               throw new Exception("Unknown overnight-swap type"); 
          
          }
       }
@@ -118,7 +116,7 @@ namespace QLNet
       {
          calculate();
          if (legBPS_[0] == null)
-            throw new ApplicationException("result not available");
+            throw new Exception("result not available");
          return legBPS_[0];
       }
 
@@ -126,7 +124,7 @@ namespace QLNet
       {
         calculate();
         if (legBPS_[1] == null)
-           throw new ApplicationException("result not available");
+           throw new Exception("result not available");
         return legBPS_[1];
       }
 
@@ -134,7 +132,7 @@ namespace QLNet
       {
          calculate();
          if (legNPV_[0] == null)
-            throw new ApplicationException("result not available");
+            throw new Exception("result not available");
          return legNPV_[0];
       }
 
@@ -142,7 +140,7 @@ namespace QLNet
       {
          calculate();
          if (legNPV_[1] == null)
-            throw new ApplicationException("result not available");
+            throw new Exception("result not available");
          return legNPV_[1];
       }
    }

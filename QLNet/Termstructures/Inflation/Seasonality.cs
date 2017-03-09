@@ -1,7 +1,7 @@
 ﻿/*
  Copyright (C) 2008, 2009 , 2010  Andrea Maggiulli (a.maggiulli@gmail.com)
   
- This file is part of QLNet Project http://qlnet.sourceforge.net/
+ This file is part of QLNet Project https://github.com/amaggiulli/qlnet
 
  QLNet is free software: you can redistribute it and/or modify it
  under the terms of the QLNet license.  You should have received a
@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QLNet
 {
@@ -194,12 +192,12 @@ namespace QLNet
             }
             else if (factorPeriod.units() == TimeUnit.Years) 
             {
-                throw new ApplicationException(
+                throw new Exception(
                    "seasonality period time unit is not allowed to be : " + factorPeriod.units());
             } 
             else 
             {
-                throw new ApplicationException("Unknown time unit: " + factorPeriod.units());
+                throw new Exception("Unknown time unit: " + factorPeriod.units());
             }
             // now adjust to the available number of factors, direction dependent
 
@@ -255,7 +253,7 @@ namespace QLNet
          {
             double factorAt = this.seasonalityFactor(curveBaseDate+new Period(i,TimeUnit.Years));
             if (Math.Abs(factorAt-factorBase)>=eps)
-               throw new ApplicationException("seasonality is inconsistent with inflation " +
+               throw new Exception("seasonality is inconsistent with inflation " +
                         "term structure, factors " + factorBase + " and later factor " 
                         + factorAt + ", " + i + " years later from inflation curve "
                         + " with base date at " + curveBaseDate);
@@ -278,13 +276,13 @@ namespace QLNet
             case Frequency.Weekly:
             case Frequency.Daily:
                if ((this.seasonalityFactors().Count % (int)this.frequency()) != 0)
-                  throw new ApplicationException(
+                  throw new Exception(
                            "For frequency " + this.frequency()
                            + " require multiple of " + ((int)this.frequency()) + " factors "
                            + this.seasonalityFactors().Count + " were given.");
             break;
             default:
-               throw new ApplicationException("bad frequency specified: " + this.frequency()
+               throw new Exception("bad frequency specified: " + this.frequency()
                         + ", only semi-annual through daily permitted.");
         }
 
@@ -314,6 +312,70 @@ namespace QLNet
          }
 
          return (rate + 1) * f - 1;
+      }
+   }
+
+   public class KerkhofSeasonality : MultiplicativePriceSeasonality 
+   {
+      public KerkhofSeasonality(Date seasonalityBaseDate,List<double> seasonalityFactors)
+        : base(seasonalityBaseDate,Frequency.Monthly,seasonalityFactors) 
+      {}
+
+      public override double seasonalityFactor(Date to)
+      {
+         int dir = 1;
+         Date from = seasonalityBaseDate();
+         int fromMonth = from.month();
+         int toMonth = to.month();
+
+         Period factorPeriod = new Period(frequency());
+
+         if (toMonth < fromMonth)
+         {
+            int dummy = fromMonth;
+            fromMonth = toMonth;
+            toMonth = dummy;
+            dir = 0; // We calculate invers Factor in loop
+         }
+
+         Utils.QL_REQUIRE(seasonalityFactors().Count == 12 &&
+                          factorPeriod.units() == TimeUnit.Months,()=>
+                          "12 monthly seasonal factors needed for Kerkhof Seasonality:" +
+                          " got " + seasonalityFactors().Count);
+
+         double seasonalCorrection = 1.0;
+         for (int i = fromMonth ; i<toMonth; i++)
+         {
+            seasonalCorrection *= seasonalityFactors()[i];
+         }
+
+         if (dir == 0) // invers Factor required
+         {
+            seasonalCorrection = 1/seasonalCorrection;
+         }
+
+         return seasonalCorrection;
+      
+      }
+      
+      protected override double seasonalityCorrection(double rate,Date atDate,DayCounter dc,Date curveBaseDate,bool isZeroRate)
+      {
+         double indexFactor = this.seasonalityFactor(atDate);
+
+         // Getting seasonality correction
+         double f = 0;
+         if (isZeroRate) 
+         {
+            KeyValuePair<Date,Date> lim = Utils.inflationPeriod(curveBaseDate, Frequency.Monthly);
+            double timeFromCurveBase = dc.yearFraction(lim.Key, atDate);
+            f = Math.Pow(indexFactor, 1/timeFromCurveBase);
+         }
+         else 
+         {
+            Utils.QL_FAIL("Seasonal Kerkhof model is not defined on YoY rates");
+         }
+
+         return (rate + 1)*f - 1;
       }
    }
 }
